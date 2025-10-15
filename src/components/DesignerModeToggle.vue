@@ -36,6 +36,7 @@ const emit = defineEmits(['mode-changed']);
 const isDesignerMode = ref(false);
 
 const toggleDesignerMode = () => {
+  localStorage.setItem('designerMode', isDesignerMode.value.toString());
   emit('mode-changed', isDesignerMode.value);
 };
 
@@ -47,9 +48,4 @@ onMounted(() => {
     emit('mode-changed', true);
   }
 });
-
-const toggleDesignerMode = () => {
-  localStorage.setItem('designerMode', isDesignerMode.value.toString());
-  emit('mode-changed', isDesignerMode.value);
-};
 </script>
