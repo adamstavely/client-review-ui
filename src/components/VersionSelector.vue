@@ -1,13 +1,13 @@
 <template>
   <v-select
-    v-model="modelValue"
+    :model-value="modelValue"
     :items="versions"
     item-title="label"
     item-value="id"
     label="Select Version"
     outlined
     class="mb-4"
-    @update:modelValue="emit('update:modelValue', $event)"
+    @update:model-value="emit('update:modelValue', $event)"
   />
 </template>
 

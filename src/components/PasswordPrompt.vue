@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="modelValue" persistent max-width="400">
+  <v-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" persistent max-width="400">
     <v-card>
       <v-card-title class="text-h6">Enter Password</v-card-title>
       <v-card-text>
