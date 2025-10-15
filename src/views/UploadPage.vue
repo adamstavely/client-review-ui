@@ -1,5 +1,7 @@
 <template>
   <v-container class="pa-4" max-width="800px">
+    <ApiStatus @mode-changed="handleApiModeChanged" />
+    
     <v-card>
       <v-card-title>Upload Design</v-card-title>
       <v-card-text>
@@ -49,12 +51,17 @@
 
 <script setup>
 import FileUpload from '@/components/FileUpload.vue';
+import ApiStatus from '@/components/ApiStatus.vue';
 import { ref } from 'vue';
 
 const resultUrl = ref('');
 
 const handleUpload = (url) => {
   resultUrl.value = url;
+};
+
+const handleApiModeChanged = (isMockMode) => {
+  console.log('API mode changed:', isMockMode ? 'Mock' : 'Real API');
 };
 
 // Demo links for testing

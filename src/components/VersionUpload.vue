@@ -76,7 +76,8 @@ const uploadVersion = async () => {
   uploading.value = true;
   
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       // Use mock API
       const newVersion = await mockAPI.uploadVersion(
         props.reviewId,

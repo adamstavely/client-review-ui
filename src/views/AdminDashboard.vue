@@ -93,7 +93,8 @@ const headers = [
 
 const loadLinks = async () => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       const res = await mockAPI.getAdminLinks(showExpired.value);
       links.value = res;
     } else {
@@ -110,7 +111,8 @@ const loadLinks = async () => {
 
 const extend = async (id) => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       await mockAPI.extendLink(id);
     } else {
       await axios.post(`/admin/${id}/extend`, {}, {
@@ -128,7 +130,8 @@ const override = async (id) => {
   if (!days) return;
   
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       await mockAPI.overrideLink(id, Number(days));
     } else {
       await axios.post(`/admin/${id}/override`, { days: Number(days) }, {
@@ -165,7 +168,8 @@ const remove = async (id) => {
   if (!confirm('Are you sure?')) return;
   
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       await mockAPI.deleteLink(id);
     } else {
       await axios.delete(`/admin/${id}`, {
@@ -182,7 +186,8 @@ const batchDelete = async () => {
   if (!confirm('Delete all selected?')) return;
   
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       await mockAPI.batchDelete(selectedIds.value);
     } else {
       await axios.post('/admin/batch-delete', { ids: selectedIds.value }, {

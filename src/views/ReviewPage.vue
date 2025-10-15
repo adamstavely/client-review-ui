@@ -129,7 +129,8 @@ const isDesignerMode = ref(false);
 
 const loadVersion = async () => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       const res = await mockAPI.getVersion(reviewId, selectedVersion.value);
       previewUrl.value = res.url;
       await loadComments();
@@ -145,7 +146,8 @@ const loadVersion = async () => {
 
 const loadComments = async () => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       const res = await mockAPI.getComments(reviewId, selectedVersion.value);
       comments.value = res;
     } else {
@@ -162,7 +164,8 @@ const loadComments = async () => {
 
 const submitPassword = async (input) => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       const res = await mockAPI.getReview(reviewId, input);
       metadata.value = res;
       selectedVersion.value = res.versions[0].id;
@@ -185,7 +188,8 @@ const submitPassword = async (input) => {
 // Comment handling functions
 const handleCommentAdded = async (comment) => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       await mockAPI.addComment(reviewId, comment);
     } else {
       await axios.post(`/review/${reviewId}/comments`, comment);
@@ -203,7 +207,8 @@ const handleCommentUpdated = async (commentId, action) => {
       if (comment) {
         const updates = { resolved: !comment.resolved };
         
-        if (isMockMode()) {
+        const useMockMode = await isMockMode();
+        if (useMockMode) {
           await mockAPI.updateComment(reviewId, commentId, updates);
         } else {
           await axios.patch(`/review/${reviewId}/comments/${commentId}`, updates);
@@ -218,7 +223,8 @@ const handleCommentUpdated = async (commentId, action) => {
 
 const handleReplyAdded = async (commentId, reply) => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       await mockAPI.addReply(reviewId, commentId, reply);
     } else {
       await axios.post(`/review/${reviewId}/comments/${commentId}/replies`, reply);
@@ -236,7 +242,8 @@ const handleModeChanged = (mode) => {
 const handleVersionUploaded = async (newVersion) => {
   // Refresh the metadata to get the new version
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       const res = await mockAPI.getReview(reviewId);
       metadata.value = res;
     } else {
@@ -281,7 +288,8 @@ const formatTimestamp = (timestamp) => {
 
 onMounted(async () => {
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       const res = await mockAPI.getReview(reviewId);
       metadata.value = res;
       selectedVersion.value = res.versions[0].id;

@@ -31,7 +31,8 @@ const submit = async () => {
   if (!file.value) return;
 
   try {
-    if (isMockMode()) {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
       // Use mock API
       const { uploadUrl, reviewId } = await mockAPI.upload(file.value.name, password.value);
       emit('uploaded', `/review/${reviewId}`);

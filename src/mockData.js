@@ -335,7 +335,37 @@ export const mockAPI = {
 };
 
 // Check if we're in mock mode (when API is not available)
-export const isMockMode = () => {
-  // You can set this to true to force mock mode, or detect API availability
-  return !window.location.hostname.includes('localhost') || true; // Force mock mode for now
+export const isMockMode = async () => {
+  // Force mock mode if explicitly set
+  if (localStorage.getItem('forceMockMode') === 'true') {
+    return true;
+  }
+  
+  // Try to ping the API to see if it's available
+  try {
+    // Try multiple possible health check endpoints
+    const endpoints = ['/health', '/', '/api/health'];
+    let apiAvailable = false;
+    
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
+          method: 'GET',
+          timeout: 2000
+        });
+        if (response.ok || response.status === 404) { // 404 means server is running but endpoint doesn't exist
+          apiAvailable = true;
+          console.log(`API detected at ${endpoint}`);
+          break;
+        }
+      } catch (e) {
+        continue; // Try next endpoint
+      }
+    }
+    
+    return !apiAvailable; // Use mock mode if no endpoints respond
+  } catch (error) {
+    console.log('API not available, using mock mode');
+    return true; // Use mock mode if API is not available
+  }
 };
