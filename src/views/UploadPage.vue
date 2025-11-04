@@ -1,7 +1,7 @@
 <template>
-  <div class="space-y-6">
+  <div class="flex gap-6">
     <!-- Upload Card -->
-    <div class="bg-white rounded-lg shadow-lg">
+    <div class="bg-white rounded-lg shadow-lg flex-1">
       <div class="border-b border-gray-200 px-8 py-6">
         <div class="flex items-center gap-3">
           <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +31,7 @@
     </div>
 
     <!-- Demo Links Card -->
-    <div class="bg-white rounded-lg shadow-lg">
+    <div class="bg-white rounded-lg shadow-lg flex-1">
       <div class="border-b border-gray-200 px-8 py-6">
         <div class="flex items-center gap-3">
           <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
