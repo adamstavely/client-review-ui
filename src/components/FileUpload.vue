@@ -117,7 +117,7 @@
       :disabled="!file"
       class="w-full px-4 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
     >
-      Upload
+      Upload & Publish
     </button>
   </form>
 
@@ -187,7 +187,8 @@ const submit = async () => {
     if (useMockMode) {
       // Use mock API
       const { uploadUrl, reviewId } = await mockAPI.upload(file.value.name, password.value);
-      emit('uploaded', `/review/${reviewId}`);
+      const fullUrl = `${window.location.origin}/review/${reviewId}`;
+      emit('uploaded', fullUrl);
     } else {
       // Use real API
       const res = await fetch('/upload', {
@@ -207,7 +208,8 @@ const submit = async () => {
         headers: { 'Content-Type': file.value.type },
       });
 
-      emit('uploaded', `/review/${reviewId}`);
+      const fullUrl = `${window.location.origin}/review/${reviewId}`;
+      emit('uploaded', fullUrl);
     }
   } catch (error) {
     console.error('Upload failed:', error);
