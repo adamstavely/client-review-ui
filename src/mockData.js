@@ -129,6 +129,8 @@ let mockAdminLinks = [
   }
 ];
 
+export { mockReviews };
+
 // Mock API functions
 export const mockAPI = {
   // Upload simulation

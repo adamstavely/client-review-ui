@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+  <div :class="isFullScreenPreview ? '' : 'min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50'">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
+    <header v-if="!isFullScreenPreview" class="bg-white shadow-sm border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -44,10 +44,21 @@
     <!-- Main Content -->
     <v-app class="bg-transparent">
       <v-main class="bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div v-if="!isFullScreenPreview" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <router-view />
+        </div>
+        <div v-else>
           <router-view />
         </div>
       </v-main>
     </v-app>
   </div>
 </template>
+
+<script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const isFullScreenPreview = computed(() => route.path.includes('/preview'));
+</script>

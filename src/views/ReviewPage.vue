@@ -1,38 +1,46 @@
 <template>
   <div class="space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Left Column - File Preview -->
-      <div class="lg:col-span-2">
-        <div v-if="!passwordRequired || passwordValidated" class="bg-white rounded-lg shadow-lg">
-          <div class="border-b border-gray-200 px-8 py-6">
-            <h2 class="text-2xl font-bold text-gray-900">{{ metadata.filename }}</h2>
-          </div>
-          <div class="p-8">
-            <VersionSelector
-              v-model="selectedVersion"
-              :versions="metadata.versions"
-              @update:modelValue="loadVersion"
-            />
-            <PreviewFrame :url="previewUrl" />
-          </div>
+    <!-- File Preview Section -->
+    <div v-if="!passwordRequired || passwordValidated" class="bg-white rounded-lg shadow-lg">
+      <div class="border-b border-gray-200 px-8 py-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-bold text-gray-900">{{ metadata.filename }}</h2>
+          <button
+            v-if="previewUrl"
+            @click="openInNewTab"
+            class="px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            Open in New Tab
+          </button>
         </div>
-
-        <PasswordPrompt
-          v-model="passwordRequired"
-          @submit="submitPassword"
-        />
       </div>
-
-      <!-- Right Column - Comments -->
-      <div class="lg:col-span-1" v-if="passwordValidated">
-        <CommentsSidebar
-          :comments="comments"
-          :version-id="selectedVersion"
-          @comment-added="handleCommentAdded"
-          @comment-updated="handleCommentUpdated"
-          @reply-added="handleReplyAdded"
+      <div class="p-8">
+        <VersionSelector
+          v-model="selectedVersion"
+          :versions="metadata.versions"
+          @update:modelValue="loadVersion"
         />
+        <PreviewFrame :url="previewUrl" />
       </div>
+    </div>
+
+    <PasswordPrompt
+      v-model="passwordRequired"
+      @submit="submitPassword"
+    />
+
+    <!-- Comments Section -->
+    <div v-if="passwordValidated">
+      <CommentsSidebar
+        :comments="comments"
+        :version-id="selectedVersion"
+        @comment-added="handleCommentAdded"
+        @comment-updated="handleCommentUpdated"
+        @reply-added="handleReplyAdded"
+      />
     </div>
 
     <!-- Alert Modal -->
@@ -187,6 +195,15 @@ const handleReplyAdded = async (commentId, reply) => {
     console.error('Failed to add reply:', error);
   }
 };
+
+// Update document title when metadata changes
+watch(() => metadata.value.filename, (newFilename) => {
+  if (newFilename) {
+    document.title = `${newFilename} - Client Review UI`;
+  } else {
+    document.title = 'Client Review UI';
+  }
+});
 
 onMounted(async () => {
   try {
