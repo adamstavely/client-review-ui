@@ -20,6 +20,7 @@
           :items="commentTypes"
           label="Comment Type"
           variant="outlined"
+          color="primary"
           class="mb-3"
         />
         <div class="d-flex justify-end">

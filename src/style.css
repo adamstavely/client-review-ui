@@ -1,0 +1,378 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Fix Vuetify app container to not interfere with Tailwind */
+.v-application {
+  background: transparent !important;
+  min-height: auto !important;
+  display: block !important;
+}
+
+.v-application--wrap {
+  min-height: auto !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+.v-main {
+  background: transparent !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+.v-main__wrap {
+  padding: 0 !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+/* Fix Vuetify icon sizing */
+.v-icon {
+  font-size: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.v-icon--size-small {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.v-icon--size-large {
+  font-size: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.v-icon--size-x-large {
+  font-size: 48px !important;
+  width: 48px !important;
+  height: 48px !important;
+}
+
+/* Ensure SVG icons are properly sized */
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Prevent Vuetify components from having excessive size */
+.v-btn {
+  min-width: auto !important;
+}
+
+.v-btn--icon {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.v-btn--size-small .v-icon {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Fix Vuetify container padding */
+.v-container {
+  padding: 0 !important;
+}
+
+/* Style checkboxes and switches to use primary color */
+.v-checkbox .v-selection-control__input {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+.v-checkbox .v-selection-control__input:hover {
+  color: #6366f1 !important; /* indigo-500 */
+}
+
+.v-checkbox .v-selection-control__input--checked {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+.v-selection-control__input input[type="checkbox"]:checked {
+  background-color: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  accent-color: #4f46e5 !important;
+}
+
+/* Data table checkbox styling */
+.v-data-table .v-checkbox input[type="checkbox"]:checked {
+  background-color: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  accent-color: #4f46e5 !important;
+}
+
+.v-data-table .v-checkbox .v-selection-control__input {
+  color: #4f46e5 !important;
+}
+
+.v-data-table .v-checkbox .v-selection-control__input--checked {
+  color: #4f46e5 !important;
+}
+
+.v-data-table .v-checkbox .v-selection-control__input .v-icon {
+  color: #4f46e5 !important;
+}
+
+.v-data-table .v-checkbox .v-selection-control__input--checked .v-icon {
+  color: #4f46e5 !important;
+}
+
+/* More specific checkbox styling */
+.v-selection-control__wrapper .v-checkbox .v-selection-control__input {
+  color: #4f46e5 !important;
+}
+
+.v-selection-control__wrapper .v-checkbox .v-selection-control__input--checked {
+  color: #4f46e5 !important;
+}
+
+.v-selection-control__wrapper .v-checkbox .v-selection-control__input--checked .v-icon {
+  color: #4f46e5 !important;
+}
+
+/* Switch styling */
+.v-switch .v-selection-control__input {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+.v-switch .v-selection-control__input--checked {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+.v-switch .v-switch__track {
+  background-color: rgba(0, 0, 0, 0.38) !important;
+}
+
+.v-switch--checked .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+.v-switch .v-switch__thumb {
+  background-color: #ffffff !important;
+}
+
+.v-switch--checked .v-switch__thumb {
+  background-color: #ffffff !important;
+}
+
+/* Override Vuetify's default primary color for switches */
+.v-switch.v-switch--inset .v-switch__track {
+  background-color: rgba(0, 0, 0, 0.38) !important;
+}
+
+.v-switch.v-switch--inset.v-switch--checked .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+/* Additional switch checked state overrides */
+.v-switch.v-switch--inset .v-selection-control__input--checked ~ .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+.v-switch .v-selection-control__input--checked ~ .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+/* Force primary color using CSS variables */
+.v-switch[aria-checked="true"] .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+.v-switch.v-switch--inset[aria-checked="true"] .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+/* Very specific rules for Vuetify 3 switch component */
+.v-switch .v-selection-control__wrapper .v-switch__track {
+  transition: background-color 0.2s ease !important;
+}
+
+.v-switch .v-selection-control__wrapper .v-selection-control__input:checked ~ .v-switch__track,
+.v-switch .v-selection-control__wrapper .v-selection-control__input--checked ~ .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+.v-switch.v-switch--inset .v-selection-control__wrapper .v-selection-control__input:checked ~ .v-switch__track,
+.v-switch.v-switch--inset .v-selection-control__wrapper .v-selection-control__input--checked ~ .v-switch__track {
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+/* Additional checkbox styling for Vuetify 3 */
+.v-checkbox-btn .v-selection-control__input {
+  color: #4f46e5 !important;
+}
+
+.v-checkbox-btn .v-selection-control__input--checked {
+  color: #4f46e5 !important;
+}
+
+.v-checkbox-btn .v-selection-control__input--checked .v-icon {
+  color: #4f46e5 !important;
+}
+
+/* Target all checkbox states */
+.v-selection-control[aria-checked="true"] .v-selection-control__input {
+  color: #4f46e5 !important;
+}
+
+.v-selection-control[aria-checked="true"] .v-selection-control__input .v-icon {
+  color: #4f46e5 !important;
+}
+
+/* Data table specific checkbox overrides */
+.v-data-table .v-selection-control[aria-checked="true"] .v-selection-control__input {
+  color: #4f46e5 !important;
+}
+
+.v-data-table .v-selection-control[aria-checked="true"] .v-selection-control__input .v-icon {
+  color: #4f46e5 !important;
+}
+
+/* Ensure checkbox icons use primary color */
+.v-icon--checkbox {
+  color: #4f46e5 !important;
+}
+
+.v-icon--checkbox-on {
+  color: #4f46e5 !important;
+}
+
+/* More comprehensive switch overrides */
+.v-switch .v-selection-control__input[aria-checked="true"] {
+  color: #4f46e5 !important;
+}
+
+.v-switch .v-selection-control__input[aria-checked="true"] .v-icon {
+  color: #4f46e5 !important;
+}
+
+/* CSS variable overrides for Vuetify theming */
+:root {
+  --v-theme-primary: 79, 70, 229 !important; /* RGB values for #4f46e5 */
+  --v-theme-on-primary: 255, 255, 255 !important;
+}
+
+.v-application {
+  --v-theme-primary: 79, 70, 229 !important; /* RGB values for #4f46e5 */
+  --v-theme-on-primary: 255, 255, 255 !important;
+}
+
+/* Force switch track color when checked using CSS variables */
+.v-switch--checked .v-switch__track {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+.v-switch.v-switch--inset.v-switch--checked .v-switch__track {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  background-color: #4f46e5 !important;
+  opacity: 1 !important;
+}
+
+/* Force primary color on selection controls */
+.v-selection-control--dirty .v-selection-control__input {
+  color: #4f46e5 !important;
+}
+
+.v-selection-control--dirty .v-selection-control__input .v-icon {
+  color: #4f46e5 !important;
+}
+
+/* Dropdown/Select styling to use primary blue color */
+.v-select .v-field--focused .v-field__outline {
+  color: #4f46e5 !important;
+}
+
+.v-select .v-field--focused .v-field__outline__start,
+.v-select .v-field--focused .v-field__outline__notch,
+.v-select .v-field--focused .v-field__outline__end {
+  border-color: #4f46e5 !important;
+}
+
+.v-select .v-field--active .v-field__outline {
+  color: #4f46e5 !important;
+}
+
+/* Dropdown menu items */
+.v-list-item--active {
+  background-color: rgba(79, 70, 229, 0.12) !important; /* indigo-600 with opacity */
+  color: #4f46e5 !important;
+}
+
+.v-list-item:hover {
+  background-color: rgba(79, 70, 229, 0.08) !important;
+}
+
+.v-list-item--active:hover {
+  background-color: rgba(79, 70, 229, 0.16) !important;
+}
+
+/* Menu shading */
+.v-menu .v-list {
+  background-color: #ffffff !important;
+}
+
+.v-menu .v-list-item:hover {
+  background-color: rgba(79, 70, 229, 0.08) !important;
+}
+
+.v-menu .v-list-item--active {
+  background-color: rgba(79, 70, 229, 0.12) !important;
+  color: #4f46e5 !important;
+}
+
+/* Select field focus states */
+.v-field--focused {
+  color: #4f46e5 !important;
+}
+
+.v-field--focused .v-field__outline {
+  color: #4f46e5 !important;
+}
+
+.v-field--focused .v-field__outline__start,
+.v-field--focused .v-field__outline__notch,
+.v-field--focused .v-field__outline__end {
+  border-color: #4f46e5 !important;
+}
+
+/* Select label when focused */
+.v-field--focused .v-field-label {
+  color: #4f46e5 !important;
+}
+
+/* Select dropdown icon */
+.v-select .v-field__append-inner .v-icon {
+  color: #4f46e5 !important;
+}
+
+.v-select.v-field--focused .v-field__append-inner .v-icon {
+  color: #4f46e5 !important;
+}

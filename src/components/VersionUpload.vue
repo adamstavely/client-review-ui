@@ -34,6 +34,7 @@
           :items="versionTypes"
           label="Version Type"
           variant="outlined"
+          color="primary"
           class="mb-3"
         />
         <div class="d-flex justify-end">
@@ -49,11 +50,20 @@
       </v-form>
     </v-card-text>
   </v-card>
+
+  <!-- Alert Modal -->
+  <AlertModal
+    v-model="showAlert"
+    title="Upload Error"
+    message="Failed to upload version. Please try again."
+    type="error"
+  />
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { mockAPI, isMockMode } from '@/mockData.js';
+import AlertModal from '@/components/AlertModal.vue';
 
 const emit = defineEmits(['version-uploaded']);
 
@@ -62,6 +72,7 @@ const versionLabel = ref('');
 const versionNotes = ref('');
 const versionType = ref('minor');
 const uploading = ref(false);
+const showAlert = ref(false);
 
 const versionTypes = [
   { title: 'Minor Update', value: 'minor' },
@@ -121,7 +132,7 @@ const uploadVersion = async () => {
     }
   } catch (error) {
     console.error('Failed to upload version:', error);
-    alert('Failed to upload version. Please try again.');
+    showAlert.value = true;
   } finally {
     uploading.value = false;
   }

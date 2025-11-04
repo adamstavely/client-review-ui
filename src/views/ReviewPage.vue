@@ -1,28 +1,30 @@
 <template>
-  <v-container class="pa-4" max-width="1200px">
-    <v-row>
+  <div class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Left Column - File Preview -->
-      <v-col cols="12" lg="8">
-        <v-card v-if="!passwordRequired || passwordValidated">
-          <v-card-title class="text-h6">{{ metadata.filename }}</v-card-title>
-          <v-card-text>
+      <div class="lg:col-span-2">
+        <div v-if="!passwordRequired || passwordValidated" class="bg-white rounded-lg shadow-lg">
+          <div class="border-b border-gray-200 px-8 py-6">
+            <h2 class="text-2xl font-bold text-gray-900">{{ metadata.filename }}</h2>
+          </div>
+          <div class="p-8">
             <VersionSelector
               v-model="selectedVersion"
               :versions="metadata.versions"
               @update:modelValue="loadVersion"
             />
             <PreviewFrame :url="previewUrl" />
-          </v-card-text>
-        </v-card>
+          </div>
+        </div>
 
         <PasswordPrompt
           v-model="passwordRequired"
           @submit="submitPassword"
         />
-      </v-col>
+      </div>
 
       <!-- Right Column - Comments & Designer Tools -->
-      <v-col cols="12" lg="4" v-if="passwordValidated">
+      <div class="lg:col-span-1" v-if="passwordValidated">
         <DesignerModeToggle @mode-changed="handleModeChanged" />
         
         <!-- Designer Mode: Version Upload -->
@@ -32,38 +34,39 @@
           @version-uploaded="handleVersionUploaded"
         />
         
-        <!-- Client Mode: Comments -->
-        <template v-if="!isDesignerMode">
-          <CommentBox
-            :version-id="selectedVersion"
-            @comment-added="handleCommentAdded"
-          />
-          
-          <CommentList
-            :comments="comments"
-            :version-id="selectedVersion"
-            @comment-updated="handleCommentUpdated"
-            @reply-added="handleReplyAdded"
-          />
-        </template>
+        <!-- Client Mode: Unified Comments Sidebar -->
+        <CommentsSidebar
+          v-if="!isDesignerMode"
+          :comments="comments"
+          :version-id="selectedVersion"
+          @comment-added="handleCommentAdded"
+          @comment-updated="handleCommentUpdated"
+          @reply-added="handleReplyAdded"
+        />
         
         <!-- Designer Mode: Comments (Read-only) -->
         <template v-else>
           <v-card class="mt-4">
             <v-card-title class="d-flex align-center">
-              <v-icon class="mr-2">mdi-comment-multiple</v-icon>
+              <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
               Client Comments ({{ comments.length }})
             </v-card-title>
             <v-card-text v-if="comments.length === 0" class="text-center py-4">
-              <v-icon size="32" color="grey-lighten-1">mdi-comment-outline</v-icon>
-              <p class="text-grey mt-2">No comments from clients yet.</p>
+              <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              <p class="text-gray-500 mt-2">No comments from clients yet.</p>
             </v-card-text>
             <v-list v-else>
               <template v-for="comment in comments" :key="comment.id">
                 <v-list-item>
                   <template #prepend>
                     <v-avatar :color="getCommentColor(comment.type)" size="32">
-                      <v-icon color="white">mdi-account</v-icon>
+                      <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                      </svg>
                     </v-avatar>
                   </template>
                   <v-list-item-title class="d-flex align-center">
@@ -81,7 +84,9 @@
                       size="small"
                       class="ml-2"
                     >
-                      <v-icon start>mdi-check</v-icon>
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      </svg>
                       Resolved
                     </v-chip>
                   </v-list-item-title>
@@ -97,9 +102,17 @@
             </v-list>
           </v-card>
         </template>
-      </v-col>
-    </v-row>
-  </v-container>
+      </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <AlertModal
+      v-model="showAlert"
+      :title="alertTitle"
+      :message="alertMessage"
+      :type="alertType"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -109,10 +122,10 @@ import { useRoute } from 'vue-router';
 import VersionSelector from '@/components/VersionSelector.vue';
 import PreviewFrame from '@/components/PreviewFrame.vue';
 import PasswordPrompt from '@/components/PasswordPrompt.vue';
-import CommentBox from '@/components/CommentBox.vue';
-import CommentList from '@/components/CommentList.vue';
+import CommentsSidebar from '@/components/CommentsSidebar.vue';
 import DesignerModeToggle from '@/components/DesignerModeToggle.vue';
 import VersionUpload from '@/components/VersionUpload.vue';
+import AlertModal from '@/components/AlertModal.vue';
 import { mockAPI, isMockMode } from '@/mockData.js';
 
 const route = useRoute();
@@ -126,6 +139,12 @@ const passwordRequired = ref(false);
 const passwordValidated = ref(false);
 const comments = ref([]);
 const isDesignerMode = ref(false);
+
+// Alert modal state
+const showAlert = ref(false);
+const alertTitle = ref('');
+const alertMessage = ref('');
+const alertType = ref('error');
 
 const loadVersion = async () => {
   try {
@@ -181,8 +200,15 @@ const submitPassword = async (input) => {
       loadVersion();
     }
   } catch {
-    alert('Invalid password');
+    showAlertMessage('Error', 'Invalid password', 'error');
   }
+};
+
+const showAlertMessage = (title, message, type = 'error') => {
+  alertTitle.value = title;
+  alertMessage.value = message;
+  alertType.value = type;
+  showAlert.value = true;
 };
 
 // Comment handling functions

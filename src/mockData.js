@@ -5,6 +5,7 @@ let mockReviews = [
     id: 'review-1',
     filename: 'Website Design v2.pdf',
     password: null,
+    designer: 'Sarah Johnson',
     versions: [
       { id: 'v1', label: 'Version 1 - Initial Design', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Version 2 - Updated Layout', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
@@ -46,6 +47,7 @@ let mockReviews = [
     id: 'review-2',
     filename: 'Mobile App Wireframes.sketch',
     password: 'design123',
+    designer: 'Mike Chen',
     versions: [
       { id: 'v1', label: 'Initial Wireframes', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Updated User Flow', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
@@ -76,6 +78,7 @@ let mockReviews = [
     id: 'review-3',
     filename: 'Brand Guidelines.ai',
     password: 'brand2024',
+    designer: 'Alex Rodriguez',
     versions: [
       { id: 'v1', label: 'Logo Concepts', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Color Palette', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
@@ -104,19 +107,25 @@ let mockAdminLinks = [
     id: 'admin-1',
     filename: 'Website Design v2.pdf',
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    extended: false
+    extended: false,
+    hasPassword: false,
+    designer: 'Sarah Johnson'
   },
   {
     id: 'admin-2', 
     filename: 'Mobile App Wireframes.sketch',
     expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-    extended: false
+    extended: false,
+    hasPassword: true,
+    designer: 'Mike Chen'
   },
   {
     id: 'admin-3',
     filename: 'Brand Guidelines.ai', 
     expiresAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Expired
-    extended: true
+    extended: true,
+    hasPassword: true,
+    designer: 'Alex Rodriguez'
   }
 ];
 
@@ -130,6 +139,7 @@ export const mockAPI = {
       id: `review-${Date.now()}`,
       filename: filename,
       password: password || null,
+      designer: 'Designer', // In real app, this would come from auth
       versions: [
         { 
           id: 'v1', 
@@ -146,7 +156,9 @@ export const mockAPI = {
       id: `admin-${newReview.id}`,
       filename: newReview.filename,
       expiresAt: newReview.expiresAt,
-      extended: newReview.extended
+      extended: newReview.extended,
+      hasPassword: !!newReview.password,
+      designer: newReview.designer
     });
     
     return { uploadUrl: 'mock://upload', reviewId: newReview.id };
@@ -191,12 +203,20 @@ export const mockAPI = {
   getAdminLinks: async (showExpired = false) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    if (showExpired) {
-      return mockAdminLinks;
-    }
+    let links = showExpired ? mockAdminLinks : mockAdminLinks.filter(link => {
+      const now = new Date();
+      return new Date(link.expiresAt) > now;
+    });
     
-    const now = new Date();
-    return mockAdminLinks.filter(link => new Date(link.expiresAt) > now);
+    // Ensure password info and designer info are synced from reviews
+    return links.map(link => {
+      const review = mockReviews.find(r => r.filename === link.filename);
+      return {
+        ...link,
+        hasPassword: review ? !!review.password : link.hasPassword || false,
+        designer: review ? review.designer : link.designer || 'Unknown'
+      };
+    });
   },
 
   extendLink: async (id) => {
@@ -242,6 +262,7 @@ export const mockAPI = {
       const review = mockReviews.find(r => r.filename === adminLink.filename);
       if (review) {
         review.password = newPassword || null;
+        adminLink.hasPassword = !!newPassword;
       }
     }
   },
@@ -341,31 +362,25 @@ export const isMockMode = async () => {
     return true;
   }
   
-  // Try to ping the API to see if it's available
-  try {
-    // Try multiple possible health check endpoints
-    const endpoints = ['/health', '/', '/api/health'];
-    let apiAvailable = false;
-    
-    for (const endpoint of endpoints) {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
-          method: 'GET',
-          timeout: 2000
-        });
-        if (response.ok || response.status === 404) { // 404 means server is running but endpoint doesn't exist
-          apiAvailable = true;
-          console.log(`API detected at ${endpoint}`);
-          break;
-        }
-      } catch (e) {
-        continue; // Try next endpoint
+  // Check if user wants to use real API
+  if (localStorage.getItem('useRealAPI') === 'true') {
+    // Only try to ping API if user explicitly enabled it
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/health`, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'omit',
+      });
+      if (response.ok) {
+        return false; // API is available
       }
+    } catch (error) {
+      // CORS error or network error - use mock mode
+      console.log('API not available or CORS error, using mock mode');
+      return true;
     }
-    
-    return !apiAvailable; // Use mock mode if no endpoints respond
-  } catch (error) {
-    console.log('API not available, using mock mode');
-    return true; // Use mock mode if API is not available
   }
+  
+  // Default to mock mode to avoid unnecessary API calls
+  return true;
 };

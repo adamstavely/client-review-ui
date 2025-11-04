@@ -6,6 +6,7 @@
     item-value="id"
     label="Select Version"
     outlined
+    color="primary"
     class="mb-4"
     @update:model-value="emit('update:modelValue', $event)"
   />
