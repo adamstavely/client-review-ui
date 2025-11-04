@@ -75,7 +75,20 @@
                   </button>
                 </template>
               </v-tooltip>
-              <v-tooltip text="Extend expiration by 7 days">
+              <v-tooltip v-if="isExpired(item)" text="Reactivate expired link">
+                <template #activator="{ props }">
+                  <button
+                    @click="reactivate(item.id)"
+                    class="p-2 rounded-lg text-green-600 hover:bg-green-50 hover:text-green-700 transition-colors"
+                    v-bind="props"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </button>
+                </template>
+              </v-tooltip>
+              <v-tooltip v-if="!isExpired(item)" text="Extend expiration by 7 days">
                 <template #activator="{ props }">
                   <button
                     @click="extend(item.id)"
@@ -254,6 +267,36 @@ const loadLinks = async () => {
     }
   } catch (error) {
     console.error('Failed to load links:', error);
+  }
+};
+
+const isExpired = (item) => {
+  if (!item.expiresAt) return false;
+  const expirationDate = new Date(item.expiresAt);
+  return expirationDate < new Date();
+};
+
+const reactivate = async (id) => {
+  try {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
+      // Reactivate by extending 30 days from now
+      await mockAPI.overrideLink(id, 30);
+    } else {
+      // For real API, set expiration to 30 days from now
+      const newExpirationDate = new Date();
+      newExpirationDate.setDate(newExpirationDate.getDate() + 30);
+      await axios.post(`/admin/${id}/override`, { 
+        expirationDate: newExpirationDate.toISOString().split('T')[0] 
+      }, {
+        headers: { 'x-admin-token': localStorage.getItem('adminToken') },
+      });
+    }
+    showAlertMessage('Success', 'Link reactivated successfully! Expiration set to 30 days from now.', 'success');
+    loadLinks();
+  } catch (error) {
+    console.error('Failed to reactivate link:', error);
+    showAlertMessage('Error', 'Failed to reactivate link', 'error');
   }
 };
 
