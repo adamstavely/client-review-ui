@@ -6,10 +6,12 @@
         <v-text-field
           v-model="inputValue"
           :label="label"
-          :type="type"
+          :type="type === 'password' && showPassword ? 'text' : type"
           :placeholder="placeholder"
           outlined
           autofocus
+          :append-inner-icon="type === 'password' ? (showPassword ? 'mdi-eye-off' : 'mdi-eye') : undefined"
+          @click:append-inner="type === 'password' ? (showPassword = !showPassword) : undefined"
           @keyup.enter="submit"
         />
       </v-card-text>
@@ -50,10 +52,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'submit', 'cancel']);
 
 const inputValue = ref(props.defaultValue);
+const showPassword = ref(false);
 
 watch(() => props.modelValue, (newVal) => {
   if (newVal) {
     inputValue.value = props.defaultValue;
+    showPassword.value = false; // Reset password visibility when modal opens
   }
 });
 

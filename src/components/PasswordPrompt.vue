@@ -6,8 +6,10 @@
         <v-text-field
           v-model="password"
           label="Password"
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
           outlined
+          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="showPassword = !showPassword"
         />
       </v-card-text>
       <v-card-actions>
@@ -27,6 +29,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'submit']);
 
 const password = ref('');
+const showPassword = ref(false);
 
 const submitPassword = () => {
   emit('submit', password.value);

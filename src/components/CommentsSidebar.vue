@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-4">
+  <v-card class="bg-white rounded-lg shadow-lg">
     <v-card-title class="d-flex align-center">
       <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -90,30 +90,30 @@
           </v-list-item-subtitle>
           
           <template #append>
-            <div class="d-flex align-center ga-1">
+            <div class="d-flex align-center ga-2">
               <v-tooltip text="Reply">
                 <template #activator="{ props }">
-                  <v-btn
-                    icon
-                    size="small"
+                  <button
+                    type="button"
                     v-bind="props"
                     @click="toggleReply(comment.id)"
+                    class="text-gray-500 hover:text-indigo-600 transition-colors p-1"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                     </svg>
-                  </v-btn>
+                  </button>
                 </template>
               </v-tooltip>
               
               <v-tooltip text="Mark as resolved">
                 <template #activator="{ props }">
-                  <v-btn
-                    icon
-                    size="small"
+                  <button
+                    type="button"
                     v-bind="props"
                     @click="toggleResolved(comment.id)"
-                    :color="comment.resolved ? 'success' : 'default'"
+                    class="transition-colors p-1"
+                    :class="comment.resolved ? 'text-green-600 hover:text-green-700' : 'text-gray-500 hover:text-indigo-600'"
                   >
                     <svg v-if="comment.resolved" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -121,7 +121,7 @@
                     <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                  </v-btn>
+                  </button>
                 </template>
               </v-tooltip>
             </div>
