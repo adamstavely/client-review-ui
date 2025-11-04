@@ -37,7 +37,10 @@
             v-for="link in demoLinks"
             :key="link.id"
             @click="handleCardClick(link, $event)"
-            class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            class="flex items-center justify-between p-4 border rounded-lg transition-colors"
+            :class="link.completed 
+              ? 'border-gray-300 bg-gray-50 opacity-75 cursor-not-allowed' 
+              : 'border-gray-200 hover:bg-gray-50 cursor-pointer'"
           >
             <div class="flex items-center gap-4 flex-1">
               <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
@@ -48,17 +51,35 @@
               <div class="flex-1">
                 <h3 class="text-base font-semibold text-gray-900">{{ link.filename }}</h3>
                 <p class="text-sm text-gray-600 mt-0.5">{{ getDescription(link) }}</p>
-                <p class="text-xs text-gray-500 mt-1">
-                  Expires: {{ formatDate(link.expiresAt) }}
-                  <span v-if="isExpired(link.expiresAt)" class="ml-2 text-red-600 font-medium">(Expired)</span>
+                <p class="text-xs mt-1">
+                  <span v-if="link.completed" class="text-green-600 font-medium">✓ Completed</span>
+                  <template v-else-if="isExpired(link.expiresAt)">
+                    <span class="text-red-600 font-medium">Expired: {{ formatDate(link.expiresAt) }}</span>
+                  </template>
+                  <template v-else-if="isExpiringSoon(link.expiresAt)">
+                    <span class="text-orange-500 font-medium">Expires: {{ formatDate(link.expiresAt) }}</span>
+                  </template>
+                  <template v-else>
+                    <span class="text-gray-500">Expires: {{ formatDate(link.expiresAt) }}</span>
+                  </template>
                 </p>
               </div>
             </div>
             <div class="flex items-center gap-2">
               <button
-                v-if="isDesigner(link)"
+                v-if="isDesigner(link) && !link.completed"
+                @click.stop="handleMarkCompleted(link)"
+                class="ml-4 px-4 py-2 text-sm font-medium text-green-600 bg-white border border-green-600 rounded-lg hover:bg-green-50 transition-colors flex items-center gap-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Mark as Completed
+              </button>
+              <button
+                v-if="isDesigner(link) && !link.completed"
                 @click.stop="handleChangePassword(link)"
-                class="ml-4 px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-2"
+                class="px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-2"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
@@ -66,7 +87,7 @@
                 Change Password
               </button>
               <button
-                v-if="isDesigner(link)"
+                v-if="isDesigner(link) && !link.completed"
                 @click.stop="handleExtendExpiration(link)"
                 class="px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-2"
               >
@@ -76,7 +97,7 @@
                 Extend Expiration
               </button>
               <button
-                v-if="isDesigner(link)"
+                v-if="isDesigner(link) && !link.completed"
                 @click.stop="handleUploadNewVersion(link)"
                 class="px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-2"
               >
@@ -98,16 +119,6 @@
       @version-uploaded="handleVersionUploaded"
     />
 
-    <!-- Extend Expiration Date Modal -->
-    <DatePickerModal
-      v-model="showDatePickerModal"
-      title="Extend Expiration Date"
-      label="Select new expiration date"
-      :min-date="minDate"
-      :default-value="selectedLinkExpiresAt"
-      @submit="handleDateSelected"
-    />
-
     <!-- Change Password Modal -->
     <PromptModal
       v-model="showPasswordModal"
@@ -117,6 +128,16 @@
       type="password"
       :required="false"
       @submit="handlePasswordChanged"
+    />
+
+    <!-- Confirm Completion Modal -->
+    <ConfirmModal
+      v-model="showConfirmModal"
+      :title="confirmModalTitle"
+      :message="confirmModalMessage"
+      confirm-text="Mark as Completed"
+      confirm-color="success"
+      @confirm="confirmMarkCompleted"
     />
 
     <!-- Alert Modal -->
@@ -132,8 +153,8 @@
 <script setup>
 import FileUpload from '@/components/FileUpload.vue';
 import VersionUploadModal from '@/components/VersionUploadModal.vue';
-import DatePickerModal from '@/components/DatePickerModal.vue';
 import PromptModal from '@/components/PromptModal.vue';
+import ConfirmModal from '@/components/ConfirmModal.vue';
 import AlertModal from '@/components/AlertModal.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -144,11 +165,11 @@ const $router = useRouter();
 const resultUrl = ref('');
 const showUploadModal = ref(false);
 const selectedReviewId = ref(null);
-const showDatePickerModal = ref(false);
-const selectedLink = ref(null);
-const selectedLinkExpiresAt = ref('');
-const minDate = ref('');
 const showPasswordModal = ref(false);
+const showConfirmModal = ref(false);
+const selectedLink = ref(null);
+const confirmModalTitle = ref('');
+const confirmModalMessage = ref('');
 const showAlert = ref(false);
 const alertTitle = ref('');
 const alertMessage = ref('');
@@ -169,7 +190,8 @@ const demoLinks = ref([
     icon: 'mdi-file-pdf-box',
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     designer: 'Sarah Johnson',
-    password: null
+    password: null,
+    completed: false
   },
   {
     id: 'demo-2',
@@ -180,7 +202,8 @@ const demoLinks = ref([
     icon: 'mdi-file-image',
     expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
     designer: 'Mike Chen',
-    password: 'design123'
+    password: 'design123',
+    completed: false
   },
   {
     id: 'demo-3',
@@ -191,7 +214,8 @@ const demoLinks = ref([
     icon: 'mdi-palette',
     expiresAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Expired
     designer: 'Alex Rodriguez',
-    password: 'brand2024'
+    password: 'brand2024',
+    completed: false
   }
 ]);
 
@@ -229,6 +253,10 @@ const getDescription = (link) => {
 const handleCardClick = (link, event) => {
   // Don't navigate if clicking on a button
   if (event.target.closest('button')) {
+    return;
+  }
+  // Don't navigate if review is completed
+  if (link.completed) {
     return;
   }
   $router.push(link.url);
@@ -290,45 +318,74 @@ const handlePasswordChanged = async (newPassword) => {
   }
 };
 
-// Handle extend expiration - open date picker modal
-const handleExtendExpiration = (link) => {
+// Handle mark as completed - show confirmation modal
+const handleMarkCompleted = (link) => {
   selectedLink.value = link;
-  selectedLinkExpiresAt.value = link.expiresAt ? link.expiresAt.split('T')[0] : '';
-  // Set min date to today
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  minDate.value = today.toISOString().split('T')[0];
-  showDatePickerModal.value = true;
+  confirmModalTitle.value = 'Mark Review as Completed';
+  confirmModalMessage.value = `Are you sure you want to mark "${link.filename}" as completed? The review link will be disabled, but comments and information will be preserved.`;
+  showConfirmModal.value = true;
 };
 
-// Handle date selected from modal
-const handleDateSelected = async (dateString) => {
-  if (!selectedLink.value || !dateString) return;
+// Confirm mark as completed
+const confirmMarkCompleted = async () => {
+  if (!selectedLink.value) return;
   
   try {
     const useMockMode = await isMockMode();
     
-    // Convert date string to ISO string with time
-    const selectedDate = new Date(dateString);
-    selectedDate.setHours(23, 59, 59, 999); // Set to end of day
-    const newExpiresAt = selectedDate.toISOString();
-    
     if (useMockMode) {
-      // Update mock data - find the link by reviewId
+      // Update mock data - mark review as completed
       const linkIndex = demoLinks.value.findIndex(l => l.id === selectedLink.value.id);
       if (linkIndex !== -1) {
-        demoLinks.value[linkIndex].expiresAt = newExpiresAt;
+        demoLinks.value[linkIndex].completed = true;
+      }
+      
+      // Also update mock reviews
+      const review = mockReviews.find(r => r.id === selectedLink.value.reviewId);
+      if (review) {
+        review.completed = true;
       }
     } else {
-      // Use real API - need to find admin link ID from review ID
-      // For now, we'll update the demo link directly
+      // Use real API - would need to call API endpoint here
       const linkIndex = demoLinks.value.findIndex(l => l.id === selectedLink.value.id);
       if (linkIndex !== -1) {
-        demoLinks.value[linkIndex].expiresAt = newExpiresAt;
+        demoLinks.value[linkIndex].completed = true;
       }
     }
     
-    showAlertMessage('Success', 'Expiration date extended successfully!', 'success');
+    showAlertMessage('Success', 'Review marked as completed. The link is now disabled.', 'success');
+  } catch (error) {
+    console.error('Failed to mark review as completed:', error);
+    showAlertMessage('Error', 'Failed to mark review as completed. Please try again.', 'error');
+  }
+};
+
+// Handle extend expiration - extend by 30 days
+const handleExtendExpiration = async (link) => {
+  try {
+    const useMockMode = await isMockMode();
+    
+    // Calculate new expiration date: 30 days from now
+    const newExpiresAt = new Date();
+    newExpiresAt.setDate(newExpiresAt.getDate() + 30);
+    newExpiresAt.setHours(23, 59, 59, 999); // Set to end of day
+    const newExpiresAtISO = newExpiresAt.toISOString();
+    
+    if (useMockMode) {
+      // Update mock data - find the link by reviewId
+      const linkIndex = demoLinks.value.findIndex(l => l.id === link.id);
+      if (linkIndex !== -1) {
+        demoLinks.value[linkIndex].expiresAt = newExpiresAtISO;
+      }
+    } else {
+      // Use real API - would need to call API endpoint here
+      const linkIndex = demoLinks.value.findIndex(l => l.id === link.id);
+      if (linkIndex !== -1) {
+        demoLinks.value[linkIndex].expiresAt = newExpiresAtISO;
+      }
+    }
+    
+    showAlertMessage('Success', 'Expiration date extended by 30 days!', 'success');
   } catch (error) {
     console.error('Failed to extend expiration:', error);
     showAlertMessage('Error', 'Failed to extend expiration date. Please try again.', 'error');
@@ -380,5 +437,16 @@ const isExpired = (dateString) => {
   if (!dateString) return false;
   const date = new Date(dateString);
   return date < new Date();
+};
+
+const isExpiringSoon = (dateString) => {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  const now = new Date();
+  const sevenDaysFromNow = new Date();
+  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+  
+  // Not expired and expires within 7 days
+  return date >= now && date <= sevenDaysFromNow;
 };
 </script>

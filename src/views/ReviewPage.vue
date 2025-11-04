@@ -1,7 +1,23 @@
 <template>
   <div class="space-y-6">
+    <!-- Completed Review Message -->
+    <div v-if="reviewCompleted" class="bg-white rounded-lg shadow-lg">
+      <div class="p-8 text-center">
+        <div class="flex justify-center mb-4">
+          <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Review Completed</h2>
+        <p class="text-gray-600 mb-4">This review has been marked as completed by the designer.</p>
+        <p class="text-sm text-gray-500">Comments and review information are preserved, but the review link is no longer active.</p>
+      </div>
+    </div>
+
     <!-- File Preview Section -->
-    <div v-if="!passwordRequired || passwordValidated" class="bg-white rounded-lg shadow-lg">
+    <div v-if="!reviewCompleted && (!passwordRequired || passwordValidated)" class="bg-white rounded-lg shadow-lg">
       <div class="border-b border-gray-200 px-8 py-6">
         <div class="flex items-center justify-between">
           <h2 class="text-2xl font-bold text-gray-900">{{ metadata.filename }}</h2>
@@ -33,10 +49,11 @@
     />
 
     <!-- Comments Section -->
-    <div v-if="passwordValidated">
+    <div v-if="passwordValidated || reviewCompleted">
       <CommentsSidebar
         :comments="comments"
         :version-id="selectedVersion"
+        :read-only="reviewCompleted"
         @comment-added="handleCommentAdded"
         @comment-updated="handleCommentUpdated"
         @reply-added="handleReplyAdded"
@@ -74,6 +91,7 @@ const password = ref('');
 const passwordRequired = ref(false);
 const passwordValidated = ref(false);
 const comments = ref([]);
+const reviewCompleted = ref(false);
 
 // Alert modal state
 const showAlert = ref(false);
@@ -211,12 +229,28 @@ onMounted(async () => {
     if (useMockMode) {
       const res = await mockAPI.getReview(reviewId);
       metadata.value = res;
+      reviewCompleted.value = res.completed || false;
+      
+      if (reviewCompleted.value) {
+        // Still load comments but don't show preview
+        await loadComments();
+        return;
+      }
+      
       selectedVersion.value = res.versions[0].id;
       passwordValidated.value = true;
       loadVersion();
     } else {
       const res = await axios.get(`/review/${reviewId}`);
       metadata.value = res.data;
+      reviewCompleted.value = res.data.completed || false;
+      
+      if (reviewCompleted.value) {
+        // Still load comments but don't show preview
+        await loadComments();
+        return;
+      }
+      
       selectedVersion.value = res.data.versions[0].id;
       passwordValidated.value = true;
       loadVersion();

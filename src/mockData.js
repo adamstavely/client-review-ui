@@ -6,6 +6,7 @@ let mockReviews = [
     filename: 'Website Design v2.pdf',
     password: null,
     designer: 'Sarah Johnson',
+    completed: false,
     versions: [
       { id: 'v1', label: 'Version 1 - Initial Design', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Version 2 - Updated Layout', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
@@ -48,6 +49,7 @@ let mockReviews = [
     filename: 'Mobile App Wireframes.sketch',
     password: 'design123',
     designer: 'Mike Chen',
+    completed: false,
     versions: [
       { id: 'v1', label: 'Initial Wireframes', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Updated User Flow', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
@@ -79,6 +81,7 @@ let mockReviews = [
     filename: 'Brand Guidelines.ai',
     password: 'brand2024',
     designer: 'Alex Rodriguez',
+    completed: false,
     versions: [
       { id: 'v1', label: 'Logo Concepts', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Color Palette', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },

@@ -10,7 +10,7 @@
     <v-divider />
     
     <!-- Add Comment Form -->
-    <v-card-text>
+    <v-card-text v-if="!readOnly">
       <v-form @submit.prevent="submitComment">
         <v-textarea
           v-model="newComment"
@@ -42,7 +42,11 @@
       </v-form>
     </v-card-text>
     
-    <v-divider />
+    <v-card-text v-if="readOnly" class="text-center py-4">
+      <p class="text-sm text-gray-500">This review is completed. Comments are view-only.</p>
+    </v-card-text>
+    
+    <v-divider v-if="!readOnly" />
     
     <!-- Comments List -->
     <v-card-text v-if="comments.length === 0" class="text-center py-8">
@@ -98,6 +102,8 @@
                     v-bind="props"
                     @click="toggleReply(comment.id)"
                     class="text-gray-500 hover:text-indigo-600 transition-colors p-1"
+                    :disabled="readOnly"
+                    :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -113,7 +119,12 @@
                     v-bind="props"
                     @click="toggleResolved(comment.id)"
                     class="transition-colors p-1"
-                    :class="comment.resolved ? 'text-green-600 hover:text-green-700' : 'text-gray-500 hover:text-indigo-600'"
+                    :disabled="readOnly"
+                    :class="readOnly 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : comment.resolved 
+                        ? 'text-green-600 hover:text-green-700' 
+                        : 'text-gray-500 hover:text-indigo-600'"
                   >
                     <svg v-if="comment.resolved" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -203,7 +214,11 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  versionId: String
+  versionId: String,
+  readOnly: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const emit = defineEmits(['comment-added', 'comment-updated', 'reply-added']);
@@ -278,6 +293,7 @@ const submitComment = async () => {
 };
 
 const toggleReply = (commentId) => {
+  if (props.readOnly) return;
   if (replyingTo.value === commentId) {
     replyingTo.value = null;
     replyText.value = '';
@@ -293,6 +309,7 @@ const cancelReply = () => {
 };
 
 const submitReply = (commentId) => {
+  if (props.readOnly) return;
   if (!replyText.value.trim()) return;
   
   const reply = {
@@ -308,6 +325,7 @@ const submitReply = (commentId) => {
 };
 
 const toggleResolved = (commentId) => {
+  if (props.readOnly) return;
   emit('comment-updated', commentId, 'toggle-resolved');
 };
 </script>
