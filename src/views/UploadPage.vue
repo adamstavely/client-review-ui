@@ -3,7 +3,12 @@
     <!-- Upload Card -->
     <div class="bg-white rounded-lg shadow-lg">
       <div class="border-b border-gray-200 px-8 py-6">
-        <h2 class="text-2xl font-bold text-gray-900">Upload Design</h2>
+        <div class="flex items-center gap-3">
+          <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          <h2 class="text-2xl font-bold text-gray-900">Upload Design</h2>
+        </div>
         <p class="text-sm text-gray-600 mt-1">Upload Adobe files for client review</p>
       </div>
       <div class="p-8">
@@ -28,7 +33,12 @@
     <!-- Demo Links Card -->
     <div class="bg-white rounded-lg shadow-lg">
       <div class="border-b border-gray-200 px-8 py-6">
-        <h2 class="text-2xl font-bold text-gray-900">Demo Review Links</h2>
+        <div class="flex items-center gap-3">
+          <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          </svg>
+          <h2 class="text-2xl font-bold text-gray-900">Demo Review Links</h2>
+        </div>
         <p class="text-sm text-gray-600 mt-1">Test the review functionality with these demo links</p>
       </div>
       <div class="p-8">
