@@ -64,7 +64,7 @@ onMounted(async () => {
     if (reviewData) {
       const filename = useMockMode ? reviewData.filename : reviewData.data.filename;
       if (filename) {
-        document.title = `${filename} - Client Review UI`;
+        document.title = `${filename} - Client Review`;
       }
     }
   } catch (error) {

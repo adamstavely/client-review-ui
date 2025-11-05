@@ -217,9 +217,9 @@ const handleReplyAdded = async (commentId, reply) => {
 // Update document title when metadata changes
 watch(() => metadata.value.filename, (newFilename) => {
   if (newFilename) {
-    document.title = `${newFilename} - Client Review UI`;
+    document.title = `${newFilename} - Client Review`;
   } else {
-    document.title = 'Client Review UI';
+    document.title = 'Client Review';
   }
 });
 
