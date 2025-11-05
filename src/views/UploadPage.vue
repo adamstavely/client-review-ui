@@ -1,5 +1,222 @@
 <template>
-  <div class="flex gap-6">
+  <div class="space-y-6" v-if="currentUserRole === 'designer'">
+    <!-- Upload Card - Full Width -->
+    <div class="bg-white rounded-lg shadow-lg w-full">
+      <div class="border-b border-gray-200 px-8 py-6">
+        <div class="flex items-center gap-3">
+          <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          <h2 class="text-2xl font-bold text-gray-900">Upload Design</h2>
+        </div>
+        <p class="text-sm text-gray-600 mt-1">Upload Adobe files for client review</p>
+      </div>
+      <div class="p-8">
+        <FileUpload @uploaded="handleUpload" />
+        <div
+          v-if="resultUrl"
+          class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg"
+        >
+          <div class="flex items-start">
+            <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <div>
+              <p class="text-sm font-medium text-green-800">Upload successful!</p>
+              <a :href="resultUrl" target="_blank" class="text-sm text-green-600 hover:text-green-800 underline mt-1 block">{{ resultUrl }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two Column Layout Below -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Demo Review Links - Left Pane -->
+      <div class="bg-white rounded-lg shadow-lg">
+        <div class="border-b border-gray-200 px-8 py-6">
+          <div class="flex items-center gap-3">
+            <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            <h2 class="text-2xl font-bold text-gray-900">Demo Review Links</h2>
+          </div>
+          <p class="text-sm text-gray-600 mt-1">Test the review functionality with these demo links</p>
+        </div>
+        <div class="p-8">
+          <div class="space-y-4">
+            <div
+              v-for="link in filteredDemoLinks"
+              :key="link.id"
+              @click="handleCardClick(link, $event)"
+              class="flex items-start justify-between p-4 border rounded-lg transition-colors"
+              :class="link.completed 
+                ? 'border-gray-300 bg-gray-50 opacity-75 cursor-not-allowed' 
+                : 'border-gray-200 hover:bg-gray-50 cursor-pointer'"
+            >
+              <div class="flex items-start gap-4 flex-1 min-w-0">
+                <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base font-semibold text-gray-900 mb-2">{{ link.filename }}</h3>
+                  <div class="flex items-center gap-2 flex-wrap mb-1.5">
+                    <v-chip
+                      :color="getWorkflowColor(link.workflowState || 'draft')"
+                      size="small"
+                      class="font-medium"
+                    >
+                      {{ getWorkflowLabel(link.workflowState || 'draft') }}
+                    </v-chip>
+                    <span class="text-sm text-gray-400">|</span>
+                    <span class="text-sm text-gray-600">{{ getVersionCount(link) }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 overflow-hidden">
+                    <span class="text-xs text-gray-600 flex items-center gap-1 flex-shrink-0">
+                      <svg v-if="link.password !== null && link.password !== undefined" class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      <svg v-else class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                      </svg>
+                      <span class="whitespace-nowrap">{{ getPasswordText(link) }}</span>
+                    </span>
+                    <span class="text-xs text-gray-400 flex-shrink-0">|</span>
+                    <span v-if="link.completed" class="text-xs text-green-600 font-medium whitespace-nowrap flex-shrink-0">✓ Completed</span>
+                    <template v-else-if="isExpired(link.expiresAt)">
+                      <span class="text-xs text-red-600 font-medium whitespace-nowrap flex-shrink-0">Expired: {{ formatDate(link.expiresAt) }}</span>
+                    </template>
+                    <template v-else-if="isExpiringSoon(link.expiresAt)">
+                      <span class="text-xs text-orange-500 font-medium whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
+                    </template>
+                    <template v-else>
+                      <span class="text-xs text-gray-500 whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
+                    </template>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-4">
+                <v-tooltip text="Mark as Completed">
+                  <template #activator="{ props }">
+                    <button
+                      v-if="isDesigner(link) && !link.completed"
+                      @click.stop="handleMarkCompleted(link)"
+                      class="p-2 rounded-lg text-green-600 hover:bg-green-50 hover:text-green-700 transition-colors"
+                      v-bind="props"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  </template>
+                </v-tooltip>
+                <v-tooltip text="Change Password">
+                  <template #activator="{ props }">
+                    <button
+                      v-if="isDesigner(link) && !link.completed"
+                      @click.stop="handleChangePassword(link)"
+                      class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                      v-bind="props"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                      </svg>
+                    </button>
+                  </template>
+                </v-tooltip>
+                <v-tooltip text="Extend Expiration">
+                  <template #activator="{ props }">
+                    <button
+                      v-if="isDesigner(link) && !link.completed"
+                      @click.stop="handleExtendExpiration(link)"
+                      class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                      v-bind="props"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+                  </template>
+                </v-tooltip>
+                <v-tooltip text="Upload New Version">
+                  <template #activator="{ props }">
+                    <button
+                      v-if="isDesigner(link) && !link.completed"
+                      @click.stop="handleUploadNewVersion(link)"
+                      class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                      v-bind="props"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    </button>
+                  </template>
+                </v-tooltip>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity - Right Pane -->
+      <div class="bg-white rounded-lg shadow-lg">
+        <div class="border-b border-gray-200 px-8 py-6">
+          <div class="flex items-center gap-3">
+            <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h2 class="text-2xl font-bold text-gray-900">Recent Activity</h2>
+          </div>
+          <p class="text-sm text-gray-600 mt-1">Latest updates on your outstanding reviews</p>
+        </div>
+        <div class="p-8">
+          <div v-if="recentActivity.length === 0" class="text-center py-8 text-gray-400 text-sm">
+            <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p>No recent activity</p>
+          </div>
+          <div v-else class="space-y-4">
+            <div
+              v-for="activity in recentActivity"
+              :key="activity.id"
+              @click="goToReview(activity.reviewId)"
+              class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+            >
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" :class="getActivityIconBg(activity.type)">
+                  <svg class="w-4 h-4" :class="getActivityIconColor(activity.type)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path v-if="activity.type === 'comment'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    <path v-else-if="activity.type === 'workflow'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="text-sm font-semibold text-gray-900 truncate">{{ activity.reviewName }}</h4>
+                    <v-chip
+                      :color="getWorkflowColor(activity.workflowState)"
+                      size="x-small"
+                      class="font-medium"
+                    >
+                      {{ getWorkflowLabel(activity.workflowState) }}
+                    </v-chip>
+                  </div>
+                  <p class="text-sm text-gray-600 mb-1">{{ activity.description }}</p>
+                  <p class="text-xs text-gray-500">{{ formatRelativeTime(activity.timestamp) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Non-Designer Layout (Original) -->
+  <div class="flex gap-6" v-else>
     <!-- Upload Card -->
     <div class="bg-white rounded-lg shadow-lg flex-1">
       <div class="border-b border-gray-200 px-8 py-6">
@@ -30,52 +247,83 @@
       </div>
     </div>
 
-    <!-- Demo Links Card -->
+    <!-- Demo Links Card or Recently Viewed Links (for clients) -->
     <div class="bg-white rounded-lg shadow-lg flex-1">
       <div class="border-b border-gray-200 px-8 py-6">
         <div class="flex items-center gap-3">
           <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            <path v-if="currentUserRole === 'client'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
           </svg>
-          <h2 class="text-2xl font-bold text-gray-900">Demo Review Links</h2>
+          <h2 class="text-2xl font-bold text-gray-900">
+            {{ currentUserRole === 'client' ? 'Recently Viewed Active Links' : 'Demo Review Links' }}
+          </h2>
         </div>
-        <p class="text-sm text-gray-600 mt-1">Test the review functionality with these demo links</p>
+        <p class="text-sm text-gray-600 mt-1">
+          {{ currentUserRole === 'client' ? 'Your recently viewed review links' : 'Test the review functionality with these demo links' }}
+        </p>
       </div>
       <div class="p-8">
-        <div class="space-y-4">
+        <div v-if="currentUserRole === 'client' && recentlyViewedLinks.length === 0" class="text-center py-8 text-gray-400 text-sm">
+          <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p>No recently viewed links</p>
+        </div>
+        <div v-else class="space-y-4">
           <div
-            v-for="link in demoLinks"
+            v-for="link in (currentUserRole === 'client' ? recentlyViewedLinks : filteredDemoLinks)"
             :key="link.id"
             @click="handleCardClick(link, $event)"
-            class="flex items-center justify-between p-4 border rounded-lg transition-colors"
+            class="flex items-start justify-between p-4 border rounded-lg transition-colors"
             :class="link.completed 
               ? 'border-gray-300 bg-gray-50 opacity-75 cursor-not-allowed' 
               : 'border-gray-200 hover:bg-gray-50 cursor-pointer'"
           >
-            <div class="flex items-center gap-4 flex-1">
-              <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+            <div class="flex items-start gap-4 flex-1 min-w-0">
+              <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
                 <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <div class="flex-1">
-                <h3 class="text-base font-semibold text-gray-900">{{ link.filename }}</h3>
-                <p class="text-sm text-gray-600 mt-0.5">{{ getDescription(link) }}</p>
-                <p class="text-xs mt-1">
-                  <span v-if="link.completed" class="text-green-600 font-medium">✓ Completed</span>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-gray-900 mb-2">{{ link.filename }}</h3>
+                <div class="flex items-center gap-2 flex-wrap mb-1.5">
+                  <v-chip
+                    :color="getWorkflowColor(link.workflowState || 'draft')"
+                    size="small"
+                    class="font-medium"
+                  >
+                    {{ getWorkflowLabel(link.workflowState || 'draft') }}
+                  </v-chip>
+                  <span class="text-sm text-gray-400">|</span>
+                  <span class="text-sm text-gray-600">{{ getVersionCount(link) }}</span>
+                </div>
+                <div class="flex items-center gap-2 overflow-hidden">
+                  <span class="text-xs text-gray-600 flex items-center gap-1 flex-shrink-0">
+                    <svg v-if="link.password !== null && link.password !== undefined" class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <svg v-else class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                    </svg>
+                    <span class="whitespace-nowrap">{{ getPasswordText(link) }}</span>
+                  </span>
+                  <span class="text-xs text-gray-400 flex-shrink-0">|</span>
+                  <span v-if="link.completed" class="text-xs text-green-600 font-medium whitespace-nowrap flex-shrink-0">✓ Completed</span>
                   <template v-else-if="isExpired(link.expiresAt)">
-                    <span class="text-red-600 font-medium">Expired: {{ formatDate(link.expiresAt) }}</span>
+                    <span class="text-xs text-red-600 font-medium whitespace-nowrap flex-shrink-0">Expired: {{ formatDate(link.expiresAt) }}</span>
                   </template>
                   <template v-else-if="isExpiringSoon(link.expiresAt)">
-                    <span class="text-orange-500 font-medium">Expires: {{ formatDate(link.expiresAt) }}</span>
+                    <span class="text-xs text-orange-500 font-medium whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
                   </template>
                   <template v-else>
-                    <span class="text-gray-500">Expires: {{ formatDate(link.expiresAt) }}</span>
+                    <span class="text-xs text-gray-500 whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
                   </template>
-                </p>
+                </div>
               </div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1 flex-shrink-0 ml-4">
               <v-tooltip text="Mark as Completed">
                 <template #activator="{ props }">
                   <button
@@ -182,9 +430,9 @@ import VersionUploadModal from '@/components/VersionUploadModal.vue';
 import PromptModal from '@/components/PromptModal.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import AlertModal from '@/components/AlertModal.vue';
-import { ref } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { mockAPI, isMockMode, mockReviews } from '@/mockData.js';
+import { mockAPI, isMockMode, mockReviews, getCurrentUser, getFilteredReviews } from '@/mockData.js';
 
 const $router = useRouter();
 
@@ -201,8 +449,254 @@ const alertTitle = ref('');
 const alertMessage = ref('');
 const alertType = ref('success');
 
+// Get current user (in real app, this would come from auth)
+const currentUser = ref(localStorage.getItem('currentDesigner') || 'Sarah Johnson');
+const currentUserEmail = ref(localStorage.getItem('currentUserEmail') || 'sarah@example.com');
+const currentUserTeamId = ref(localStorage.getItem('currentUserTeamId') || 'team-1');
+
+// Ensure Sarah Johnson always has designer role
+const getStoredRole = () => {
+  const storedRole = localStorage.getItem('userRole');
+  const storedEmail = localStorage.getItem('currentUserEmail') || 'sarah@example.com';
+  const storedName = localStorage.getItem('currentDesigner') || 'Sarah Johnson';
+  
+  // If user is Sarah Johnson, force designer role
+  if (storedEmail === 'sarah@example.com' || storedName === 'Sarah Johnson') {
+    if (storedRole !== 'designer') {
+      localStorage.setItem('userRole', 'designer');
+      return 'designer';
+    }
+    return 'designer';
+  }
+  
+  return storedRole || 'designer';
+};
+
+const currentUserRole = ref(getStoredRole());
+
+// Watch for role changes and ensure Sarah Johnson stays as designer
+watch(() => [currentUser.value, currentUserEmail.value], () => {
+  const storedEmail = localStorage.getItem('currentUserEmail') || 'sarah@example.com';
+  const storedName = localStorage.getItem('currentDesigner') || 'Sarah Johnson';
+  
+  if (storedEmail === 'sarah@example.com' || storedName === 'Sarah Johnson') {
+    if (currentUserRole.value !== 'designer') {
+      currentUserRole.value = 'designer';
+      localStorage.setItem('userRole', 'designer');
+    }
+  }
+}, { immediate: true });
+
+// Recent activity for designer
+const recentActivity = ref([]);
+
+// Recently viewed links for clients
+const recentlyViewedLinks = ref([]);
+
+// Load recently viewed links for clients
+const loadRecentlyViewedLinks = async () => {
+  if (currentUserRole.value !== 'client') return;
+  
+  try {
+    const useMockMode = await isMockMode();
+    
+    if (useMockMode) {
+      // Get recently viewed links from localStorage
+      const stored = localStorage.getItem('recentlyViewedLinks');
+      const viewedIds = stored ? JSON.parse(stored) : [];
+      
+      // Filter to only active (not completed, not expired) links
+      const activeLinks = [];
+      for (const linkId of viewedIds) {
+        // Try to find in demoLinks first
+        let link = demoLinks.value.find(l => l.id === linkId || l.reviewId === linkId);
+        
+        // If not found, try to find in mockReviews
+        if (!link) {
+          const review = mockReviews.find(r => r.id === linkId);
+          if (review && !review.completed && !isExpired(review.expiresAt)) {
+            // Convert review to link format
+            link = {
+              id: review.id,
+              filename: review.filename,
+              description: `${review.versions.length} versions available`,
+              url: `/review/${review.id}`,
+              reviewId: review.id,
+              expiresAt: review.expiresAt,
+              designer: review.designer,
+              password: review.password,
+              completed: review.completed,
+              workflowState: review.workflowState
+            };
+          }
+        }
+        
+        if (link && !link.completed && !isExpired(link.expiresAt)) {
+          activeLinks.push(link);
+        }
+      }
+      
+      recentlyViewedLinks.value = activeLinks.slice(0, 10); // Limit to 10 most recent
+    } else {
+      // In real app, would call API endpoint
+      // const res = await fetch('/api/reviews/recently-viewed');
+      // recentlyViewedLinks.value = await res.json();
+    }
+  } catch (error) {
+    console.error('Failed to load recently viewed links:', error);
+  }
+};
+
+// Track when a review is viewed (called from router or review page)
+const trackReviewView = (reviewId) => {
+  if (currentUserRole.value !== 'client') return;
+  
+  try {
+    const stored = localStorage.getItem('recentlyViewedLinks');
+    const viewedIds = stored ? JSON.parse(stored) : [];
+    
+    // Remove if already exists (to move to front)
+    const index = viewedIds.indexOf(reviewId);
+    if (index > -1) {
+      viewedIds.splice(index, 1);
+    }
+    
+    // Add to front
+    viewedIds.unshift(reviewId);
+    
+    // Keep only last 20
+    const trimmed = viewedIds.slice(0, 20);
+    
+    localStorage.setItem('recentlyViewedLinks', JSON.stringify(trimmed));
+  } catch (error) {
+    console.error('Failed to track review view:', error);
+  }
+};
+
 const handleUpload = (url) => {
   resultUrl.value = url;
+};
+
+// Load recent activity for designer
+const loadRecentActivity = async () => {
+  if (currentUserRole.value !== 'designer') return;
+  
+  try {
+    const useMockMode = await isMockMode();
+    const activities = [];
+    
+    if (useMockMode) {
+      // Get designer's reviews (outstanding = not completed and not approved)
+      const designerReviews = mockReviews.filter(review => 
+        !review.completed &&
+        review.workflowState !== 'approved' &&
+        (review.designerEmail === currentUserEmail.value || review.designer === currentUser.value)
+      );
+      
+      // Collect recent comments from outstanding reviews
+      for (const review of designerReviews) {
+        if (review.comments && review.comments.length > 0) {
+          // Get most recent comments (last 2 per review)
+          const recentComments = review.comments
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 2);
+          
+          recentComments.forEach(comment => {
+            activities.push({
+              id: `comment-${comment.id}`,
+              type: 'comment',
+              reviewId: review.id,
+              reviewName: review.filename,
+              workflowState: review.workflowState,
+              description: `${comment.author}: ${comment.text.substring(0, 100)}${comment.text.length > 100 ? '...' : ''}`,
+              timestamp: comment.timestamp
+            });
+          });
+        }
+        
+        // Collect workflow history entries
+        if (review.workflowHistory && review.workflowHistory.length > 0) {
+          const recentHistory = review.workflowHistory
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 2);
+          
+          recentHistory.forEach(entry => {
+            const actionLabels = {
+              'moved_to_review': 'Moved to Review',
+              'approved': 'Approved',
+              'rejected': 'Rejected',
+              'resubmitted': 'Resubmitted',
+              'version_uploaded': 'New Version Uploaded',
+              'extended': 'Expiration Extended',
+              'password_set': 'Password Set',
+              'password_removed': 'Password Removed'
+            };
+            
+            activities.push({
+              id: `history-${review.id}-${entry.timestamp}`,
+              type: 'workflow',
+              reviewId: review.id,
+              reviewName: review.filename,
+              workflowState: review.workflowState,
+              description: `${entry.user}: ${actionLabels[entry.action] || entry.action}`,
+              timestamp: entry.timestamp
+            });
+          });
+        }
+      }
+    } else {
+      // In real app, would call API endpoint
+      // const res = await fetch('/api/reviews/activity');
+      // activities = await res.json();
+    }
+    
+    // Sort by timestamp (newest first) and limit to 10
+    recentActivity.value = activities
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .slice(0, 10);
+  } catch (error) {
+    console.error('Failed to load recent activity:', error);
+  }
+};
+
+// Format relative time
+const formatRelativeTime = (timestamp) => {
+  if (!timestamp) return '';
+  try {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    return formatDate(timestamp);
+  } catch (error) {
+    return timestamp;
+  }
+};
+
+// Get activity icon background color
+const getActivityIconBg = (type) => {
+  if (type === 'comment') return 'bg-blue-100';
+  if (type === 'workflow') return 'bg-purple-100';
+  return 'bg-gray-100';
+};
+
+// Get activity icon color
+const getActivityIconColor = (type) => {
+  if (type === 'comment') return 'text-blue-600';
+  if (type === 'workflow') return 'text-purple-600';
+  return 'text-gray-600';
+};
+
+// Navigate to review
+const goToReview = (reviewId) => {
+  $router.push(`/review/${reviewId}`);
 };
 
 // Demo links for testing
@@ -217,7 +711,8 @@ const demoLinks = ref([
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     designer: 'Sarah Johnson',
     password: null,
-    completed: false
+    completed: false,
+    workflowState: 'client_review'
   },
   {
     id: 'demo-2',
@@ -229,7 +724,8 @@ const demoLinks = ref([
     expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
     designer: 'Mike Chen',
     password: 'design123',
-    completed: false
+    completed: false,
+    workflowState: 'client_approved'
   },
   {
     id: 'demo-3',
@@ -241,16 +737,57 @@ const demoLinks = ref([
     expiresAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Expired
     designer: 'Alex Rodriguez',
     password: 'brand2024',
-    completed: false
+    completed: false,
+    workflowState: 'approved'
   }
 ]);
 
-// Get current user (in real app, this would come from auth)
-const currentUser = ref(localStorage.getItem('currentDesigner') || 'Sarah Johnson');
+// Filter demo links based on user role
+const filteredDemoLinks = computed(() => {
+  if (currentUserRole.value === 'creative_director') {
+    // Creative Director sees all reviews across all teams
+    return demoLinks.value;
+  } else if (currentUserRole.value === 'art_director') {
+    // Art Director sees all reviews in their team
+    return demoLinks.value.filter(link => {
+      const review = mockReviews.find(r => r.id === link.reviewId);
+      return review && review.teamId === currentUserTeamId.value;
+    });
+  } else if (currentUserRole.value === 'designer') {
+    // Designer sees only their own reviews
+    return demoLinks.value.filter(link => {
+      return link.designer === currentUser.value || 
+             mockReviews.find(r => r.id === link.reviewId)?.designerEmail === currentUserEmail.value;
+    });
+  }
+  // Default: return all (for clients/admins)
+  return demoLinks.value;
+});
 
 // Check if current user is the designer for a given link
 const isDesigner = (link) => {
   return currentUser.value === link.designer;
+};
+
+// Get version count text
+const getVersionCount = (link) => {
+  const versionMatch = link.description.match(/^(\d+)\s+versions/);
+  const versionCount = versionMatch ? versionMatch[1] : '0';
+  return `${versionCount} versions available`;
+};
+
+// Get password text
+const getPasswordText = (link) => {
+  const hasPassword = link.password !== null && link.password !== undefined;
+  if (hasPassword) {
+    if (isDesigner(link)) {
+      return `Password: ${link.password}`;
+    } else {
+      return 'Password required';
+    }
+  } else {
+    return 'No password required';
+  }
 };
 
 // Get description based on user role
@@ -285,6 +822,12 @@ const handleCardClick = (link, event) => {
   if (link.completed) {
     return;
   }
+  
+  // Track view for clients
+  if (currentUserRole.value === 'client') {
+    trackReviewView(link.reviewId || link.id);
+  }
+  
   $router.push(link.url);
 };
 
@@ -308,7 +851,21 @@ const handlePasswordChanged = async (newPassword) => {
       // Update mock data - find review by reviewId
       const review = mockReviews.find(r => r.id === selectedLink.value.reviewId);
       if (review) {
+        const hadPassword = !!review.password;
+        const hasPassword = !!passwordValue;
+        
         review.password = passwordValue;
+        
+        // Add history entry for any password change
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
+        review.workflowHistory.push({
+          stage: review.workflowState || 'draft',
+          action: hasPassword ? 'password_set' : 'password_removed',
+          user: review.designer || 'Designer',
+          timestamp: new Date().toISOString()
+        });
       }
       
       // Update demo link
@@ -475,4 +1032,63 @@ const isExpiringSoon = (dateString) => {
   // Not expired and expires within 7 days
   return date >= now && date <= sevenDaysFromNow;
 };
+
+// Workflow helper functions
+const getWorkflowLabel = (state) => {
+  const labels = {
+    'draft': 'Draft',
+    'client_review': 'Client Review',
+    'client_approved': 'Client Approved',
+    'art_director_review': 'Art Director Review',
+    'art_director_approved': 'Art Director Approved',
+    'ad_changes_requested': 'AD Changes Requested',
+    'creative_director_review': 'Creative Director Review',
+    'cd_changes_requested': 'CD Changes Requested',
+    'approved': 'Approved & Released'
+  };
+  return labels[state] || state;
+};
+
+const getWorkflowColor = (state) => {
+  const colors = {
+    'draft': 'grey',
+    'client_review': 'blue',
+    'client_approved': 'light-blue',
+    'art_director_review': 'purple',
+    'art_director_approved': 'deep-purple',
+    'ad_changes_requested': 'orange',
+    'creative_director_review': 'indigo',
+    'cd_changes_requested': 'orange',
+    'approved': 'green'
+  };
+  return colors[state] || 'grey';
+};
+
+// Load demo links and sync workflow state from mock data
+onMounted(async () => {
+  try {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
+      // Sync workflow state from mockReviews
+      demoLinks.value.forEach(link => {
+        const review = mockReviews.find(r => r.id === link.reviewId);
+        if (review) {
+          link.workflowState = review.workflowState || 'draft';
+        }
+      });
+    }
+    
+    // Load recent activity for designers
+    if (currentUserRole.value === 'designer') {
+      await loadRecentActivity();
+    }
+    
+    // Load recently viewed links for clients
+    if (currentUserRole.value === 'client') {
+      await loadRecentlyViewedLinks();
+    }
+  } catch (error) {
+    console.error('Failed to load demo links:', error);
+  }
+});
 </script>

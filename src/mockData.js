@@ -6,7 +6,14 @@ let mockReviews = [
     filename: 'Website Design v2.pdf',
     password: null,
     designer: 'Sarah Johnson',
+    designerEmail: 'sarah@example.com', // Add email for team matching
+    teamId: 'team-1', // Associate with team
     completed: false,
+    workflowState: 'client_review', // draft, client_review, client_approved, art_director_review, art_director_approved, creative_director_review, approved
+    workflowHistory: [
+      { stage: 'draft', action: 'uploaded', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'client_review', action: 'moved_to_review', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() }
+    ],
     versions: [
       { id: 'v1', label: 'Version 1 - Initial Design', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Version 2 - Updated Layout', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
@@ -23,6 +30,9 @@ let mockReviews = [
         timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         version: 'v3',
         resolved: false,
+        reactions: [
+          { user: 'Mike Chen', emoji: '👍', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() }
+        ],
         replies: [
           {
             id: 'reply-1',
@@ -40,6 +50,7 @@ let mockReviews = [
         timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
         version: 'v2',
         resolved: false,
+        reactions: [],
         replies: []
       }
     ]
@@ -49,7 +60,15 @@ let mockReviews = [
     filename: 'Mobile App Wireframes.sketch',
     password: 'design123',
     designer: 'Mike Chen',
+    designerEmail: 'mike@example.com', // Add email for team matching
+    teamId: 'team-1', // Associate with team
     completed: false,
+    workflowState: 'client_approved',
+    workflowHistory: [
+      { stage: 'draft', action: 'uploaded', user: 'Mike Chen', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'client_review', action: 'moved_to_review', user: 'Mike Chen', timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'client_approved', action: 'approved', user: 'Client', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() }
+    ],
     versions: [
       { id: 'v1', label: 'Initial Wireframes', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Updated User Flow', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
@@ -65,6 +84,10 @@ let mockReviews = [
         timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
         version: 'v1',
         resolved: true,
+        reactions: [
+          { user: 'Mike Chen', emoji: '👍', timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString() },
+          { user: 'Sarah Johnson', emoji: '❤️', timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString() }
+        ],
         replies: [
           {
             id: 'reply-2',
@@ -81,7 +104,19 @@ let mockReviews = [
     filename: 'Brand Guidelines.ai',
     password: 'brand2024',
     designer: 'Alex Rodriguez',
+    designerEmail: 'alex@example.com', // Add email for team matching
+    teamId: 'team-2', // Associate with team
     completed: false,
+    workflowState: 'approved',
+    workflowHistory: [
+      { stage: 'draft', action: 'uploaded', user: 'Alex Rodriguez', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'client_review', action: 'moved_to_review', user: 'Alex Rodriguez', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'client_approved', action: 'approved', user: 'Client', timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'art_director_review', action: 'moved_to_review', user: 'System', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'art_director_approved', action: 'approved', user: 'Art Director', timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'creative_director_review', action: 'moved_to_review', user: 'System', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+      { stage: 'approved', action: 'approved', user: 'Creative Director', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() }
+    ],
     versions: [
       { id: 'v1', label: 'Logo Concepts', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
       { id: 'v2', label: 'Color Palette', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
@@ -99,6 +134,11 @@ let mockReviews = [
         timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
         version: 'v4',
         resolved: true,
+        reactions: [
+          { user: 'Alex Rodriguez', emoji: '✅', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() },
+          { user: 'Mike Chen', emoji: '👍', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() },
+          { user: 'Sarah Johnson', emoji: '🎉', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() }
+        ],
         replies: []
       }
     ]
@@ -145,6 +185,12 @@ export const mockAPI = {
       filename: filename,
       password: password || null,
       designer: 'Designer', // In real app, this would come from auth
+      designerEmail: 'designer@example.com', // In real app, this would come from auth
+      teamId: null, // Will be set when associated with a team
+      workflowState: 'draft', // Start in draft state
+      workflowHistory: [
+        { stage: 'draft', action: 'uploaded', user: 'Designer', timestamp: new Date().toISOString() }
+      ],
       versions: [
         { 
           id: 'v1', 
@@ -153,7 +199,8 @@ export const mockAPI = {
         }
       ],
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      extended: false
+      extended: false,
+      comments: []
     };
     
     mockReviews.push(newReview);
@@ -163,10 +210,56 @@ export const mockAPI = {
       expiresAt: newReview.expiresAt,
       extended: newReview.extended,
       hasPassword: !!newReview.password,
-      designer: newReview.designer
+      designer: newReview.designer,
+      workflowState: newReview.workflowState
     });
     
     return { uploadUrl: 'mock://upload', reviewId: newReview.id };
+  },
+
+  // Create review from external URL
+  createReviewFromUrl: async (url, password) => {
+    await new Promise(resolve => setTimeout(resolve, 800)); // Simulate API delay
+    
+    // Extract filename from URL or use a default
+    const urlParts = url.split('/');
+    const filename = urlParts[urlParts.length - 1] || 'External Design Link';
+    
+    const newReview = {
+      id: `review-${Date.now()}`,
+      filename: filename,
+      password: password || null,
+      designer: 'Designer', // In real app, this would come from auth
+      designerEmail: 'designer@example.com', // In real app, this would come from auth
+      teamId: null, // Will be set when associated with a team
+      workflowState: 'draft', // Start in draft state
+      workflowHistory: [
+        { stage: 'draft', action: 'created_from_url', user: 'Designer', timestamp: new Date().toISOString() }
+      ],
+      versions: [
+        { 
+          id: 'v1', 
+          label: 'External Link', 
+          url: url // Use the provided URL directly
+        }
+      ],
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      extended: false,
+      comments: []
+    };
+    
+    mockReviews.push(newReview);
+    mockAdminLinks.push({
+      id: `admin-${newReview.id}`,
+      filename: newReview.filename,
+      expiresAt: newReview.expiresAt,
+      extended: newReview.extended,
+      hasPassword: !!newReview.password,
+      designer: newReview.designer,
+      workflowState: newReview.workflowState
+    });
+    
+    return { reviewId: newReview.id };
   },
 
   // Get review data
@@ -231,6 +324,20 @@ export const mockAPI = {
     if (link) {
       link.extended = true;
       link.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      
+      // Find corresponding review and add history entry
+      const review = mockReviews.find(r => r.filename === link.filename);
+      if (review) {
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
+        review.workflowHistory.push({
+          stage: review.workflowState || 'draft',
+          action: 'extended',
+          user: 'Admin', // In real app, this would come from auth
+          timestamp: new Date().toISOString()
+        });
+      }
     }
   },
 
@@ -240,6 +347,20 @@ export const mockAPI = {
     const link = mockAdminLinks.find(l => l.id === id);
     if (link) {
       link.expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+      
+      // Find corresponding review and add history entry
+      const review = mockReviews.find(r => r.filename === link.filename);
+      if (review) {
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
+        review.workflowHistory.push({
+          stage: review.workflowState || 'draft',
+          action: 'extended',
+          user: 'Admin', // In real app, this would come from auth
+          timestamp: new Date().toISOString()
+        });
+      }
     }
   },
 
@@ -266,6 +387,22 @@ export const mockAPI = {
     if (adminLink) {
       const review = mockReviews.find(r => r.filename === adminLink.filename);
       if (review) {
+        const hadPassword = !!review.password;
+        const hasPassword = !!newPassword;
+        
+        // Add history entry before changing password (to track the change)
+        if (review.password !== newPassword) {
+          if (!review.workflowHistory) {
+            review.workflowHistory = [];
+          }
+          review.workflowHistory.push({
+            stage: review.workflowState || 'draft',
+            action: hasPassword ? 'password_set' : 'password_removed',
+            user: 'Admin', // In real app, this would come from auth
+            timestamp: new Date().toISOString()
+          });
+        }
+        
         review.password = newPassword || null;
         adminLink.hasPassword = !!newPassword;
       }
@@ -281,12 +418,9 @@ export const mockAPI = {
       return [];
     }
     
-    let comments = review.comments;
-    if (versionId) {
-      comments = comments.filter(c => c.version === versionId);
-    }
-    
-    return comments;
+    // Return all comments for the review
+    // Comments are tagged with version but shown for all versions
+    return review.comments || [];
   },
 
   addComment: async (reviewId, comment) => {
@@ -297,7 +431,17 @@ export const mockAPI = {
       if (!review.comments) {
         review.comments = [];
       }
-      review.comments.push(comment);
+      // Ensure comment has all required fields
+      const newComment = {
+        ...comment,
+        id: comment.id || `comment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: comment.timestamp || new Date().toISOString(),
+        resolved: comment.resolved !== undefined ? comment.resolved : false,
+        replies: comment.replies || [],
+        reactions: comment.reactions || []
+      };
+      review.comments.push(newComment);
+      return newComment;
     }
     
     return comment;
@@ -332,6 +476,242 @@ export const mockAPI = {
     }
   },
 
+  toggleEmojiReaction: async (reviewId, commentId, emoji) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (review && review.comments) {
+      const comment = review.comments.find(c => c.id === commentId);
+      if (comment) {
+        if (!comment.reactions) {
+          comment.reactions = [];
+        }
+        
+        const currentUser = 'Current User'; // In real app, this would come from auth
+        // Find existing reaction by this user with this emoji
+        const existingIndex = comment.reactions.findIndex(r => 
+          (r.user === currentUser || r.userEmail === currentUser) && 
+          (r.emoji || '👍') === emoji
+        );
+        
+        if (existingIndex >= 0) {
+          // Remove reaction (unreact) - toggle off this specific emoji
+          comment.reactions.splice(existingIndex, 1);
+        } else {
+          // Add new emoji reaction (users can have multiple emoji reactions)
+          comment.reactions.push({
+            user: currentUser,
+            emoji: emoji,
+            timestamp: new Date().toISOString()
+          });
+        }
+      }
+    }
+  },
+
+  toggleEmojiReactionOnReply: async (reviewId, commentId, replyId, emoji) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (review && review.comments) {
+      const comment = review.comments.find(c => c.id === commentId);
+      if (comment && comment.replies) {
+        const reply = comment.replies.find(r => r.id === replyId);
+        if (reply) {
+          if (!reply.reactions) {
+            reply.reactions = [];
+          }
+          
+          const currentUser = 'Current User'; // In real app, this would come from auth
+          // Find existing reaction by this user with this emoji
+          const existingIndex = reply.reactions.findIndex(r => 
+            (r.user === currentUser || r.userEmail === currentUser) && 
+            (r.emoji || '👍') === emoji
+          );
+          
+          if (existingIndex >= 0) {
+            // Remove reaction (unreact) - toggle off this specific emoji
+            reply.reactions.splice(existingIndex, 1);
+          } else {
+            // Add new emoji reaction (users can have multiple emoji reactions)
+            reply.reactions.push({
+              user: currentUser,
+              emoji: emoji,
+              timestamp: new Date().toISOString()
+            });
+          }
+        }
+      }
+    }
+  },
+
+  // Workflow approval methods
+  moveToClientReview: async (reviewId) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (review) {
+      review.workflowState = 'client_review';
+      review.workflowHistory.push({
+        stage: 'client_review',
+        action: 'moved_to_review',
+        user: review.designer || 'Designer',
+        timestamp: new Date().toISOString()
+      });
+      
+      // Update admin link
+      const adminLink = mockAdminLinks.find(l => l.id === `admin-${reviewId}`);
+      if (adminLink) {
+        adminLink.workflowState = 'client_review';
+      }
+    }
+  },
+
+  approveWorkflowStage: async (reviewId, stage, user) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (!review) return;
+    
+    // Define the workflow progression
+    const workflowFlow = {
+      'client_review': 'client_approved', // Client approves -> moves to client_approved only
+      'art_director_review': 'art_director_approved', // Art director approves -> moves to art_director_approved, then auto to creative_director_review
+      'creative_director_review': 'approved' // Creative director approves -> final approval
+    };
+    
+    // Check if current state matches the stage being approved
+    if (review.workflowState === stage) {
+      const nextStage = workflowFlow[stage];
+      if (nextStage) {
+        review.workflowState = nextStage;
+        review.workflowHistory.push({
+          stage: nextStage,
+          action: 'approved',
+          user: user || 'Current User',
+          timestamp: new Date().toISOString()
+        });
+        
+        // Auto-advance only for art_director_approved -> creative_director_review
+        if (nextStage === 'art_director_approved') {
+          review.workflowState = 'creative_director_review';
+          review.workflowHistory.push({
+            stage: 'creative_director_review',
+            action: 'moved_to_review',
+            user: 'System',
+            timestamp: new Date().toISOString()
+          });
+        }
+        
+        // Update admin link
+        const adminLink = mockAdminLinks.find(l => l.id === `admin-${reviewId}`);
+        if (adminLink) {
+          adminLink.workflowState = review.workflowState;
+        }
+      }
+    }
+  },
+
+  rejectWorkflowStage: async (reviewId, stage, user, reason) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (!review) return;
+    
+    // Handle rejection based on stage
+    if (stage === 'art_director_review') {
+      // Art Director rejection -> AD Changes Requested
+      review.workflowState = 'ad_changes_requested';
+      review.workflowHistory.push({
+        stage: 'ad_changes_requested',
+        action: 'rejected',
+        user: user || 'Art Director',
+        reason: reason || '',
+        timestamp: new Date().toISOString()
+      });
+    } else if (stage === 'creative_director_review') {
+      // Creative Director rejection -> CD Changes Requested
+      review.workflowState = 'cd_changes_requested';
+      review.workflowHistory.push({
+        stage: 'cd_changes_requested',
+        action: 'rejected',
+        user: user || 'Creative Director',
+        reason: reason || '',
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      // Client rejection -> back to client review
+      review.workflowState = 'client_review';
+      review.workflowHistory.push({
+        stage: 'client_review',
+        action: 'rejected',
+        user: user || 'Current User',
+        reason: reason || '',
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    // Update admin link
+    const adminLink = mockAdminLinks.find(l => l.id === `admin-${reviewId}`);
+    if (adminLink) {
+      adminLink.workflowState = review.workflowState;
+    }
+  },
+  
+  // Move from changes requested back to review
+  // Move from client approved to art director review (designer requests)
+  moveToArtDirectorReview: async (reviewId) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (review && review.workflowState === 'client_approved') {
+      review.workflowState = 'art_director_review';
+      review.workflowHistory.push({
+        stage: 'art_director_review',
+        action: 'moved_to_review',
+        user: review.designer || 'Designer',
+        timestamp: new Date().toISOString()
+      });
+      
+      // Update admin link
+      const adminLink = mockAdminLinks.find(l => l.id === `admin-${reviewId}`);
+      if (adminLink) {
+        adminLink.workflowState = 'art_director_review';
+      }
+    }
+  },
+
+  resubmitForReview: async (reviewId, targetStage) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (!review) return;
+    
+    if (review.workflowState === 'ad_changes_requested') {
+      review.workflowState = 'art_director_review';
+      review.workflowHistory.push({
+        stage: 'art_director_review',
+        action: 'resubmitted',
+        user: review.designer || 'Designer',
+        timestamp: new Date().toISOString()
+      });
+    } else if (review.workflowState === 'cd_changes_requested') {
+      review.workflowState = 'creative_director_review';
+      review.workflowHistory.push({
+        stage: 'creative_director_review',
+        action: 'resubmitted',
+        user: review.designer || 'Designer',
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    // Update admin link
+    const adminLink = mockAdminLinks.find(l => l.id === `admin-${reviewId}`);
+    if (adminLink) {
+      adminLink.workflowState = review.workflowState;
+    }
+  },
+
   // Version upload functions
   uploadVersion: async (reviewId, filename, label, notes, type) => {
     await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate upload time
@@ -356,9 +736,150 @@ export const mockAPI = {
     
     review.versions.push(newVersion);
     
+    // Add history entry for version upload
+    if (!review.workflowHistory) {
+      review.workflowHistory = [];
+    }
+    review.workflowHistory.push({
+      stage: review.workflowState || 'draft',
+      action: 'version_uploaded',
+      user: review.designer || 'Designer',
+      versionLabel: label,
+      timestamp: new Date().toISOString()
+    });
+    
     return newVersion;
   }
 };
+
+// Mock user context (in real app, this would come from auth)
+export const getCurrentUser = () => {
+  return {
+    name: localStorage.getItem('currentDesigner') || 'Sarah Johnson',
+    email: localStorage.getItem('currentUserEmail') || 'sarah@example.com',
+    role: localStorage.getItem('userRole') || 'designer', // 'designer', 'art_director', 'creative_director'
+    teamId: localStorage.getItem('currentUserTeamId') || 'team-1' // For art directors
+  };
+};
+
+// Get filtered reviews based on user role
+export const getFilteredReviews = (userRole, userEmail, userTeamId) => {
+  if (userRole === 'creative_director') {
+    // Creative Director sees all reviews across all teams
+    return mockReviews;
+  } else if (userRole === 'art_director') {
+    // Art Director sees all reviews in their team
+    return mockReviews.filter(review => review.teamId === userTeamId);
+  } else if (userRole === 'designer') {
+    // Designer sees only their own reviews
+    return mockReviews.filter(review => review.designerEmail === userEmail || review.designer === localStorage.getItem('currentDesigner'));
+  }
+  // Default: return all (for clients/admins)
+  return mockReviews;
+};
+
+// Mock teams data
+let mockTeams = [
+  {
+    id: 'team-1',
+    name: 'Design Team Alpha',
+    description: 'Main design team for client projects',
+    members: [
+      { email: 'sarah@example.com', name: 'Sarah Johnson', role: 'Designer' },
+      { email: 'mike@example.com', name: 'Mike Chen', role: 'Designer' }
+    ],
+    reviews: []
+  },
+  {
+    id: 'team-2',
+    name: 'Brand Guidelines Team',
+    description: 'Team responsible for brand consistency',
+    members: [
+      { email: 'alex@example.com', name: 'Alex Rodriguez', role: 'Designer' }
+    ],
+    reviews: []
+  }
+];
+
+// Teams API methods
+export const teamsAPI = {
+  getTeams: async () => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return mockTeams;
+  },
+
+  createTeam: async (name, description = '') => {
+    await new Promise(resolve => setTimeout(resolve, 800));
+    const newTeam = {
+      id: `team-${Date.now()}`,
+      name: name,
+      description: description,
+      members: [],
+      reviews: []
+    };
+    mockTeams.push(newTeam);
+    return newTeam;
+  },
+
+  updateTeam: async (teamId, updates) => {
+    await new Promise(resolve => setTimeout(resolve, 600));
+    const team = mockTeams.find(t => t.id === teamId);
+    if (!team) {
+      throw new Error('Team not found');
+    }
+    Object.assign(team, updates);
+    return team;
+  },
+
+  deleteTeam: async (teamId) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = mockTeams.findIndex(t => t.id === teamId);
+    if (index === -1) {
+      throw new Error('Team not found');
+    }
+    mockTeams.splice(index, 1);
+  },
+
+  addTeamMember: async (teamId, member) => {
+    await new Promise(resolve => setTimeout(resolve, 600));
+    const team = mockTeams.find(t => t.id === teamId);
+    if (!team) {
+      throw new Error('Team not found');
+    }
+    if (team.members.find(m => m.email === member.email)) {
+      throw new Error('Member already exists');
+    }
+    // Ensure role is set, default to 'Designer' if not provided
+    const memberWithRole = {
+      ...member,
+      role: member.role || 'Designer'
+    };
+    team.members.push(memberWithRole);
+    return team;
+  },
+
+  removeTeamMember: async (teamId, email) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const team = mockTeams.find(t => t.id === teamId);
+    if (!team) {
+      throw new Error('Team not found');
+    }
+    const index = team.members.findIndex(m => m.email === email);
+    if (index === -1) {
+      throw new Error('Member not found');
+    }
+    team.members.splice(index, 1);
+    return team;
+  }
+};
+
+// Add teams methods to mockAPI
+mockAPI.getTeams = teamsAPI.getTeams;
+mockAPI.createTeam = teamsAPI.createTeam;
+mockAPI.updateTeam = teamsAPI.updateTeam;
+mockAPI.deleteTeam = teamsAPI.deleteTeam;
+mockAPI.addTeamMember = teamsAPI.addTeamMember;
+mockAPI.removeTeamMember = teamsAPI.removeTeamMember;
 
 // Check if we're in mock mode (when API is not available)
 export const isMockMode = async () => {

@@ -1,4 +1,4 @@
-# Client Review UI
+# Client Review
 
 A modern Vue.js application for managing and reviewing design files. This application allows designers to upload design files (PDF, AI, Sketch, Figma, etc.) and share them with clients for review and feedback.
 
@@ -26,14 +26,16 @@ A modern Vue.js application for managing and reviewing design files. This applic
   - Change or remove passwords
   - Mark reviews as completed (disables link but preserves comments)
   - View all uploaded files in demo review links
+  - Upload new versions via modal with drag-and-drop support
 - **Admin Dashboard**: 
   - View all review links in a table format
   - Batch operations (select multiple links for deletion)
   - Copy review URLs
-  - Extend expiration dates
+  - Extend expiration dates (7-day extension)
   - Override expiration dates with custom dates
   - Reset passwords
-  - Filter by expiration status
+  - Reactivate expired links (extends by 30 days)
+  - Filter by expiration status (shows all links including expired)
 
 ### For Clients
 - **Design Review**: View designs in an embedded preview with version switching
@@ -51,6 +53,8 @@ A modern Vue.js application for managing and reviewing design files. This applic
 - **Responsive Design**: Modern UI built with Tailwind CSS and Vuetify 3
 - **Password Visibility Toggle**: Show/hide passwords in input fields
 - **Expiration Tracking**: Visual indicators for expired links (red) and links expiring soon (orange, within 7 days)
+- **Side-by-Side Layout**: Upload and demo links cards displayed side-by-side (50/50 split)
+- **Clean UI**: Streamlined header without demo mode indicators
 
 ## Tech Stack
 
@@ -225,12 +229,13 @@ Mock data is stored in browser memory during the session. To persist data across
 
 ### Upload & Publish Flow
 
-1. User selects or drags a file onto the upload card
-2. Optionally enters a password
+1. User selects or drags a file onto the upload card (or clicks to choose file)
+2. Optionally enters a password (with visibility toggle)
 3. Clicks "Upload & Publish"
 4. File is uploaded (mock or real API)
 5. Review link is generated and displayed
 6. Full URL is shown for easy sharing
+7. Upload and demo links sections are displayed side-by-side for easy navigation
 
 ### Review Flow
 
@@ -250,20 +255,26 @@ Designers can perform these actions via icon buttons with tooltips:
 - **Mark as Completed** (✓): Disables the review link, preserves comments
 - **Change Password** (🔑): Update or remove password protection
 - **Extend Expiration** (📅): Extends expiration by 30 days
-- **Upload New Version** (⬆️): Add a new version to the review
+- **Upload New Version** (⬆️): Add a new version to the review via modal with drag-and-drop support
+
+**Note**: These actions are only visible to the designer who owns the review link.
 
 ### Admin Dashboard
 
-- **View All Links**: Table showing all review links with metadata
+- **View All Links**: Table showing all review links with metadata (including expired)
 - **Batch Selection**: Select multiple links for batch operations
 - **Actions** (per link):
   - Copy review URL
   - Extend expiration (7 days)
   - Override expiration (custom date)
   - Reset password
+  - Reactivate expired link (extends by 30 days, only shown for expired reviews)
   - Delete link
 - **Bulk Delete**: Delete selected links at once
-- **Filtering**: View all links including expired ones
+- **Visual Indicators**: 
+  - Password protection status (Protected/Public badges)
+  - Extension status (Extended badge)
+  - Expiration dates with color coding
 
 ### Comment System
 
@@ -289,9 +300,10 @@ Designers can perform these actions via icon buttons with tooltips:
   - Gray: Active (more than 7 days remaining)
 
 - **Extension Options**:
-  - Quick extend: 30 days (demo links)
+  - Quick extend: 30 days (demo links, admin reactivate)
   - Custom extend: 7 days (admin dashboard)
   - Override: Custom date (admin dashboard)
+  - Reactivate: 30 days from current date (admin dashboard, expired links only)
 
 ## Development
 

@@ -12,7 +12,7 @@
       </div>
       <div class="p-8">
         <v-data-table
-          :items="links"
+          :items="filteredLinks"
           :headers="headers"
           item-value="id"
           show-select
@@ -215,7 +215,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
-import { mockAPI, isMockMode } from '@/mockData.js';
+import { mockAPI, isMockMode, mockReviews, getCurrentUser, getFilteredReviews } from '@/mockData.js';
 import PromptModal from '@/components/PromptModal.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import AlertModal from '@/components/AlertModal.vue';
@@ -223,6 +223,34 @@ import DatePickerModal from '@/components/DatePickerModal.vue';
 
 const links = ref([]);
 const selectedIds = ref([]);
+
+// Get current user context
+const currentUser = computed(() => getCurrentUser());
+const currentUserRole = computed(() => currentUser.value.role);
+const currentUserEmail = computed(() => currentUser.value.email);
+const currentUserTeamId = computed(() => currentUser.value.teamId);
+
+// Filter links based on user role
+const filteredLinks = computed(() => {
+  if (currentUserRole.value === 'creative_director') {
+    // Creative Director sees all links across all teams
+    return links.value;
+  } else if (currentUserRole.value === 'art_director') {
+    // Art Director sees all links in their team
+    return links.value.filter(link => {
+      const review = mockReviews.find(r => r.filename === link.filename);
+      return review && review.teamId === currentUserTeamId.value;
+    });
+  } else if (currentUserRole.value === 'designer') {
+    // Designer sees only their own links
+    return links.value.filter(link => {
+      return link.designer === currentUser.value.name || 
+             mockReviews.find(r => r.filename === link.filename)?.designerEmail === currentUserEmail.value;
+    });
+  }
+  // Default: return all (for admins)
+  return links.value;
+});
 
 // Modal states
 const showOverrideDialog = ref(false);

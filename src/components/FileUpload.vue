@@ -1,7 +1,34 @@
 <template>
   <form @submit.prevent="submit" class="space-y-6">
-    <!-- Drag and Drop File Upload Card -->
+    <!-- Upload Type Selection -->
     <div>
+      <label class="block text-sm font-medium text-gray-700 mb-3">Upload Type</label>
+      <div class="flex gap-4">
+        <label class="flex items-center">
+          <input
+            type="radio"
+            v-model="uploadType"
+            value="file"
+            class="mr-2 text-indigo-600 focus:ring-indigo-500"
+            @change="clearInputs"
+          />
+          <span class="text-sm text-gray-700">Upload File</span>
+        </label>
+        <label class="flex items-center">
+          <input
+            type="radio"
+            v-model="uploadType"
+            value="url"
+            class="mr-2 text-indigo-600 focus:ring-indigo-500"
+            @change="clearInputs"
+          />
+          <span class="text-sm text-gray-700">Use External Link</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- File Upload Section -->
+    <div v-if="uploadType === 'file'">
       <label class="block text-sm font-medium text-gray-700 mb-2">
         Select file
       </label>
@@ -81,6 +108,24 @@
         </div>
       </div>
     </div>
+
+    <!-- URL Input Section -->
+    <div v-else>
+      <label for="externalUrl" class="block text-sm font-medium text-gray-700 mb-2">
+        External Link URL
+      </label>
+      <input
+        id="externalUrl"
+        v-model="externalUrl"
+        type="url"
+        placeholder="https://example.com/design.pdf"
+        class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+        required
+      />
+      <p class="mt-2 text-xs text-gray-500">
+        Enter a direct link to your design file (PDF, image, or other publicly accessible file)
+      </p>
+    </div>
     
     <!-- Password Input -->
     <div>
@@ -114,10 +159,10 @@
     <!-- Upload Button -->
     <button
       type="submit"
-      :disabled="!file"
+      :disabled="uploadType === 'file' ? !file : !externalUrl"
       class="w-full px-4 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
     >
-      Upload & Publish
+      {{ uploadType === 'file' ? 'Upload & Publish' : 'Create Review Link' }}
     </button>
   </form>
 
@@ -137,13 +182,23 @@ import AlertModal from '@/components/AlertModal.vue';
 
 const emit = defineEmits(['uploaded']);
 
+const uploadType = ref('file');
 const file = ref(null);
+const externalUrl = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const showAlert = ref(false);
 const alertMessage = ref('');
 const isDragging = ref(false);
 const fileInput = ref(null);
+
+const clearInputs = () => {
+  file.value = null;
+  externalUrl.value = '';
+  if (fileInput.value) {
+    fileInput.value.value = '';
+  }
+};
 
 const handleFileChange = (event) => {
   file.value = event.target.files[0];
@@ -180,40 +235,66 @@ const formatFileSize = (bytes) => {
 };
 
 const submit = async () => {
-  if (!file.value) return;
+  if (uploadType.value === 'file' && !file.value) return;
+  if (uploadType.value === 'url' && !externalUrl.value) return;
 
   try {
     const useMockMode = await isMockMode();
     if (useMockMode) {
       // Use mock API
-      const { uploadUrl, reviewId } = await mockAPI.upload(file.value.name, password.value);
-      const fullUrl = `${window.location.origin}/review/${reviewId}`;
-      emit('uploaded', fullUrl);
+      if (uploadType.value === 'file') {
+        const { uploadUrl, reviewId } = await mockAPI.upload(file.value.name, password.value);
+        const fullUrl = `${window.location.origin}/review/${reviewId}`;
+        emit('uploaded', fullUrl);
+      } else {
+        // Create review with external URL
+        const { reviewId } = await mockAPI.createReviewFromUrl(externalUrl.value, password.value);
+        const fullUrl = `${window.location.origin}/review/${reviewId}`;
+        emit('uploaded', fullUrl);
+      }
     } else {
       // Use real API
-      const res = await fetch('/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          filename: file.value.name,
-          password: password.value || null,
-        }),
-      });
+      if (uploadType.value === 'file') {
+        const res = await fetch('/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: file.value.name,
+            password: password.value || null,
+          }),
+        });
 
-      const { uploadUrl, reviewId } = await res.json();
+        const { uploadUrl, reviewId } = await res.json();
 
-      await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file.value,
-        headers: { 'Content-Type': file.value.type },
-      });
+        await fetch(uploadUrl, {
+          method: 'PUT',
+          body: file.value,
+          headers: { 'Content-Type': file.value.type },
+        });
 
-      const fullUrl = `${window.location.origin}/review/${reviewId}`;
-      emit('uploaded', fullUrl);
+        const fullUrl = `${window.location.origin}/review/${reviewId}`;
+        emit('uploaded', fullUrl);
+      } else {
+        // Create review with external URL
+        const res = await fetch('/review/create-from-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: externalUrl.value,
+            password: password.value || null,
+          }),
+        });
+
+        const { reviewId } = await res.json();
+        const fullUrl = `${window.location.origin}/review/${reviewId}`;
+        emit('uploaded', fullUrl);
+      }
     }
   } catch (error) {
     console.error('Upload failed:', error);
-    alertMessage.value = 'Upload failed. Please try again.';
+    alertMessage.value = uploadType.value === 'file' 
+      ? 'Upload failed. Please try again.' 
+      : 'Failed to create review link. Please check the URL and try again.';
     showAlert.value = true;
   }
 };
