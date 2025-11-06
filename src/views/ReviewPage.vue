@@ -131,7 +131,7 @@
               </svg>
               <h3 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">DESIGNER TOOLS</h3>
             </div>
-            <div class="grid gap-2" :class="metadata.password ? 'grid-cols-4' : 'grid-cols-3'">
+            <div class="grid gap-2" :class="metadata.password ? 'grid-cols-5' : 'grid-cols-4'">
               <!-- Mark as Completed -->
               <v-tooltip text="Mark as Completed">
                 <template #activator="{ props }">
@@ -195,6 +195,22 @@
                   </button>
                 </template>
               </v-tooltip>
+              
+              <!-- Sharing Settings -->
+              <v-tooltip text="Sharing Settings">
+                <template #activator="{ props }">
+                  <button
+                    @click="handleSharingSettings"
+                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
+                    v-bind="props"
+                  >
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Sharing</span>
+                  </button>
+                </template>
+              </v-tooltip>
             </div>
           </div>
         </div>
@@ -242,6 +258,103 @@
       :required="false"
       @submit="handlePasswordChanged"
     />
+
+    <!-- Sharing Settings Modal -->
+    <v-dialog :model-value="showSharingModal" @update:model-value="showSharingModal = $event" max-width="600">
+      <v-card class="bg-white dark:bg-slate-800">
+        <v-card-title class="d-flex align-center justify-space-between bg-white dark:bg-slate-800 px-6 pt-6 pb-4">
+          <div class="d-flex align-center">
+            <svg class="w-6 h-6 mr-3 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            <span class="text-lg font-bold text-gray-900 dark:text-gray-100">Sharing Settings</span>
+          </div>
+          <button @click.stop="showSharingModal = false" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </v-card-title>
+        <v-divider />
+        <v-card-text class="px-6 py-4 bg-white dark:bg-slate-800">
+          <div class="space-y-4">
+            <!-- Sharing Type Selection -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Who can access this review?</label>
+              <div class="space-y-2">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    v-model="sharingType"
+                    value="anyone"
+                    class="w-4 h-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                  />
+                  <span class="text-sm text-gray-900 dark:text-gray-100">Anyone with the link</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    v-model="sharingType"
+                    value="restricted"
+                    class="w-4 h-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                  />
+                  <span class="text-sm text-gray-900 dark:text-gray-100">Only people I list</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Approved People List -->
+            <div v-if="sharingType === 'restricted'">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Approved People</label>
+              <div class="space-y-2">
+                <div v-for="(person, index) in approvedPeople" :key="index" class="flex items-center gap-2">
+                  <input
+                    type="email"
+                    v-model="approvedPeople[index]"
+                    placeholder="email@example.com"
+                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm"
+                  />
+                  <button
+                    type="button"
+                    @click="removeApprovedPerson(index)"
+                    class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  @click="addApprovedPerson"
+                  class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors"
+                >
+                  + Add Person
+                </button>
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions class="px-6 py-4 bg-white dark:bg-slate-800">
+          <v-spacer />
+          <v-btn
+            variant="text"
+            @click="showSharingModal = false"
+            class="text-gray-600 dark:text-gray-400"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="flat"
+            @click="handleSharingChanged"
+          >
+            Save Changes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <!-- Confirm Completion Modal -->
     <ConfirmModal
@@ -310,9 +423,12 @@ const alertType = ref('error');
 // Designer tools modals state
 const showUploadModal = ref(false);
 const showPasswordModal = ref(false);
+const showSharingModal = ref(false);
 const showConfirmModal = ref(false);
 const confirmModalTitle = ref('');
 const confirmModalMessage = ref('');
+const sharingType = ref('anyone'); // 'anyone' or 'restricted'
+const approvedPeople = ref(['']);
 
 const loadVersion = async () => {
   try {
@@ -891,6 +1007,77 @@ const confirmMarkCompleted = async () => {
 
 const handleChangePassword = () => {
   showPasswordModal.value = true;
+};
+
+const handleSharingSettings = () => {
+  // Initialize sharing settings from metadata
+  sharingType.value = metadata.value.sharingMode || 'anyone';
+  approvedPeople.value = metadata.value.approvedEmails && metadata.value.approvedEmails.length > 0
+    ? [...metadata.value.approvedEmails, '']
+    : [''];
+  showSharingModal.value = true;
+};
+
+const addApprovedPerson = () => {
+  approvedPeople.value.push('');
+};
+
+const removeApprovedPerson = (index) => {
+  if (approvedPeople.value.length > 1) {
+    approvedPeople.value.splice(index, 1);
+  } else {
+    approvedPeople.value[0] = '';
+  }
+};
+
+const handleSharingChanged = async () => {
+  try {
+    const useMockMode = await isMockMode();
+    const finalSharingMode = sharingType.value === 'restricted' ? 'restricted' : 'anyone';
+    const finalApprovedEmails = sharingType.value === 'restricted'
+      ? approvedPeople.value.filter(email => email.trim() !== '')
+      : [];
+    
+    if (useMockMode) {
+      // Update mock data
+      const review = mockReviews.find(r => r.id === reviewId);
+      if (review) {
+        review.sharingMode = finalSharingMode;
+        review.approvedEmails = finalApprovedEmails;
+        
+        // Add history entry for sharing change
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
+        review.workflowHistory.push({
+          stage: review.workflowState || 'draft',
+          action: 'sharing_changed',
+          user: review.designer || 'Designer',
+          timestamp: new Date().toISOString()
+        });
+        
+        // Reload review data to get updated history
+        const res = await mockAPI.getReview(reviewId);
+        metadata.value = { ...res };
+      }
+    } else {
+      // Use real API
+      await axios.post(`/review/${reviewId}/sharing`, {
+        sharingMode: finalSharingMode,
+        approvedEmails: finalApprovedEmails
+      });
+      
+      // Reload review data
+      const res = await axios.get(`/review/${reviewId}`);
+      metadata.value = { ...res.data };
+    }
+    
+    showSharingModal.value = false;
+    showAlertMessage('Success', 'Sharing settings updated successfully!', 'success');
+  } catch (error) {
+    console.error('Failed to update sharing settings:', error);
+    showAlertMessage('Error', 'Failed to update sharing settings. Please try again.', 'error');
+  }
 };
 
 const handlePasswordChanged = async (passwordValue) => {
