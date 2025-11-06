@@ -852,50 +852,70 @@ html.dark .v-chip--color-orange {
   color: #fdba74 !important; /* orange-300 - lighter text */
 }
 
-/* Light mode chip reset - ensure chips use Vuetify default colors in light mode */
-html:not(.dark) .v-chip {
-  background-color: rgba(0, 0, 0, 0.08) !important; /* Default Vuetify chip background */
-  color: rgba(0, 0, 0, 0.87) !important; /* Default Vuetify chip text */
-}
-
-html:not(.dark) .v-chip--color-blue {
-  background-color: rgba(33, 150, 243, 0.12) !important; /* blue-500 with opacity */
+/* Light mode chip colors - ensure colored chips display properly */
+/* Override Vuetify's inline styles with higher specificity */
+html:not(.dark) .v-chip--color-blue,
+html:not(.dark) .v-chip.v-chip--color-blue,
+html:not(.dark) [class*="v-chip--color-blue"] {
+  background-color: rgba(33, 150, 243, 0.2) !important; /* blue-500 with higher opacity */
   color: #1976d2 !important; /* blue-700 - darker blue text */
+  border-color: rgba(33, 150, 243, 0.3) !important;
 }
 
-html:not(.dark) .v-chip--color-light-blue {
-  background-color: rgba(3, 169, 244, 0.12) !important; /* light-blue-500 with opacity */
+html:not(.dark) .v-chip--color-light-blue,
+html:not(.dark) .v-chip.v-chip--color-light-blue,
+html:not(.dark) [class*="v-chip--color-light-blue"] {
+  background-color: rgba(3, 169, 244, 0.2) !important; /* light-blue-500 with higher opacity */
   color: #0288d1 !important; /* light-blue-700 - darker blue text */
+  border-color: rgba(3, 169, 244, 0.3) !important;
 }
 
-html:not(.dark) .v-chip--color-purple {
-  background-color: rgba(156, 39, 176, 0.12) !important; /* purple-500 with opacity */
+html:not(.dark) .v-chip--color-purple,
+html:not(.dark) .v-chip.v-chip--color-purple,
+html:not(.dark) [class*="v-chip--color-purple"] {
+  background-color: rgba(156, 39, 176, 0.2) !important; /* purple-500 with higher opacity */
   color: #7b1fa2 !important; /* purple-800 - darker purple text */
+  border-color: rgba(156, 39, 176, 0.3) !important;
 }
 
-html:not(.dark) .v-chip--color-deep-purple {
-  background-color: rgba(103, 58, 183, 0.12) !important; /* deep-purple-500 with opacity */
+html:not(.dark) .v-chip--color-deep-purple,
+html:not(.dark) .v-chip.v-chip--color-deep-purple,
+html:not(.dark) [class*="v-chip--color-deep-purple"] {
+  background-color: rgba(103, 58, 183, 0.2) !important; /* deep-purple-500 with higher opacity */
   color: #512da8 !important; /* deep-purple-700 - darker purple text */
+  border-color: rgba(103, 58, 183, 0.3) !important;
 }
 
-html:not(.dark) .v-chip--color-indigo {
-  background-color: rgba(63, 81, 181, 0.12) !important; /* indigo-500 with opacity */
+html:not(.dark) .v-chip--color-indigo,
+html:not(.dark) .v-chip.v-chip--color-indigo,
+html:not(.dark) [class*="v-chip--color-indigo"] {
+  background-color: rgba(63, 81, 181, 0.2) !important; /* indigo-500 with higher opacity */
   color: #303f9f !important; /* indigo-700 - darker indigo text */
+  border-color: rgba(63, 81, 181, 0.3) !important;
 }
 
-html:not(.dark) .v-chip--color-grey {
-  background-color: rgba(158, 158, 158, 0.12) !important; /* grey-500 with opacity */
+html:not(.dark) .v-chip--color-grey,
+html:not(.dark) .v-chip.v-chip--color-grey,
+html:not(.dark) [class*="v-chip--color-grey"] {
+  background-color: rgba(158, 158, 158, 0.2) !important; /* grey-500 with higher opacity */
   color: #616161 !important; /* grey-700 - darker grey text */
+  border-color: rgba(158, 158, 158, 0.3) !important;
 }
 
-html:not(.dark) .v-chip--color-green {
-  background-color: rgba(76, 175, 80, 0.12) !important; /* green-500 with opacity */
+html:not(.dark) .v-chip--color-green,
+html:not(.dark) .v-chip.v-chip--color-green,
+html:not(.dark) [class*="v-chip--color-green"] {
+  background-color: rgba(76, 175, 80, 0.2) !important; /* green-500 with higher opacity */
   color: #388e3c !important; /* green-700 - darker green text */
+  border-color: rgba(76, 175, 80, 0.3) !important;
 }
 
-html:not(.dark) .v-chip--color-orange {
-  background-color: rgba(255, 152, 0, 0.12) !important; /* orange-500 with opacity */
+html:not(.dark) .v-chip--color-orange,
+html:not(.dark) .v-chip.v-chip--color-orange,
+html:not(.dark) [class*="v-chip--color-orange"] {
+  background-color: rgba(255, 152, 0, 0.2) !important; /* orange-500 with higher opacity */
   color: #f57c00 !important; /* orange-700 - darker orange text */
+  border-color: rgba(255, 152, 0, 0.3) !important;
 }
 
 /* Ensure proper contrast for accessibility */

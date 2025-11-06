@@ -4,23 +4,38 @@
     <header v-if="!isFullScreenPreview" class="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-slate-700">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3 cursor-pointer" @click="$router.push('/')">
-            <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Design Review</h1>
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3 cursor-pointer" @click="$router.push('/')">
+              <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Design Review</h1>
+            </div>
+            <div class="flex items-center gap-3">
+              <!-- Request Review Menu Item -->
+              <button
+                @click="showRequestReviewModal = true"
+                class="flex items-center gap-2 px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <svg class="w-5 h-5 text-gray-900 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                <span class="text-gray-900 dark:text-gray-300">Request Review</span>
+              </button>
+              <!-- Review Status Menu Item -->
+              <button
+                @click="$router.push('/kanban')"
+                class="flex items-center gap-2 px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <svg class="w-5 h-5 text-gray-900 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                </svg>
+                <span class="text-gray-900 dark:text-gray-300">Review Status</span>
+              </button>
+            </div>
           </div>
           <div class="flex items-center gap-4">
             <DarkModeToggle />
-            <button
-              @click="$router.push('/kanban')"
-              class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              title="Kanban Board"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-              </svg>
-            </button>
             <button
               @click="$router.push('/admin')"
               class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
@@ -97,21 +112,72 @@
         </div>
       </v-main>
     </v-app>
+
+    <!-- Request Review Modal -->
+    <v-dialog :model-value="showRequestReviewModal" @update:model-value="(val) => showRequestReviewModal = val" persistent max-width="800">
+      <v-card class="bg-white dark:bg-slate-800">
+        <v-card-title class="d-flex align-center justify-space-between bg-white dark:bg-slate-800 px-6 pt-10 pb-4" style="font-family: inherit; font-weight: 600;">
+          <div class="d-flex align-center">
+            <svg class="w-7 h-7 mr-3 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            <span class="text-gray-900 dark:text-gray-100 font-bold text-2xl">Design Review Request</span>
+          </div>
+          <button @click.stop="showRequestReviewModal = false" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </v-card-title>
+        <v-divider />
+        <v-card-text class="pt-0 bg-white dark:bg-slate-800 px-6">
+          <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">Upload design files or link to a website under development for client review</p>
+          <FileUpload @uploaded="handleRequestReviewUpload" />
+          <div
+            v-if="requestReviewResultUrl"
+            class="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+          >
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <div>
+                <p class="text-sm font-medium text-green-800 dark:text-green-300">Upload successful!</p>
+                <a :href="requestReviewResultUrl" target="_blank" class="text-sm text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 underline mt-1 block">{{ requestReviewResultUrl }}</a>
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getCurrentUser } from '@/mockData.js';
 import DarkModeToggle from '@/components/DarkModeToggle.vue';
+import FileUpload from '@/components/FileUpload.vue';
 
 const route = useRoute();
+const router = useRouter();
 const isFullScreenPreview = computed(() => route.path.includes('/preview'));
 
 const showUserMenu = ref(false);
 const userMenuRef = ref(null);
 const currentUser = computed(() => getCurrentUser());
+const showRequestReviewModal = ref(false);
+const requestReviewResultUrl = ref('');
+
+const handleRequestReviewUpload = (url) => {
+  requestReviewResultUrl.value = url;
+  // Optionally close modal after a delay or navigate to the review
+  setTimeout(() => {
+    showRequestReviewModal.value = false;
+    router.push(url.replace(window.location.origin, ''));
+  }, 2000);
+};
 
 // Handle click outside to close menu
 const handleClickOutside = (event) => {
