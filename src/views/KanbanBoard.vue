@@ -40,7 +40,7 @@
           <!-- In Work Column -->
           <div class="flex flex-col">
             <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
-              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-600/10 dark:bg-indigo-600/20">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Work</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_work') }} items</p>
               </div>
@@ -79,7 +79,7 @@
           <!-- In Client Review Column -->
           <div class="flex flex-col">
             <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
-              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-50 dark:bg-indigo-900/20">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-600/10 dark:bg-indigo-600/20">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Client Review</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_client_review') }} items</p>
               </div>
@@ -118,7 +118,7 @@
           <!-- In Art/Creative Review Column -->
           <div class="flex flex-col">
             <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
-              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-50 dark:bg-indigo-900/20">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-600/10 dark:bg-indigo-600/20">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Art/Creative Review</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_art_creative_review') }} items</p>
               </div>
@@ -157,7 +157,7 @@
           <!-- Approved & Closed Column -->
           <div class="flex flex-col">
             <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
-              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-600/10 dark:bg-indigo-600/20">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">Approved & Closed</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('approved_closed') }} items</p>
               </div>
