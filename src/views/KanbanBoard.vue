@@ -39,7 +39,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" style="min-height: calc(100vh - 400px);">
           <!-- In Work Column -->
           <div class="flex flex-col">
-            <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-indigo-600 dark:border-indigo-500 shadow-lg h-full flex flex-col">
               <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-600/10 dark:bg-indigo-600/20">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Work</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_work') }} items</p>
@@ -49,14 +49,28 @@
                   v-for="review in getColumnItems('in_work')"
                   :key="review.id"
                   @click="goToReview(review.id)"
-                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-gray-300 dark:border-slate-500 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-indigo-600 dark:border-indigo-500 shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col"
                 >
-                  <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate mb-2">{{ review.filename }}</h4>
-                  <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
-                    <span>{{ review.designer }}</span>
+                  <div class="flex items-start gap-3 mb-2">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate mb-1">{{ review.filename }}</h4>
+                      <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
+                        <span>{{ review.designer }}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div class="flex items-center justify-between text-xs mt-auto">
-                    <span class="text-gray-500 dark:text-gray-400">{{ formatDate(review.expiresAt) }}</span>
+                  <div class="flex items-center justify-between text-xs mt-auto pt-2 border-t border-gray-200 dark:border-slate-600">
+                    <div class="flex flex-col gap-1">
+                      <div class="text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">{{ review.versions?.length || 0 }}</span> version{{ (review.versions?.length || 0) !== 1 ? 's' : '' }}
+                      </div>
+                      <div class="text-gray-500 dark:text-gray-400">
+                        Expires: {{ formatDate(review.expiresAt) }}
+                      </div>
+                    </div>
                     <div class="flex items-center gap-2">
                       <span v-if="review.password" class="text-gray-400 dark:text-gray-500">
                         <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
@@ -78,7 +92,7 @@
 
           <!-- In Review Column -->
           <div class="flex flex-col">
-            <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-indigo-600 dark:border-indigo-500 shadow-lg h-full flex flex-col">
               <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-600/10 dark:bg-indigo-600/20">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Review</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_review') }} items</p>
@@ -88,14 +102,28 @@
                   v-for="review in getColumnItems('in_review')"
                   :key="review.id"
                   @click="goToReview(review.id)"
-                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-gray-300 dark:border-slate-500 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-indigo-600 dark:border-indigo-500 shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col"
                 >
-                  <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate mb-2">{{ review.filename }}</h4>
-                  <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
-                    <span>{{ review.designer }}</span>
+                  <div class="flex items-start gap-3 mb-2">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate mb-1">{{ review.filename }}</h4>
+                      <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
+                        <span>{{ review.designer }}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div class="flex items-center justify-between text-xs mt-auto">
-                    <span class="text-gray-500 dark:text-gray-400">{{ formatDate(review.expiresAt) }}</span>
+                  <div class="flex items-center justify-between text-xs mt-auto pt-2 border-t border-gray-200 dark:border-slate-600">
+                    <div class="flex flex-col gap-1">
+                      <div class="text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">{{ review.versions?.length || 0 }}</span> version{{ (review.versions?.length || 0) !== 1 ? 's' : '' }}
+                      </div>
+                      <div class="text-gray-500 dark:text-gray-400">
+                        Expires: {{ formatDate(review.expiresAt) }}
+                      </div>
+                    </div>
                     <div class="flex items-center gap-2">
                       <span v-if="review.password" class="text-gray-400 dark:text-gray-500">
                         <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
@@ -117,7 +145,7 @@
 
           <!-- Approved & Closed Column -->
           <div class="flex flex-col">
-            <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-indigo-600 dark:border-indigo-500 shadow-lg h-full flex flex-col">
               <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-600/10 dark:bg-indigo-600/20">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-100">Approved & Closed</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('approved_closed') }} items</p>
@@ -127,14 +155,28 @@
                   v-for="review in getColumnItems('approved_closed')"
                   :key="review.id"
                   @click="goToReview(review.id)"
-                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-gray-300 dark:border-slate-500 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-indigo-600 dark:border-indigo-500 shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex flex-col"
                 >
-                  <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2 truncate">{{ review.filename }}</h4>
-                  <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
-                    <span>{{ review.designer }}</span>
+                  <div class="flex items-start gap-3 mb-2">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate mb-1">{{ review.filename }}</h4>
+                      <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
+                        <span>{{ review.designer }}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div class="flex items-center justify-between text-xs mt-auto">
-                    <span class="text-gray-500 dark:text-gray-400">{{ formatDate(review.expiresAt) }}</span>
+                  <div class="flex items-center justify-between text-xs mt-auto pt-2 border-t border-gray-200 dark:border-slate-600">
+                    <div class="flex flex-col gap-1">
+                      <div class="text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">{{ review.versions?.length || 0 }}</span> version{{ (review.versions?.length || 0) !== 1 ? 's' : '' }}
+                      </div>
+                      <div class="text-gray-500 dark:text-gray-400">
+                        Expires: {{ formatDate(review.expiresAt) }}
+                      </div>
+                    </div>
                     <div class="flex items-center gap-2">
                       <span v-if="review.password" class="text-gray-400 dark:text-gray-500">
                         <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">

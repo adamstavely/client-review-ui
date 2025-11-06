@@ -24,19 +24,7 @@
           <div class="flex items-center justify-between mb-3">
             <div class="flex-1">
               <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ metadata.filename }}</h2>
-              <!-- Role switcher for demo/testing (remove in production) -->
-              <div class="flex items-center gap-1">
-                <span class="text-xs text-gray-400 dark:text-gray-500">Role:</span>
-                <select 
-                  v-model="currentUserRole" 
-                  @change="switchRole(currentUserRole)"
-                  class="text-xs border border-gray-300 dark:border-slate-600 rounded px-2 py-1 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
-                >
-                  <option value="designer">Designer</option>
-                  <option value="art_director">Art Director</option>
-                  <option value="creative_director">Creative Director</option>
-                </select>
-              </div>
+              <p v-if="metadata.designer" class="text-sm text-gray-600 dark:text-gray-400">Designer: {{ metadata.designer }}</p>
             </div>
             <div class="flex items-center gap-3">
               <button

@@ -33,6 +33,19 @@
             </div>
           </div>
           <div class="flex items-center gap-4">
+            <!-- Role switcher for demo/testing (remove in production) -->
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Role:</span>
+              <select 
+                v-model="currentUserRole" 
+                @change="switchRole(currentUserRole)"
+                class="text-sm border border-gray-300 dark:border-slate-600 rounded px-3 py-1.5 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 hover:border-indigo-500 dark:hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors"
+              >
+                <option value="designer">Designer</option>
+                <option value="art_director">Art Director</option>
+                <option value="creative_director">Creative Director</option>
+              </select>
+            </div>
             <DarkModeToggle />
             <button
               @click="$router.push('/admin')"
@@ -167,6 +180,14 @@ const userMenuRef = ref(null);
 const currentUser = computed(() => getCurrentUser());
 const showRequestReviewModal = ref(false);
 const requestReviewResultUrl = ref('');
+const currentUserRole = ref(localStorage.getItem('userRole') || 'designer'); // 'designer', 'art_director', 'creative_director'
+
+const switchRole = (role) => {
+  localStorage.setItem('userRole', role);
+  currentUserRole.value = role;
+  // Reload page to apply role changes across all components
+  window.location.reload();
+};
 
 const handleRequestReviewUpload = (url) => {
   requestReviewResultUrl.value = url;
