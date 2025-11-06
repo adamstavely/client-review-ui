@@ -1000,10 +1000,19 @@ html:not(.dark) span.text-gray-400 {
   color: #9ca3af !important; /* gray-400 */
 }
 
-html:not(.dark) .text-gray-300,
-html:not(.dark) p.text-gray-300,
-html:not(.dark) span.text-gray-300 {
+/* Fix version labels in comparison mode */
+html:not(.dark) label.block.text-sm.font-medium.text-gray-700 {
+  color: #374151 !important; /* gray-700 */
+}
+
+html.dark label.block.text-sm.font-medium.text-gray-700.dark\:text-gray-300,
+html.dark label.text-gray-700.dark\:text-gray-300 {
   color: #d1d5db !important; /* gray-300 */
+}
+
+/* Ensure light mode doesn't apply dark mode colors */
+html:not(.dark) label.text-gray-700.dark\:text-gray-300 {
+  color: #374151 !important; /* gray-700 - force light mode color */
 }
 
 /* Ensure icon colors reset properly in light mode */
