@@ -1,7 +1,7 @@
 <template>
-  <div class="flex gap-6" style="min-height: calc(100vh - 200px);">
+  <div class="flex gap-4" style="min-height: calc(100vh - 200px);">
     <!-- Main Content Area -->
-    <div class="flex-1 overflow-y-auto space-y-6">
+    <div class="flex-1 overflow-y-auto space-y-4">
       <!-- Completed Review Message -->
       <div v-if="reviewCompleted" class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
         <div class="p-8 text-center">
@@ -20,10 +20,10 @@
 
       <!-- File Preview Section -->
       <div v-if="!reviewCompleted && (!passwordRequired || passwordValidated)" class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
-        <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
-          <div class="flex items-center justify-between mb-4">
+        <div class="border-b border-gray-200 dark:border-slate-700 px-6 py-4">
+          <div class="flex items-center justify-between mb-3">
             <div class="flex-1">
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ metadata.filename }}</h2>
+              <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ metadata.filename }}</h2>
               <!-- Role switcher for demo/testing (remove in production) -->
               <div class="flex items-center gap-1">
                 <span class="text-xs text-gray-400 dark:text-gray-500">Role:</span>
@@ -42,19 +42,17 @@
               <button
                 v-if="metadata.versions.length > 1"
                 @click="toggleComparisonMode"
-                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-sm"
+                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-sm compare-versions-btn"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-                </svg>
+                <span class="material-symbols-outlined text-base">compare</span>
                 {{ comparisonMode ? 'Single View' : 'Compare Versions' }}
               </button>
               <button
                 v-if="previewUrl && !comparisonMode"
                 @click="openInNewTab"
-                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-sm"
+                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-sm open-new-tab-btn"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
                 Open in New Tab
@@ -62,7 +60,7 @@
             </div>
           </div>
         </div>
-        <div class="p-8">
+        <div class="p-6">
           <!-- Single View Mode -->
           <div v-if="!comparisonMode">
         <VersionSelector
@@ -70,7 +68,15 @@
           :versions="metadata.versions"
           @update:modelValue="loadVersion"
         />
-        <PreviewFrame :url="previewUrl" />
+        <PreviewFrame 
+          ref="previewFrameRef"
+          :url="previewUrl" 
+          :review-id="reviewId"
+          :read-only="reviewCompleted"
+          @annotation-added="handleAnnotationAdded"
+          @annotation-updated="handleAnnotationUpdated"
+          @annotation-deleted="handleAnnotationDeleted"
+        />
           </div>
           
           <!-- Comparison Mode -->
@@ -87,7 +93,11 @@
                   />
                 </div>
                 <div class="border-2 border-indigo-200 dark:border-indigo-800 rounded-lg overflow-hidden">
-                  <PreviewFrame :url="leftPreviewUrl" />
+                  <PreviewFrame 
+                    :url="leftPreviewUrl" 
+                    :review-id="reviewId"
+                    :read-only="reviewCompleted"
+                  />
                 </div>
               </div>
               
@@ -102,7 +112,11 @@
                   />
                 </div>
                 <div class="border-2 border-indigo-200 dark:border-indigo-800 rounded-lg overflow-hidden">
-                  <PreviewFrame :url="rightPreviewUrl" />
+                  <PreviewFrame 
+                    :url="rightPreviewUrl" 
+                    :review-id="reviewId"
+                    :read-only="reviewCompleted"
+                  />
                 </div>
               </div>
             </div>
@@ -116,29 +130,29 @@
     />
     </div>
 
-    <!-- Comments Sidebar -->
-    <div v-if="passwordValidated || reviewCompleted" class="w-96 flex-shrink-0">
-      <div class="space-y-6">
+    <!-- Right Sidebar -->
+    <div v-if="passwordValidated || reviewCompleted" class="w-72 flex-shrink-0">
+      <div class="space-y-4">
         <!-- Designer Tools Card -->
         <div v-if="isDesigner && !reviewCompleted" class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
-          <div class="p-6">
-            <div class="flex items-center gap-3 mb-4">
-              <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <h3 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">DESIGNER TOOLS</h3>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">DESIGNER TOOLS</h3>
             </div>
-            <div class="grid gap-3" :class="metadata.password ? 'grid-cols-4' : 'grid-cols-3'">
+            <div class="grid gap-2" :class="metadata.password ? 'grid-cols-4' : 'grid-cols-3'">
               <!-- Mark as Completed -->
               <v-tooltip text="Mark as Completed">
                 <template #activator="{ props }">
                   <button
                     @click="handleMarkCompleted"
-                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
-                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Mark Completed</span>
@@ -151,10 +165,10 @@
                 <template #activator="{ props }">
                   <button
                     @click="handleChangePassword"
-                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
-                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                     </svg>
                     <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Change Password</span>
@@ -167,10 +181,10 @@
                 <template #activator="{ props }">
                   <button
                     @click="handleExtendExpiration"
-                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
-                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Extend Expiration</span>
@@ -183,10 +197,10 @@
                 <template #activator="{ props }">
                   <button
                     @click="handleUploadNewVersion"
-                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
-                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                     <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Upload Version</span>
@@ -201,6 +215,7 @@
           :workflow-state="metadata.workflowState"
           :current-user-role="currentUserRole"
           :designer="metadata.designer"
+          :workflow-history="metadata.workflowHistory || []"
           @workflow-approve="handleApprove"
           @workflow-reject="handleReject"
           @workflow-move-to-client-review="handleMoveToClientReview"
@@ -212,18 +227,12 @@
           :comments="comments"
           :version-id="selectedVersion"
           :read-only="reviewCompleted"
-          :workflow-history="metadata.workflowHistory || []"
           @comment-added="handleCommentAdded"
           @comment-updated="handleCommentUpdated"
           @reply-added="handleReplyAdded"
           @emoji-reaction-toggled="handleEmojiReactionToggled"
           @emoji-reaction-toggled-reply="handleEmojiReactionToggledReply"
         />
-        
-        <!-- Debug info (remove in production) -->
-        <div v-if="false" class="mt-2 p-2 bg-gray-100 text-xs">
-          Debug: workflowHistory length = {{ metadata.workflowHistory?.length || 0 }}
-        </div>
       </div>
     </div>
 
@@ -271,17 +280,19 @@ import axios from 'axios';
 import { useRoute } from 'vue-router';
 import VersionSelector from '@/components/VersionSelector.vue';
 import PreviewFrame from '@/components/PreviewFrame.vue';
-import PasswordPrompt from '@/components/PasswordPrompt.vue';
 import CommentsSidebar from '@/components/CommentsSidebar.vue';
 import WorkflowCard from '@/components/WorkflowCard.vue';
-import AlertModal from '@/components/AlertModal.vue';
 import VersionUploadModal from '@/components/VersionUploadModal.vue';
 import PromptModal from '@/components/PromptModal.vue';
+import PasswordPrompt from '@/components/PasswordPrompt.vue';
+import AlertModal from '@/components/AlertModal.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import { mockAPI, isMockMode, mockReviews } from '@/mockData.js';
 
 const route = useRoute();
 const reviewId = route.params.id;
+
+const previewFrameRef = ref(null);
 
 const metadata = ref({ filename: '', versions: [], workflowState: 'draft', workflowHistory: [] });
 const selectedVersion = ref('');
@@ -293,12 +304,6 @@ const comments = ref([]);
 const reviewCompleted = ref(false);
 const currentUser = ref('Current User'); // In real app, this would come from auth
 const currentUserRole = ref(localStorage.getItem('userRole') || 'designer'); // 'designer', 'client', 'art_director', 'creative_director'
-
-// Role switcher for demo/testing (remove in production)
-const switchRole = (role) => {
-  currentUserRole.value = role;
-  localStorage.setItem('userRole', role);
-};
 
 // Comparison mode state
 const comparisonMode = ref(false);
@@ -385,32 +390,6 @@ const openInNewTab = () => {
   }
 };
 
-const loadComments = async () => {
-  try {
-    const useMockMode = await isMockMode();
-    if (useMockMode) {
-      // Load all comments for the review (not filtered by version)
-      // This allows seeing all comments across versions
-      const res = await mockAPI.getComments(reviewId);
-      // Create new object references to ensure Vue reactivity detects nested changes
-      comments.value = res.map(comment => ({
-        ...comment,
-        reactions: comment.reactions ? [...comment.reactions] : [],
-        replies: comment.replies ? comment.replies.map(reply => ({
-          ...reply,
-          reactions: reply.reactions ? [...reply.reactions] : []
-        })) : []
-      }));
-    } else {
-      // Load all comments for the review
-      const res = await axios.get(`/review/${reviewId}/comments`);
-      comments.value = res.data;
-    }
-  } catch (error) {
-    console.error('Failed to load comments:', error);
-    comments.value = [];
-  }
-};
 
 const submitPassword = async (input) => {
   try {
@@ -448,29 +427,40 @@ const handleCommentAdded = async (comment) => {
     const useMockMode = await isMockMode();
     if (useMockMode) {
       await mockAPI.addComment(reviewId, comment);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     } else {
       await axios.post(`/review/${reviewId}/comments`, comment);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     }
-    await loadComments();
   } catch (error) {
     console.error('Failed to add comment:', error);
   }
 };
 
-const handleCommentUpdated = async (commentId, action) => {
+const handleCommentUpdated = async (commentId, updates) => {
   try {
-    if (action === 'toggle-resolved') {
-      const comment = comments.value.find(c => c.id === commentId);
-      if (comment) {
-        const updates = { resolved: !comment.resolved };
-        
-        const useMockMode = await isMockMode();
-        if (useMockMode) {
-          await mockAPI.updateComment(reviewId, commentId, updates);
-        } else {
-          await axios.patch(`/review/${reviewId}/comments/${commentId}`, updates);
-        }
-        await loadComments();
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
+      await mockAPI.updateComment(reviewId, commentId, updates);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
+    } else {
+      await axios.patch(`/review/${reviewId}/comments/${commentId}`, updates);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
       }
     }
   } catch (error) {
@@ -483,10 +473,19 @@ const handleReplyAdded = async (commentId, reply) => {
     const useMockMode = await isMockMode();
     if (useMockMode) {
       await mockAPI.addReply(reviewId, commentId, reply);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     } else {
       await axios.post(`/review/${reviewId}/comments/${commentId}/replies`, reply);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     }
-    await loadComments();
   } catch (error) {
     console.error('Failed to add reply:', error);
   }
@@ -497,10 +496,19 @@ const handleEmojiReactionToggled = async (commentId, emoji) => {
     const useMockMode = await isMockMode();
     if (useMockMode) {
       await mockAPI.toggleEmojiReaction(reviewId, commentId, emoji);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     } else {
-      await axios.post(`/review/${reviewId}/comments/${commentId}/reactions/toggle`, { emoji });
+      await axios.post(`/review/${reviewId}/comments/${commentId}/reactions`, { emoji });
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     }
-    await loadComments();
   } catch (error) {
     console.error('Failed to toggle emoji reaction:', error);
   }
@@ -510,14 +518,145 @@ const handleEmojiReactionToggledReply = async (commentId, replyId, emoji) => {
   try {
     const useMockMode = await isMockMode();
     if (useMockMode) {
-      await mockAPI.toggleEmojiReactionOnReply(reviewId, commentId, replyId, emoji);
+      await mockAPI.toggleEmojiReactionReply(reviewId, commentId, replyId, emoji);
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     } else {
-      await axios.post(`/review/${reviewId}/comments/${commentId}/replies/${replyId}/reactions/toggle`, { emoji });
+      await axios.post(`/review/${reviewId}/comments/${commentId}/replies/${replyId}/reactions`, { emoji });
+      await loadComments();
+      // Refresh annotations in WebViewer to sync
+      if (previewFrameRef.value) {
+        await previewFrameRef.value.refreshAnnotations();
+      }
     }
-    await loadComments();
   } catch (error) {
     console.error('Failed to toggle emoji reaction on reply:', error);
   }
+};
+
+// Annotation handling functions (from WebViewer - syncs with backend)
+const handleAnnotationAdded = async (comment) => {
+  // Annotation already saved to backend via PreviewFrame
+  // Just reload comments to sync CommentsSidebar
+  await loadComments();
+};
+
+const handleAnnotationUpdated = async (comment) => {
+  // Annotation already updated in backend via PreviewFrame
+  // Just reload comments to sync CommentsSidebar
+  await loadComments();
+};
+
+const handleAnnotationDeleted = async (comment) => {
+  // Annotation already deleted from backend via PreviewFrame
+  // Just reload comments to sync CommentsSidebar
+  await loadComments();
+};
+
+// History helper functions (moved from CommentsSidebar)
+const sortedHistory = computed(() => {
+  if (!metadata.value.workflowHistory || !Array.isArray(metadata.value.workflowHistory) || metadata.value.workflowHistory.length === 0) {
+    return [];
+  }
+  // Sort by timestamp, newest first
+  const sorted = [...metadata.value.workflowHistory].sort((a, b) => {
+    const dateA = new Date(a.timestamp);
+    const dateB = new Date(b.timestamp);
+    return dateB - dateA; // Newest first
+  });
+  return sorted;
+});
+
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return 'Unknown date';
+  try {
+    return new Date(timestamp).toLocaleString();
+  } catch (error) {
+    return 'Invalid date';
+  }
+};
+
+const getHistoryLabel = (stage, action) => {
+  const stageLabels = {
+    'draft': 'Draft',
+    'client_review': 'Client Review',
+    'client_approved': 'Client Approved',
+    'art_director_review': 'Art Director Review',
+    'art_director_approved': 'Art Director Approved',
+    'ad_changes_requested': 'AD Changes Requested',
+    'creative_director_review': 'Creative Director Review',
+    'cd_changes_requested': 'CD Changes Requested',
+    'approved': 'Approved & Released'
+  };
+  
+  const actionLabels = {
+    'uploaded': 'Uploaded',
+    'created_from_url': 'Created from URL',
+    'moved_to_review': 'Moved to Review',
+    'approved': 'Approved',
+    'rejected': 'Rejected',
+    'resubmitted': 'Resubmitted',
+    'version_uploaded': 'Version Uploaded',
+    'extended': 'Expiration Extended',
+    'password_set': 'Password Set',
+    'password_removed': 'Password Removed'
+  };
+  
+  const stageLabel = stageLabels[stage] || stage;
+  const actionLabel = actionLabels[action] || action;
+  
+  // For version uploads, include version label if available
+  if (action === 'version_uploaded') {
+    return actionLabel;
+  }
+  
+  return `${stageLabel} - ${actionLabel}`;
+};
+
+const loadComments = async () => {
+  try {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
+      // Load all comments for the review (not filtered by version)
+      // This allows seeing all comments across versions
+      const res = await mockAPI.getComments(reviewId);
+      // Create new object references to ensure Vue reactivity detects nested changes
+      comments.value = res.map(comment => ({
+        ...comment,
+        reactions: comment.reactions ? [...comment.reactions] : [],
+        replies: comment.replies ? comment.replies.map(reply => ({
+          ...reply,
+          reactions: reply.reactions ? [...reply.reactions] : []
+        })) : []
+      }));
+    } else {
+      // Load all comments for the review
+      const res = await axios.get(`/review/${reviewId}/comments`);
+      comments.value = res.data;
+    }
+  } catch (error) {
+    console.error('Failed to load comments:', error);
+    comments.value = [];
+  }
+};
+
+const getHistoryColor = (action) => {
+  const colors = {
+    'uploaded': 'blue',
+    'created_from_url': 'blue',
+    'moved_to_review': 'indigo',
+    'approved': 'green',
+    'rejected': 'red',
+    'resubmitted': 'orange',
+    'version_uploaded': 'purple',
+    'extended': 'teal',
+    'password_set': 'amber',
+    'password_removed': 'orange'
+  };
+  return colors[action] || 'grey';
 };
 
 // Workflow helper functions
@@ -831,9 +970,10 @@ const handleExtendExpiration = async () => {
         }
         review.workflowHistory.push({
           stage: review.workflowState || 'draft',
-          action: 'expiration_extended',
+          action: 'extended',
           user: review.designer || 'Designer',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          days: 30
         });
         
         // Reload review data to get updated history
@@ -937,8 +1077,7 @@ onMounted(async () => {
       }
       
       if (reviewCompleted.value) {
-        // Still load comments but don't show preview
-        await loadComments();
+        // Comments are loaded automatically by WebViewer when document loads
         return;
       }
       
@@ -964,8 +1103,7 @@ onMounted(async () => {
       }
       
       if (reviewCompleted.value) {
-        // Still load comments but don't show preview
-        await loadComments();
+        // Comments are loaded automatically by WebViewer when document loads
         return;
       }
       

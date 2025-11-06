@@ -1072,6 +1072,39 @@ html:not(.dark) [class*="dark:hover:bg-indigo"]:hover {
   background-color: inherit !important;
 }
 
+/* Fix Compare Versions and Open in New Tab buttons hover states in light mode */
+html:not(.dark) .compare-versions-btn:hover,
+html:not(.dark) .open-new-tab-btn:hover {
+  background-color: #4338ca !important; /* indigo-700 */
+}
+
+html.dark .compare-versions-btn:hover,
+html.dark .open-new-tab-btn:hover {
+  background-color: #818cf8 !important; /* indigo-400 */
+}
+
+/* Ensure icon doesn't distort */
+.compare-versions-btn svg,
+.open-new-tab-btn svg {
+  width: 1rem !important;
+  height: 1rem !important;
+  flex-shrink: 0;
+}
+
+/* Material Symbols icon styling */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
 html:not(.dark) [class*="dark:hover:bg-green"]:hover {
   background-color: inherit !important;
 }
@@ -1484,4 +1517,60 @@ html:not(.dark) input[type="checkbox"] {
 html:not(.dark) input[type="checkbox"]:checked {
   border-color: #4f46e5 !important; /* indigo-600 */
   background-color: #4f46e5 !important; /* indigo-600 */
+}
+
+/* Workflow History Timeline - Hide default Vuetify dots and ensure consistent icon styling */
+.workflow-history-timeline :deep(.v-timeline-item__dot) {
+  display: none !important;
+}
+
+.workflow-history-timeline :deep(.v-timeline-item__opposite) {
+  display: none !important;
+}
+
+.workflow-history-timeline :deep(.v-timeline-item__body) {
+  width: 100% !important;
+}
+
+/* Ensure icon containers have consistent styling without borders */
+.workflow-history-timeline .w-8.h-8.rounded-full {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Force background colors to apply correctly - override any Vuetify styles */
+.workflow-history-timeline .w-8.h-8.rounded-full.bg-red-50 {
+  background-color: #fef2f2 !important; /* red-50 */
+}
+
+.workflow-history-timeline .w-8.h-8.rounded-full.bg-red-100 {
+  background-color: #fee2e2 !important; /* red-100 */
+}
+
+.workflow-history-timeline .w-8.h-8.rounded-full.bg-teal-100 {
+  background-color: #ccfbf1 !important; /* teal-100 */
+}
+
+/* Remove any background from Vuetify timeline icon wrapper */
+.workflow-history-timeline :deep(.v-timeline-item__body .v-timeline-item__icon),
+.workflow-history-timeline :deep(.v-timeline-item__icon-container),
+.workflow-history-timeline :deep(.v-timeline-item__icon-wrapper),
+.workflow-history-timeline :deep(.v-timeline-item__icon > *),
+.workflow-history-timeline :deep(.v-timeline-item__icon) {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure any nested divs don't have backgrounds */
+.workflow-history-timeline :deep(.v-timeline-item__icon div) {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Ensure Material Symbols icons don't have any background */
+.workflow-history-timeline .material-symbols-outlined {
+  background-color: transparent !important;
+  background: transparent !important;
 }

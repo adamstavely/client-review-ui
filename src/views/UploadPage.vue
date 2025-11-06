@@ -158,11 +158,23 @@
               class="p-4 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"
             >
               <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" :class="getActivityIconBg(activity.type)">
-                  <svg class="w-4 h-4" :class="getActivityIconColor(activity.type)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path v-if="activity.type === 'comment'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    <path v-else-if="activity.type === 'workflow'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" :class="getActivityIconBg(activity.type, activity.action)">
+                  <svg v-if="activity.type === 'comment'" class="w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <svg v-else-if="activity.action === 'uploaded' || activity.action === 'created_from_url'" class="w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <span v-else-if="activity.action === 'version_uploaded'" class="material-symbols-outlined w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" style="font-size: 16px;">difference</span>
+                  <span v-else-if="activity.action === 'approved'" class="material-symbols-outlined w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" style="font-size: 16px;">approval</span>
+                  <span v-else-if="activity.action === 'completed'" class="material-symbols-outlined w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" style="font-size: 16px;">done_all</span>
+                  <span v-else-if="activity.action === 'rejected'" class="material-symbols-outlined w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" style="font-size: 16px;">source_notes</span>
+                  <span v-else-if="activity.action === 'moved_to_review'" class="material-symbols-outlined w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" style="font-size: 16px;">graph_1</span>
+                  <svg v-else-if="activity.type === 'workflow'" class="w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <svg v-else class="w-4 h-4" :class="getActivityIconColor(activity.type, activity.action)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -633,6 +645,7 @@ const loadRecentActivity = async () => {
             activities.push({
               id: `history-${review.id}-${entry.timestamp}`,
               type: 'workflow',
+              action: entry.action,
               reviewId: review.id,
               reviewName: review.filename,
               workflowState: review.workflowState,
@@ -679,17 +692,29 @@ const formatRelativeTime = (timestamp) => {
 };
 
 // Get activity icon background color
-const getActivityIconBg = (type) => {
-  if (type === 'comment') return 'bg-blue-100';
-  if (type === 'workflow') return 'bg-purple-100';
-  return 'bg-gray-100';
+const getActivityIconBg = (type, action) => {
+  if (type === 'comment') return 'bg-blue-100 dark:bg-blue-900/30';
+  if (action === 'uploaded' || action === 'created_from_url') return 'bg-indigo-100 dark:bg-indigo-900/30';
+  if (action === 'version_uploaded') return 'bg-purple-100 dark:bg-purple-900/30';
+  if (action === 'approved') return 'bg-green-100 dark:bg-green-900/30';
+  if (action === 'completed') return 'bg-green-100 dark:bg-green-900/30';
+  if (action === 'rejected') return 'bg-orange-100 dark:bg-orange-900/30';
+  if (action === 'moved_to_review') return 'bg-indigo-100 dark:bg-indigo-900/30';
+  if (type === 'workflow') return 'bg-purple-100 dark:bg-purple-900/30';
+  return 'bg-gray-100 dark:bg-gray-700';
 };
 
 // Get activity icon color
-const getActivityIconColor = (type) => {
-  if (type === 'comment') return 'text-blue-600';
-  if (type === 'workflow') return 'text-purple-600';
-  return 'text-gray-600';
+const getActivityIconColor = (type, action) => {
+  if (type === 'comment') return 'text-blue-600 dark:text-blue-400';
+  if (action === 'uploaded' || action === 'created_from_url') return 'text-indigo-600 dark:text-indigo-400';
+  if (action === 'version_uploaded') return 'text-purple-600 dark:text-purple-400';
+  if (action === 'approved') return 'text-green-600 dark:text-green-400';
+  if (action === 'completed') return 'text-green-600 dark:text-green-400';
+  if (action === 'rejected') return 'text-orange-600 dark:text-orange-400';
+  if (action === 'moved_to_review') return 'text-indigo-600 dark:text-indigo-400';
+  if (type === 'workflow') return 'text-purple-600 dark:text-purple-400';
+  return 'text-gray-600 dark:text-gray-400';
 };
 
 // Navigate to review
@@ -953,7 +978,25 @@ const handleExtendExpiration = async (link) => {
     const newExpiresAtISO = newExpiresAt.toISOString();
     
     if (useMockMode) {
-      // Update mock data - find the link by reviewId
+      // Update mock data - find review by reviewId
+      const review = mockReviews.find(r => r.id === link.reviewId);
+      if (review) {
+        review.expiresAt = newExpiresAtISO;
+        
+        // Add history entry
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
+        review.workflowHistory.push({
+          stage: review.workflowState || 'draft',
+          action: 'extended',
+          user: review.designer || 'Designer',
+          timestamp: new Date().toISOString(),
+          days: 30
+        });
+      }
+      
+      // Update demo link
       const linkIndex = demoLinks.value.findIndex(l => l.id === link.id);
       if (linkIndex !== -1) {
         demoLinks.value[linkIndex].expiresAt = newExpiresAtISO;

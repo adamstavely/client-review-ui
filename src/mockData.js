@@ -11,8 +11,42 @@ let mockReviews = [
     completed: false,
     workflowState: 'client_review', // draft, client_review, client_approved, art_director_review, art_director_approved, creative_director_review, approved
     workflowHistory: [
-      { stage: 'draft', action: 'uploaded', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
-      { stage: 'client_review', action: 'moved_to_review', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() }
+      // Initial upload
+      { stage: 'draft', action: 'uploaded', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString() },
+      // Password set
+      { stage: 'draft', action: 'password_set', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 19 * 24 * 60 * 60 * 1000).toISOString() },
+      // Moved to client review
+      { stage: 'client_review', action: 'moved_to_review', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString() },
+      // Rejected by client
+      { stage: 'client_review', action: 'rejected', user: 'Client', timestamp: new Date(Date.now() - 17 * 24 * 60 * 60 * 1000).toISOString(), reason: 'Needs more color variation' },
+      // Resubmitted
+      { stage: 'draft', action: 'resubmitted', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString() },
+      // Version uploaded
+      { stage: 'draft', action: 'version_uploaded', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), versionLabel: 'Version 2' },
+      // Moved to client review again
+      { stage: 'client_review', action: 'moved_to_review', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString() },
+      // Approved by client
+      { stage: 'client_approved', action: 'approved', user: 'Client', timestamp: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString() },
+      // Moved to art director review
+      { stage: 'art_director_review', action: 'moved_to_review', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString() },
+      // Approved by art director
+      { stage: 'art_director_approved', action: 'approved', user: 'Art Director', timestamp: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString() },
+      // Moved to creative director review
+      { stage: 'creative_director_review', action: 'moved_to_review', user: 'System', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() },
+      // Version uploaded during review
+      { stage: 'creative_director_review', action: 'version_uploaded', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(), versionLabel: 'Version 3' },
+      // Expiration extended
+      { stage: 'creative_director_review', action: 'extended', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), days: 30 },
+      // Password removed
+      { stage: 'creative_director_review', action: 'password_removed', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() },
+      // Password set again
+      { stage: 'creative_director_review', action: 'password_set', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() },
+      // Sharing changed
+      { stage: 'creative_director_review', action: 'sharing_changed', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 5.5 * 24 * 60 * 60 * 1000).toISOString() },
+      // Approved by creative director
+      { stage: 'approved', action: 'approved', user: 'Creative Director', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+      // Marked as completed
+      { stage: 'approved', action: 'completed', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() }
     ],
     versions: [
       { id: 'v1', label: 'Version 1 - Initial Design', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
@@ -365,7 +399,8 @@ export const mockAPI = {
           stage: review.workflowState || 'draft',
           action: 'extended',
           user: 'Admin', // In real app, this would come from auth
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          days: 7
         });
       }
     }
@@ -388,7 +423,8 @@ export const mockAPI = {
           stage: review.workflowState || 'draft',
           action: 'extended',
           user: 'Admin', // In real app, this would come from auth
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          days: 7
         });
       }
     }

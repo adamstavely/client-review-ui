@@ -1,33 +1,23 @@
 <template>
   <v-card class="bg-white dark:bg-slate-800 rounded-lg shadow-lg" elevation="0">
     <v-card-title class="d-flex align-center pa-0">
-      <v-tabs v-model="activeTab" bg-color="transparent" class="w-100">
-        <v-tab value="comments" class="text-left">
-          <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-          Comments ({{ validComments.length }})
-        </v-tab>
-        <v-tab value="history" class="text-left">
-          <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          History
-        </v-tab>
-      </v-tabs>
+      <div class="d-flex align-center w-100" style="padding: 12px 16px;">
+        <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <span class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">Comments ({{ validComments.length }})</span>
+      </div>
     </v-card-title>
     
     <v-divider />
     
-    <!-- Comments Tab -->
-    <v-window v-model="activeTab">
-      <v-window-item value="comments">
-        <v-card-text v-if="readOnly" class="text-center py-4">
-          <p class="text-sm text-gray-500 dark:text-gray-400">This review is completed. Comments are view-only.</p>
-        </v-card-text>
-        
-        <!-- Comments List -->
-        <v-card-text v-if="validComments.length === 0" class="empty-state">
+    <!-- Comments Content -->
+    <v-card-text v-if="readOnly" class="text-center py-4">
+      <p class="text-sm text-gray-500 dark:text-gray-400">This review is completed. Comments are view-only.</p>
+    </v-card-text>
+    
+    <!-- Comments List -->
+    <v-card-text v-if="validComments.length === 0" class="empty-state">
           <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
@@ -65,42 +55,6 @@
                 
                 <!-- Action buttons -->
                 <div class="d-flex align-center ga-2" style="flex-shrink: 0;">
-                  <!-- Emoji picker button -->
-                  <v-menu v-if="!readOnly" v-model="emojiMenus[comment.id]" location="top">
-                    <template #activator="{ props: menuProps }">
-                      <v-tooltip text="Add reaction">
-                        <template #activator="{ props: tooltipProps }">
-                          <button
-                            type="button"
-                            v-bind="{ ...menuProps, ...tooltipProps }"
-                            class="reaction-add-btn text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
-                            :disabled="readOnly"
-                            :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
-                          >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </button>
-                        </template>
-                      </v-tooltip>
-                    </template>
-                    <v-card class="emoji-picker">
-                      <v-card-text class="pa-2">
-                        <div class="d-flex flex-wrap ga-1" style="width: 200px;">
-                          <button
-                            v-for="emoji in availableEmojis"
-                            :key="emoji"
-                            @click="addEmojiReaction(comment.id, emoji)"
-                            class="emoji-btn"
-                            type="button"
-                          >
-                            {{ emoji }}
-                          </button>
-                        </div>
-                      </v-card-text>
-                    </v-card>
-                  </v-menu>
-                  
                   <v-tooltip text="Reply">
                     <template #activator="{ props }">
                       <button
@@ -170,6 +124,42 @@
                     <span class="font-weight-medium">{{ reactionGroup.length }}</span>
                   </v-chip>
                 </template>
+                
+                <!-- Emoji picker button -->
+                <v-menu v-if="!readOnly" v-model="emojiMenus[comment.id]" location="top">
+                  <template #activator="{ props: menuProps }">
+                    <v-tooltip text="Add reaction">
+                      <template #activator="{ props: tooltipProps }">
+                        <button
+                          type="button"
+                          v-bind="{ ...menuProps, ...tooltipProps }"
+                          class="reaction-add-btn text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
+                          :disabled="readOnly"
+                          :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                      </template>
+                    </v-tooltip>
+                  </template>
+                  <v-card class="emoji-picker">
+                    <v-card-text class="pa-2">
+                      <div class="d-flex flex-wrap ga-1" style="width: 200px;">
+                        <button
+                          v-for="emoji in availableEmojis"
+                          :key="emoji"
+                          @click="addEmojiReaction(comment.id, emoji)"
+                          class="emoji-btn"
+                          type="button"
+                        >
+                          {{ emoji }}
+                        </button>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-menu>
               </div>
               
               <!-- Reply Form -->
@@ -214,52 +204,14 @@
                           <span class="font-weight-medium text-body-2 text-gray-900 dark:text-gray-100" style="white-space: nowrap;">{{ reply.author }}</span>
                           <span class="text-caption text-gray-500 dark:text-gray-400" style="white-space: nowrap;">{{ formatTimestamp(reply.timestamp) }}</span>
                         </div>
-                        
-                        <!-- Reply action buttons -->
-                        <div class="d-flex align-center ga-2" style="flex-shrink: 0;">
-                          <!-- Emoji picker for reply -->
-                          <v-menu v-if="!readOnly" v-model="emojiMenus[`reply-${reply.id}`]" location="top">
-                            <template #activator="{ props: menuProps }">
-                              <v-tooltip text="Add reaction">
-                                <template #activator="{ props: tooltipProps }">
-                                  <button
-                                    type="button"
-                                    v-bind="{ ...menuProps, ...tooltipProps }"
-                                    class="reaction-add-btn text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
-                                    :disabled="readOnly"
-                                    :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
-                                  >
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                  </button>
-                                </template>
-                              </v-tooltip>
-                            </template>
-                            <v-card class="emoji-picker">
-                              <v-card-text class="pa-2">
-                                <div class="d-flex flex-wrap ga-1" style="width: 200px;">
-                                  <button
-                                    v-for="emoji in availableEmojis"
-                                    :key="emoji"
-                                    @click="addEmojiReactionToReply(comment.id, reply.id, emoji)"
-                                    class="emoji-btn"
-                                    type="button"
-                                  >
-                                    {{ emoji }}
-                                  </button>
-                                </div>
-                              </v-card-text>
-                            </v-card>
-                          </v-menu>
-                        </div>
                       </div>
                       
                       <p class="text-body-2 mb-0 mt-1 text-gray-900 dark:text-gray-100">{{ reply.text }}</p>
                       
                       <!-- Reply emoji reactions -->
-                      <div v-if="reply.reactions && reply.reactions.length > 0" class="d-flex align-center flex-wrap ga-2 mt-1">
-                        <template v-for="(reactionGroup, emoji) in getReactionGroups(reply)" :key="emoji">
+                      <div class="mt-2 d-flex align-center flex-wrap ga-2">
+                        <!-- Display existing reactions -->
+                        <template v-if="reply.reactions && reply.reactions.length > 0" v-for="(reactionGroup, emoji) in getReactionGroups(reply)" :key="emoji">
                           <v-chip
                             :color="hasUserReacted(reply, emoji) ? 'primary' : 'default'"
                             size="small"
@@ -272,6 +224,42 @@
                             <span class="font-weight-medium">{{ reactionGroup.length }}</span>
                           </v-chip>
                         </template>
+                        
+                        <!-- Emoji picker button for reply -->
+                        <v-menu v-if="!readOnly" v-model="emojiMenus[`reply-${reply.id}`]" location="top">
+                          <template #activator="{ props: menuProps }">
+                            <v-tooltip text="Add reaction">
+                              <template #activator="{ props: tooltipProps }">
+                                <button
+                                  type="button"
+                                  v-bind="{ ...menuProps, ...tooltipProps }"
+                                  class="reaction-add-btn text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
+                                  :disabled="readOnly"
+                                  :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
+                                >
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                </button>
+                              </template>
+                            </v-tooltip>
+                          </template>
+                          <v-card class="emoji-picker">
+                            <v-card-text class="pa-2">
+                              <div class="d-flex flex-wrap ga-1" style="width: 200px;">
+                                <button
+                                  v-for="emoji in availableEmojis"
+                                  :key="emoji"
+                                  @click="addEmojiReactionToReply(comment.id, reply.id, emoji)"
+                                  class="emoji-btn"
+                                  type="button"
+                                >
+                                  {{ emoji }}
+                                </button>
+                              </div>
+                            </v-card-text>
+                          </v-card>
+                        </v-menu>
                       </div>
                     </div>
                   </div>
@@ -306,52 +294,11 @@
         </div>
       </v-form>
     </v-card-text>
-      </v-window-item>
-      
-      <!-- History Tab -->
-      <v-window-item value="history">
-        <v-card-text>
-          <div v-if="!sortedHistory || sortedHistory.length === 0" class="empty-state">
-            <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p class="text-gray-600 dark:text-gray-400">No history available</p>
-          </div>
-          
-          <v-timeline v-else density="compact" class="pa-0">
-            <v-timeline-item
-              v-for="(entry, index) in sortedHistory"
-              :key="`history-${index}-${entry.timestamp}`"
-              :dot-color="getHistoryColor(entry.action)"
-              size="small"
-            >
-              <div class="d-flex align-start">
-                <div class="flex-grow-1">
-                  <div class="mb-1">
-                    <span class="font-weight-medium text-body-2">{{ getHistoryLabel(entry.stage, entry.action) }}</span>
-                  </div>
-                  <div class="text-caption text-gray-600 dark:text-gray-300 mb-1">
-                    <span class="font-weight-medium">{{ entry.user }}</span>
-                    <span v-if="entry.versionLabel" class="text-gray-500 dark:text-gray-400 ml-2">({{ entry.versionLabel }})</span>
-                  </div>
-                  <div class="text-caption text-gray-500 dark:text-gray-400">
-                    {{ formatTimestamp(entry.timestamp) }}
-                  </div>
-                  <div v-if="entry.reason" class="text-caption text-gray-600 dark:text-gray-300 mt-1 italic">
-                    Reason: {{ entry.reason }}
-                  </div>
-                </div>
-              </div>
-            </v-timeline-item>
-          </v-timeline>
-        </v-card-text>
-      </v-window-item>
-    </v-window>
   </v-card>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
   comments: {
@@ -362,14 +309,8 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false
-  },
-  workflowHistory: {
-    type: Array,
-    default: () => []
   }
 });
-
-const activeTab = ref('comments');
 
 const emit = defineEmits(['comment-added', 'comment-updated', 'reply-added', 'emoji-reaction-toggled', 'emoji-reaction-toggled-reply']);
 
@@ -395,78 +336,6 @@ const formatTimestamp = (timestamp) => {
   } catch (error) {
     return 'Invalid date';
   }
-};
-
-// History helper functions
-const sortedHistory = computed(() => {
-  if (!props.workflowHistory || !Array.isArray(props.workflowHistory) || props.workflowHistory.length === 0) {
-    return [];
-  }
-  // Sort by timestamp, newest first
-  const sorted = [...props.workflowHistory].sort((a, b) => {
-    const dateA = new Date(a.timestamp);
-    const dateB = new Date(b.timestamp);
-    return dateB - dateA; // Newest first
-  });
-  return sorted;
-});
-
-// Watch for workflowHistory changes
-watch(() => props.workflowHistory, (newVal) => {
-  console.log('WorkflowHistory prop changed:', newVal);
-}, { immediate: true, deep: true });
-
-const getHistoryLabel = (stage, action) => {
-  const stageLabels = {
-    'draft': 'Draft',
-    'client_review': 'Client Review',
-    'client_approved': 'Client Approved',
-    'art_director_review': 'Art Director Review',
-    'art_director_approved': 'Art Director Approved',
-    'ad_changes_requested': 'AD Changes Requested',
-    'creative_director_review': 'Creative Director Review',
-    'cd_changes_requested': 'CD Changes Requested',
-    'approved': 'Approved & Released'
-  };
-  
-  const actionLabels = {
-    'uploaded': 'Uploaded',
-    'created_from_url': 'Created from URL',
-    'moved_to_review': 'Moved to Review',
-    'approved': 'Approved',
-    'rejected': 'Rejected',
-    'resubmitted': 'Resubmitted',
-    'version_uploaded': 'Version Uploaded',
-    'extended': 'Expiration Extended',
-    'password_set': 'Password Set',
-    'password_removed': 'Password Removed'
-  };
-  
-  const stageLabel = stageLabels[stage] || stage;
-  const actionLabel = actionLabels[action] || action;
-  
-  // For version uploads, include version label if available
-  if (action === 'version_uploaded') {
-    return actionLabel;
-  }
-  
-  return `${stageLabel} - ${actionLabel}`;
-};
-
-const getHistoryColor = (action) => {
-  const colors = {
-    'uploaded': 'blue',
-    'created_from_url': 'blue',
-    'moved_to_review': 'indigo',
-    'approved': 'green',
-    'rejected': 'red',
-    'resubmitted': 'orange',
-    'version_uploaded': 'purple',
-    'extended': 'teal',
-    'password_set': 'amber',
-    'password_removed': 'orange'
-  };
-  return colors[action] || 'grey';
 };
 
 // Get user initials from name
@@ -595,7 +464,17 @@ const submitReply = (commentId) => {
 
 const toggleResolved = (commentId) => {
   if (props.readOnly) return;
-  emit('comment-updated', commentId, 'toggle-resolved');
+  
+  // Find the comment
+  const comment = props.comments.find(c => c.id === commentId);
+  if (!comment) return;
+  
+  // Toggle resolved status and emit update
+  const updates = {
+    resolved: !comment.resolved
+  };
+  
+  emit('comment-updated', commentId, updates);
 };
 </script>
 
@@ -905,13 +784,6 @@ html.dark :deep(.v-textarea .v-field--focused .v-field-label--active) {
   font-size: 12px;
   height: 24px;
   font-weight: 500;
-}
-
-/* Improve card header */
-:deep(.v-card-title) {
-  padding: 20px 24px 12px 24px !important;
-  font-size: 18px;
-  font-weight: 600;
 }
 
 :deep(.v-card-text) {
