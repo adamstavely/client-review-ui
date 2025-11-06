@@ -1,6 +1,56 @@
 // Mock data and API simulation for testing without backend
 
-let mockReviews = [
+// Save reviews to localStorage
+const saveReviewsToStorage = (reviews) => {
+  try {
+    localStorage.setItem('mockReviews', JSON.stringify(reviews));
+  } catch (error) {
+    console.error('Failed to save reviews to storage:', error);
+  }
+};
+
+// Load persisted reviews from localStorage and merge with defaults
+const initializeMockReviews = (defaultReviews) => {
+  try {
+    const persisted = localStorage.getItem('mockReviews');
+    if (persisted) {
+      const parsed = JSON.parse(persisted);
+      // Merge persisted data with defaults, keeping defaults for new reviews
+      const merged = defaultReviews.map(defaultReview => {
+        const persistedReview = parsed.find(r => r.id === defaultReview.id);
+        if (persistedReview) {
+          // Merge: keep defaults but override with persisted workflow state and history
+          return {
+            ...defaultReview,
+            workflowState: persistedReview.workflowState,
+            workflowHistory: persistedReview.workflowHistory || defaultReview.workflowHistory,
+            completed: persistedReview.completed !== undefined ? persistedReview.completed : defaultReview.completed,
+            password: persistedReview.password !== undefined ? persistedReview.password : defaultReview.password,
+            expiresAt: persistedReview.expiresAt || defaultReview.expiresAt,
+            extended: persistedReview.extended !== undefined ? persistedReview.extended : defaultReview.extended,
+            sharingMode: persistedReview.sharingMode || defaultReview.sharingMode,
+            approvedEmails: persistedReview.approvedEmails || defaultReview.approvedEmails || [],
+            versions: persistedReview.versions || defaultReview.versions,
+            comments: persistedReview.comments || defaultReview.comments
+          };
+        }
+        return defaultReview;
+      });
+      // Add any persisted reviews that don't exist in defaults (newly created reviews)
+      parsed.forEach(persistedReview => {
+        if (!merged.find(r => r.id === persistedReview.id)) {
+          merged.push(persistedReview);
+        }
+      });
+      return merged;
+    }
+  } catch (error) {
+    console.error('Failed to load persisted reviews:', error);
+  }
+  return defaultReviews;
+};
+
+const defaultMockReviews = [
   {
     id: 'review-1',
     filename: 'Website Design v2.pdf',
@@ -185,6 +235,9 @@ let mockReviews = [
   }
 ];
 
+// Initialize mockReviews with persisted data if available
+let mockReviews = initializeMockReviews(defaultMockReviews);
+
 let mockAdminLinks = [
   {
     id: 'admin-1',
@@ -269,6 +322,9 @@ export const mockAPI = {
       workflowState: newReview.workflowState
     });
     
+    // Save to localStorage
+    saveReviewsToStorage(mockReviews);
+    
     return { uploadUrl: 'mock://upload', reviewId: newReview.id };
   },
 
@@ -329,6 +385,9 @@ export const mockAPI = {
       workflowState: newReview.workflowState
     });
     
+    // Save to localStorage
+    saveReviewsToStorage(mockReviews);
+    
     return { reviewId: newReview.id };
   },
 
@@ -347,7 +406,8 @@ export const mockAPI = {
       throw error;
     }
     
-    return review;
+    // Return a deep copy to ensure reactivity works properly
+    return JSON.parse(JSON.stringify(review));
   },
 
   // Get version URL
@@ -636,6 +696,9 @@ export const mockAPI = {
       if (adminLink) {
         adminLink.workflowState = 'client_review';
       }
+      
+      // Save to localStorage
+      saveReviewsToStorage(mockReviews);
     }
   },
 
@@ -643,7 +706,9 @@ export const mockAPI = {
     await new Promise(resolve => setTimeout(resolve, 300));
     
     const review = mockReviews.find(r => r.id === reviewId);
-    if (!review) return;
+    if (!review) {
+      throw new Error('Review not found');
+    }
     
     // Define the workflow progression
     const workflowFlow = {
@@ -656,16 +721,24 @@ export const mockAPI = {
     if (review.workflowState === stage) {
       const nextStage = workflowFlow[stage];
       if (nextStage) {
-        review.workflowState = nextStage;
+        // Add approval history entry first
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
         review.workflowHistory.push({
           stage: nextStage,
           action: 'approved',
-          user: user || 'Current User',
+          user: user?.name || user || 'Current User',
           timestamp: new Date().toISOString()
         });
         
+        // Update workflow state
+        review.workflowState = nextStage;
+        
         // Auto-advance only for art_director_approved -> creative_director_review
         if (nextStage === 'art_director_approved') {
+          // Add a small delay to ensure state is updated
+          await new Promise(resolve => setTimeout(resolve, 50));
           review.workflowState = 'creative_director_review';
           review.workflowHistory.push({
             stage: 'creative_director_review',
@@ -675,13 +748,20 @@ export const mockAPI = {
           });
         }
         
-        // Update admin link
+        // Update admin link if it exists
         const adminLink = mockAdminLinks.find(l => l.id === `admin-${reviewId}`);
         if (adminLink) {
           adminLink.workflowState = review.workflowState;
         }
+        
+        // Save to localStorage
+        saveReviewsToStorage(mockReviews);
+        
+        return JSON.parse(JSON.stringify(review)); // Return updated review
       }
     }
+    
+    throw new Error('Invalid workflow stage for approval');
   },
 
   rejectWorkflowStage: async (reviewId, stage, user, reason) => {
@@ -728,6 +808,11 @@ export const mockAPI = {
     if (adminLink) {
       adminLink.workflowState = review.workflowState;
     }
+    
+    // Save to localStorage
+    saveReviewsToStorage(mockReviews);
+    
+    return JSON.parse(JSON.stringify(review));
   },
   
   // Move from changes requested back to review
@@ -750,6 +835,9 @@ export const mockAPI = {
       if (adminLink) {
         adminLink.workflowState = 'art_director_review';
       }
+      
+      // Save to localStorage
+      saveReviewsToStorage(mockReviews);
     }
   },
 
@@ -782,6 +870,11 @@ export const mockAPI = {
     if (adminLink) {
       adminLink.workflowState = review.workflowState;
     }
+    
+    // Save to localStorage
+    saveReviewsToStorage(mockReviews);
+    
+    return JSON.parse(JSON.stringify(review));
   },
 
   // Version upload functions
@@ -820,7 +913,48 @@ export const mockAPI = {
       timestamp: new Date().toISOString()
     });
     
+    // Save to localStorage
+    saveReviewsToStorage(mockReviews);
+    
     return newVersion;
+  },
+
+  // Mark review as completed and deactivate the link
+  markReviewCompleted: async (reviewId, user) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const review = mockReviews.find(r => r.id === reviewId);
+    if (!review) {
+      throw new Error('Review not found');
+    }
+    
+    // Mark as completed
+    review.completed = true;
+    
+    // Deactivate the review link by setting expiresAt to current time (making it expired)
+    review.expiresAt = new Date().toISOString();
+    
+    // Add history entry
+    if (!review.workflowHistory) {
+      review.workflowHistory = [];
+    }
+    review.workflowHistory.push({
+      stage: review.workflowState || 'approved',
+      action: 'completed',
+      user: user?.name || user || 'Designer',
+      timestamp: new Date().toISOString()
+    });
+    
+    // Update corresponding admin link to expire it
+    const adminLink = mockAdminLinks.find(l => l.id === `admin-${reviewId}`);
+    if (adminLink) {
+      adminLink.expiresAt = new Date().toISOString(); // Set to current time to expire it
+    }
+    
+    // Save to localStorage
+    saveReviewsToStorage(mockReviews);
+    
+    return JSON.parse(JSON.stringify(review));
   }
 };
 

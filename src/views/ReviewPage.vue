@@ -12,8 +12,8 @@
               </svg>
             </div>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Review Completed</h2>
-          <p class="text-gray-600 dark:text-gray-300 mb-4">This review has been marked as completed by the designer.</p>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Review Complete</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">This review has been marked as complete by the designer.</p>
           <p class="text-sm text-gray-500 dark:text-gray-400">Comments and review information are preserved, but the review link is no longer active.</p>
         </div>
       </div>
@@ -131,35 +131,18 @@
               </svg>
               <h3 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">DESIGNER TOOLS</h3>
             </div>
-            <div class="grid gap-2" :class="metadata.password ? 'grid-cols-5' : 'grid-cols-4'">
-              <!-- Mark as Completed -->
-              <v-tooltip text="Mark as Completed">
-                <template #activator="{ props }">
-                  <button
-                    @click="handleMarkCompleted"
-                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
-                    v-bind="props"
-                  >
-                    <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Mark Completed</span>
-                  </button>
-                </template>
-              </v-tooltip>
-              
+            <div class="grid gap-2" :class="metadata.password ? 'grid-cols-4' : 'grid-cols-3'">
               <!-- Change Password -->
               <v-tooltip v-if="metadata.password" text="Change Password">
                 <template #activator="{ props }">
                   <button
                     @click="handleChangePassword"
-                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
+                    class="flex items-center justify-center p-2 rounded-lg hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                     </svg>
-                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Change Password</span>
                   </button>
                 </template>
               </v-tooltip>
@@ -169,13 +152,12 @@
                 <template #activator="{ props }">
                   <button
                     @click="handleExtendExpiration"
-                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
+                    class="flex items-center justify-center p-2 rounded-lg hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Extend Expiration</span>
                   </button>
                 </template>
               </v-tooltip>
@@ -185,13 +167,12 @@
                 <template #activator="{ props }">
                   <button
                     @click="handleUploadNewVersion"
-                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
+                    class="flex items-center justify-center p-2 rounded-lg hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Upload Version</span>
                   </button>
                 </template>
               </v-tooltip>
@@ -201,13 +182,12 @@
                 <template #activator="{ props }">
                   <button
                     @click="handleSharingSettings"
-                    class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
+                    class="flex items-center justify-center p-2 rounded-lg hover:bg-white dark:hover:bg-slate-600 transition-colors bg-white dark:bg-slate-800"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                     </svg>
-                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Sharing</span>
                   </button>
                 </template>
               </v-tooltip>
@@ -220,11 +200,13 @@
           :current-user-role="currentUserRole"
           :designer="metadata.designer"
           :workflow-history="metadata.workflowHistory || []"
+          :review-completed="reviewCompleted"
           @workflow-approve="handleApprove"
           @workflow-reject="handleReject"
           @workflow-move-to-client-review="handleMoveToClientReview"
           @workflow-move-to-art-director-review="handleMoveToArtDirectorReview"
           @workflow-resubmit="handleResubmitForReview"
+          @workflow-completed="handleMarkCompleted"
         />
         
         <CommentsSidebar
@@ -361,8 +343,8 @@
       v-model="showConfirmModal"
       :title="confirmModalTitle"
       :message="confirmModalMessage"
-      confirm-text="Mark as Completed"
-      confirm-color="success"
+      confirm-text="Mark as Complete"
+      confirm-color="primary"
       @confirm="confirmMarkCompleted"
     />
 
@@ -824,17 +806,19 @@ const handleApprove = async () => {
     const state = metadata.value.workflowState;
     
     if (useMockMode) {
-      await mockAPI.approveWorkflowStage(reviewId, state, currentUser.value);
+      const updatedReview = await mockAPI.approveWorkflowStage(reviewId, state, currentUser.value);
+      // Update metadata with the returned review data
+      if (updatedReview) {
+        metadata.value = { ...updatedReview };
+      } else {
+        // Fallback: reload review data
+        const res = await mockAPI.getReview(reviewId);
+        metadata.value = { ...res };
+      }
     } else {
       await axios.post(`/review/${reviewId}/workflow/approve`, { stage: state });
-    }
-    
-    // Reload review data
-    const useMock = await isMockMode();
-    if (useMock) {
-      const res = await mockAPI.getReview(reviewId);
-      metadata.value = { ...res }; // Create new object reference for reactivity
-    } else {
+      
+      // Reload review data
       const res = await axios.get(`/review/${reviewId}`);
       metadata.value = { ...res.data };
     }
@@ -964,8 +948,8 @@ const handleResubmitForReview = async () => {
 
 // Designer tools handler functions
 const handleMarkCompleted = () => {
-  confirmModalTitle.value = 'Mark Review as Completed';
-  confirmModalMessage.value = `Are you sure you want to mark "${metadata.value.filename}" as completed? The review link will be disabled, but comments and information will be preserved.`;
+  confirmModalTitle.value = 'Mark Review as Complete';
+  confirmModalMessage.value = `Are you sure you want to mark "${metadata.value.filename}" as complete? The review link will be disabled, but comments and information will be preserved.`;
   showConfirmModal.value = true;
 };
 
@@ -974,16 +958,11 @@ const confirmMarkCompleted = async () => {
     const useMockMode = await isMockMode();
     
     if (useMockMode) {
-      // Update mock data - mark review as completed
-      const review = mockReviews.find(r => r.id === reviewId);
-      if (review) {
-        review.completed = true;
-        reviewCompleted.value = true;
-      }
+      // Use mockAPI to mark review as completed (this will also deactivate the link)
+      await mockAPI.markReviewCompleted(reviewId, currentUser.value);
     } else {
       // Use real API
       await axios.post(`/review/${reviewId}/complete`);
-      reviewCompleted.value = true;
     }
     
     // Reload review data
@@ -998,10 +977,10 @@ const confirmMarkCompleted = async () => {
       reviewCompleted.value = res.data.completed || false;
     }
     
-    showAlertMessage('Success', 'Review marked as completed. The link is now disabled.', 'success');
+    showAlertMessage('Success', 'Review marked as complete. The link is now disabled.', 'success');
   } catch (error) {
-    console.error('Failed to mark review as completed:', error);
-    showAlertMessage('Error', 'Failed to mark review as completed. Please try again.', 'error');
+    console.error('Failed to mark review as complete:', error);
+    showAlertMessage('Error', 'Failed to mark review as complete. Please try again.', 'error');
   }
 };
 

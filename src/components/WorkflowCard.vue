@@ -60,8 +60,19 @@
       
       <!-- Designer Actions -->
       <div v-else-if="isDesigner" class="mb-0">
+        <!-- Mark as Completed (only after approved) -->
+        <div v-if="workflowState === 'approved' && !reviewCompleted" class="d-flex justify-center">
+          <button
+            @click="handleMarkCompleted"
+            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors d-flex align-center ga-2"
+          >
+            <span class="material-symbols-outlined" style="font-size: 18px;">done_all</span>
+            Mark as Complete
+          </button>
+        </div>
+        
         <!-- Move to Client Review -->
-        <div v-if="workflowState === 'draft'">
+        <div v-else-if="workflowState === 'draft'">
           <button
             @click="handleMoveToClientReview"
             class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors d-flex align-center ga-2"
@@ -226,6 +237,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  reviewCompleted: {
+    type: Boolean,
+    default: false
+  },
   workflowHistory: {
     type: Array,
     default: () => []
@@ -237,7 +252,8 @@ const emit = defineEmits([
   'workflow-reject',
   'workflow-move-to-client-review',
   'workflow-move-to-art-director-review',
-  'workflow-resubmit'
+  'workflow-resubmit',
+  'workflow-completed'
 ]);
 
 const showHistoryModal = ref(false);
@@ -315,6 +331,10 @@ const handleMoveToArtDirectorReview = () => {
 
 const handleResubmitForReview = () => {
   emit('workflow-resubmit');
+};
+
+const handleMarkCompleted = () => {
+  emit('workflow-completed');
 };
 
 // History helper functions
