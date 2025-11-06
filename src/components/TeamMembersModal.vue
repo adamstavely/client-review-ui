@@ -2,8 +2,8 @@
   <v-dialog v-model="dialog" max-width="700" persistent>
     <v-card>
       <v-card-title class="d-flex align-center justify-space-between">
-        <span>Manage Team Members</span>
-        <button @click="close" class="text-gray-400 hover:text-gray-600">
+        <span class="text-gray-900 dark:text-gray-100">Manage Team Members</span>
+        <button @click="close" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -15,7 +15,7 @@
       <v-card-text class="pt-6">
         <!-- Add Member Form -->
         <div class="mb-6">
-          <h3 class="text-sm font-medium text-gray-700 mb-3">Add Member</h3>
+          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Add Member</h3>
           <v-form @submit.prevent="addMember">
             <div class="d-flex flex-column ga-3">
               <div class="d-flex ga-2">
@@ -55,7 +55,7 @@
         
         <!-- Members List -->
         <div>
-          <h3 class="text-sm font-medium text-gray-700 mb-3">
+          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Members ({{ team?.members?.length || 0 }})
           </h3>
           <v-list v-if="team?.members?.length > 0">
@@ -72,7 +72,7 @@
               
               <v-list-item-title>
                 <div class="d-flex align-center ga-2 flex-wrap">
-                  <span>{{ member.name || member.email }}</span>
+                  <span class="text-gray-900 dark:text-gray-100">{{ member.name || member.email }}</span>
                   <v-chip
                     :color="getRoleColor(member.role)"
                     size="small"
@@ -82,7 +82,7 @@
                   </v-chip>
                 </div>
               </v-list-item-title>
-              <v-list-item-subtitle>
+              <v-list-item-subtitle class="text-gray-600 dark:text-gray-300">
                 {{ member.email }}
               </v-list-item-subtitle>
               
@@ -108,7 +108,7 @@
               </template>
             </v-list-item>
           </v-list>
-          <div v-else class="text-center py-8 text-gray-500">
+          <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
             No members yet. Add members using the form above.
           </div>
         </div>

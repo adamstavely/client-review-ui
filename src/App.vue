@@ -1,19 +1,20 @@
 <template>
-  <div :class="isFullScreenPreview ? '' : 'min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50'">
+  <div :class="isFullScreenPreview ? '' : 'min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900'">
     <!-- Header -->
-    <header v-if="!isFullScreenPreview" class="bg-white shadow-sm border-b border-gray-200">
+    <header v-if="!isFullScreenPreview" class="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-slate-700">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-center gap-3 cursor-pointer" @click="$router.push('/')">
+            <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h1 class="text-3xl font-bold text-gray-900">Design Review</h1>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Design Review</h1>
           </div>
           <div class="flex items-center gap-4">
+            <DarkModeToggle />
             <button
               @click="$router.push('/kanban')"
-              class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               title="Kanban Board"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,26 +22,8 @@
               </svg>
             </button>
             <button
-              @click="$router.push('/teams')"
-              class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-              title="Teams"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </button>
-            <button
-              @click="$router.push('/')"
-              class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-              title="Upload"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-            </button>
-            <button
               @click="$router.push('/admin')"
-              class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               title="Admin"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,10 +36,10 @@
             <div class="relative" ref="userMenuRef">
               <button
                 @click="showUserMenu = !showUserMenu"
-                class="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+                class="flex items-center gap-2 p-1 hover:opacity-80 transition-opacity"
                 title="User Menu"
               >
-                <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
+                <div class="w-10 h-10 rounded-full bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white font-semibold text-sm">
                   {{ userInitials }}
                 </div>
               </button>
@@ -64,20 +47,20 @@
               <!-- User Menu Dropdown -->
               <div
                 v-if="showUserMenu"
-                class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 py-2 z-50"
               >
-                <div class="px-4 py-3 border-b border-gray-200">
+                <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700">
                   <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
+                    <div class="w-12 h-12 rounded-full bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white font-semibold">
                       {{ userInitials }}
                     </div>
                     <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-gray-900 truncate">{{ currentUser.name }}</p>
-                      <p class="text-xs text-gray-500 truncate">{{ currentUser.email }}</p>
+                      <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ currentUser.name }}</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ currentUser.email }}</p>
                     </div>
                   </div>
                 </div>
-                <div class="px-4 py-2 border-b border-gray-200">
+                <div class="px-4 py-2 border-b border-gray-200 dark:border-slate-700">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" :class="getRoleBadgeClass(currentUser.role)">
                     {{ getRoleLabel(currentUser.role) }}
                   </span>
@@ -85,13 +68,13 @@
                 <div class="py-1">
                   <button
                     @click="showUserMenu = false"
-                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                   >
                     Settings
                   </button>
                   <button
                     @click="showUserMenu = false"
-                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                   >
                     Sign Out
                   </button>
@@ -121,6 +104,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getCurrentUser } from '@/mockData.js';
+import DarkModeToggle from '@/components/DarkModeToggle.vue';
 
 const route = useRoute();
 const isFullScreenPreview = computed(() => route.path.includes('/preview'));
@@ -166,11 +150,11 @@ const getRoleLabel = (role) => {
 
 const getRoleBadgeClass = (role) => {
   if (role === 'creative_director') {
-    return 'bg-purple-100 text-purple-800';
+    return 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200';
   } else if (role === 'art_director') {
-    return 'bg-blue-100 text-blue-800';
+    return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200';
   }
-  return 'bg-indigo-100 text-indigo-800';
+  return 'bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200';
 };
 
 // Click outside directive

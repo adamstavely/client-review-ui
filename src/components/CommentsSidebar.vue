@@ -1,15 +1,15 @@
 <template>
-  <v-card class="bg-white rounded-lg shadow-lg">
+  <v-card class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
     <v-card-title class="d-flex align-center pa-0">
       <v-tabs v-model="activeTab" bg-color="transparent" class="w-100">
         <v-tab value="comments" class="text-left">
-          <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
           Comments ({{ validComments.length }})
         </v-tab>
         <v-tab value="history" class="text-left">
-          <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           History
@@ -23,15 +23,15 @@
     <v-window v-model="activeTab">
       <v-window-item value="comments">
         <v-card-text v-if="readOnly" class="text-center py-4">
-          <p class="text-sm text-gray-500">This review is completed. Comments are view-only.</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">This review is completed. Comments are view-only.</p>
         </v-card-text>
         
         <!-- Comments List -->
         <v-card-text v-if="validComments.length === 0" class="empty-state">
-          <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-          <p>No comments yet. Be the first to add feedback!</p>
+          <p class="text-gray-600 dark:text-gray-400">No comments yet. Be the first to add feedback!</p>
         </v-card-text>
         
         <v-list v-else class="pt-1 pb-2 px-2">
@@ -48,7 +48,7 @@
               <!-- Header with name, chips, and actions -->
               <div class="d-flex align-center mb-1" style="width: 100%;">
                 <div class="d-flex align-center flex-wrap" style="flex: 1 1 0; min-width: 0; margin-right: 12px;">
-                  <span class="font-weight-medium text-body-1 mr-2" style="white-space: nowrap;">{{ comment.author }}</span>
+                  <span class="font-weight-medium text-body-1 mr-2 text-gray-900 dark:text-gray-100" style="white-space: nowrap;">{{ comment.author }}</span>
                   <v-chip
                     v-if="comment.resolved"
                     color="success"
@@ -73,7 +73,7 @@
                           <button
                             type="button"
                             v-bind="{ ...menuProps, ...tooltipProps }"
-                            class="reaction-add-btn text-gray-500 hover:text-indigo-600 transition-colors p-1"
+                            class="reaction-add-btn text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
                             :disabled="readOnly"
                             :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
                           >
@@ -107,7 +107,7 @@
                         type="button"
                         v-bind="props"
                         @click="toggleReply(comment.id)"
-                        class="text-gray-500 hover:text-indigo-600 transition-colors p-1"
+                        class="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
                         :disabled="readOnly"
                         :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
                       >
@@ -129,8 +129,8 @@
                         :class="readOnly 
                           ? 'opacity-50 cursor-not-allowed' 
                           : comment.resolved 
-                            ? 'text-green-600 hover:text-green-700' 
-                            : 'text-gray-500 hover:text-indigo-600'"
+                            ? 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300' 
+                            : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400'"
                       >
                         <svg v-if="comment.resolved" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -145,13 +145,13 @@
               </div>
               
               <!-- Timestamp -->
-              <div class="text-caption text-gray-500 mb-2" style="white-space: nowrap;">
+              <div class="text-caption text-gray-500 dark:text-gray-400 mb-2" style="white-space: nowrap;">
                 {{ formatTimestamp(comment.timestamp) }}
               </div>
               
               <!-- Comment text -->
               <div class="comment-content">
-                <p class="text-body-1 mb-0">{{ comment.text }}</p>
+                <p class="text-body-1 mb-0 text-gray-900 dark:text-gray-100">{{ comment.text }}</p>
               </div>
           
               <!-- Emoji Reactions -->
@@ -206,13 +206,13 @@
                 <template v-for="(reply, replyIndex) in comment.replies" :key="reply?.id || `reply-${comment.id}-${replyIndex}`">
                   <div v-if="reply" class="reply-item d-flex align-start">
                     <v-avatar size="24" color="grey-lighten-2" class="mr-2" style="margin-top: 2px;">
-                      <span class="text-gray-700 font-weight-medium text-xs">{{ getInitials(reply.author) }}</span>
+                      <span class="text-gray-700 dark:text-gray-300 font-weight-medium text-xs">{{ getInitials(reply.author) }}</span>
                     </v-avatar>
                     <div class="flex-grow-1 w-100">
                       <div class="d-flex align-start justify-space-between mb-1">
                         <div class="d-flex flex-column">
-                          <span class="font-weight-medium text-body-2" style="white-space: nowrap;">{{ reply.author }}</span>
-                          <span class="text-caption text-gray-500" style="white-space: nowrap;">{{ formatTimestamp(reply.timestamp) }}</span>
+                          <span class="font-weight-medium text-body-2 text-gray-900 dark:text-gray-100" style="white-space: nowrap;">{{ reply.author }}</span>
+                          <span class="text-caption text-gray-500 dark:text-gray-400" style="white-space: nowrap;">{{ formatTimestamp(reply.timestamp) }}</span>
                         </div>
                         
                         <!-- Reply action buttons -->
@@ -225,7 +225,7 @@
                                   <button
                                     type="button"
                                     v-bind="{ ...menuProps, ...tooltipProps }"
-                                    class="reaction-add-btn text-gray-500 hover:text-indigo-600 transition-colors p-1"
+                                    class="reaction-add-btn text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-1"
                                     :disabled="readOnly"
                                     :class="readOnly ? 'opacity-50 cursor-not-allowed' : ''"
                                   >
@@ -255,7 +255,7 @@
                         </div>
                       </div>
                       
-                      <p class="text-body-2 mb-0 mt-1">{{ reply.text }}</p>
+                      <p class="text-body-2 mb-0 mt-1 text-gray-900 dark:text-gray-100">{{ reply.text }}</p>
                       
                       <!-- Reply emoji reactions -->
                       <div v-if="reply.reactions && reply.reactions.length > 0" class="d-flex align-center flex-wrap ga-2 mt-1">
@@ -294,14 +294,11 @@
           rows="3"
           variant="outlined"
           class="mb-3"
-          :rules="[v => !!v || 'Comment is required']"
-          required
         />
         <div class="d-flex justify-end">
           <v-btn 
             type="submit" 
             color="primary" 
-            :disabled="!newComment.trim()"
             :loading="submitting"
           >
             Add Comment
@@ -315,10 +312,10 @@
       <v-window-item value="history">
         <v-card-text>
           <div v-if="!sortedHistory || sortedHistory.length === 0" class="empty-state">
-            <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p>No history available</p>
+            <p class="text-gray-600 dark:text-gray-400">No history available</p>
           </div>
           
           <v-timeline v-else density="compact" class="pa-0">
@@ -333,14 +330,14 @@
                   <div class="mb-1">
                     <span class="font-weight-medium text-body-2">{{ getHistoryLabel(entry.stage, entry.action) }}</span>
                   </div>
-                  <div class="text-caption text-gray-600 mb-1">
+                  <div class="text-caption text-gray-600 dark:text-gray-300 mb-1">
                     <span class="font-weight-medium">{{ entry.user }}</span>
-                    <span v-if="entry.versionLabel" class="text-gray-500 ml-2">({{ entry.versionLabel }})</span>
+                    <span v-if="entry.versionLabel" class="text-gray-500 dark:text-gray-400 ml-2">({{ entry.versionLabel }})</span>
                   </div>
-                  <div class="text-caption text-gray-500">
+                  <div class="text-caption text-gray-500 dark:text-gray-400">
                     {{ formatTimestamp(entry.timestamp) }}
                   </div>
-                  <div v-if="entry.reason" class="text-caption text-gray-600 mt-1 italic">
+                  <div v-if="entry.reason" class="text-caption text-gray-600 dark:text-gray-300 mt-1 italic">
                     Reason: {{ entry.reason }}
                   </div>
                 </div>
@@ -633,6 +630,10 @@ const toggleResolved = (commentId) => {
   background-color: rgba(0, 0, 0, 0.02);
 }
 
+.dark .comment-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 .comment-item:first-child {
   margin-top: 0;
 }
@@ -647,6 +648,10 @@ const toggleResolved = (commentId) => {
   margin-bottom: 8px;
   background-color: rgba(0, 0, 0, 0.01);
   transition: background-color 0.2s;
+}
+
+.dark .reply-item {
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .reply-item > .flex-grow-1 {
@@ -666,6 +671,10 @@ const toggleResolved = (commentId) => {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
+.dark .reply-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 .reply-item:last-child {
   margin-bottom: 0;
 }
@@ -674,7 +683,6 @@ const toggleResolved = (commentId) => {
   width: 100%;
   margin-top: 8px;
   line-height: 1.6;
-  color: #374151;
 }
 
 .comment-content p {
@@ -688,9 +696,17 @@ const toggleResolved = (commentId) => {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.dark .reaction-chip {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .reaction-chip:hover:not(:disabled) {
   transform: scale(1.05);
   border-color: rgba(0, 0, 0, 0.2);
+}
+
+.dark .reaction-chip:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .reaction-chip:disabled {
@@ -709,9 +725,18 @@ const toggleResolved = (commentId) => {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.dark .reaction-add-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .emoji-picker {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
+}
+
+.dark .emoji-picker {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  background-color: #1e293b !important; /* slate-800 */
 }
 
 .emoji-btn {
@@ -731,6 +756,10 @@ const toggleResolved = (commentId) => {
 .emoji-btn:hover {
   background-color: rgba(99, 102, 241, 0.1);
   transform: scale(1.2);
+}
+
+.dark .emoji-btn:hover {
+  background-color: rgba(129, 140, 248, 0.2);
 }
 
 /* Improve spacing and visual hierarchy */
@@ -778,6 +807,10 @@ const toggleResolved = (commentId) => {
   border-left: 2px solid rgba(99, 102, 241, 0.2);
 }
 
+.dark .reply-section {
+  border-left-color: rgba(129, 140, 248, 0.3);
+}
+
 .reply-header {
   font-size: 12px;
   font-weight: 600;
@@ -787,9 +820,80 @@ const toggleResolved = (commentId) => {
   letter-spacing: 0.5px;
 }
 
+.dark .reply-header {
+  color: #94a3b8; /* slate-400 */
+}
+
 /* Improve form styling */
 :deep(.v-textarea) {
   margin-bottom: 12px;
+}
+
+/* Dark mode textarea styling - lighter blue background */
+.dark :deep(.v-textarea .v-field__input) {
+  background-color: #334155 !important; /* slate-700 - lighter blue */
+}
+
+.dark :deep(.v-textarea .v-field) {
+  background-color: #334155 !important; /* slate-700 - lighter blue */
+}
+
+/* Lighter blue outline for textarea */
+html.dark :deep(.v-textarea .v-field__outline) {
+  color: #c7d2fe !important; /* indigo-200 - even lighter blue */
+  border-color: #c7d2fe !important;
+}
+
+html.dark :deep(.v-textarea .v-field__outline__start),
+html.dark :deep(.v-textarea .v-field__outline__notch),
+html.dark :deep(.v-textarea .v-field__outline__end) {
+  border-color: #c7d2fe !important; /* indigo-200 - even lighter blue */
+  color: #c7d2fe !important;
+}
+
+html.dark :deep(.v-textarea .v-field--focused .v-field__outline),
+html.dark :deep(.v-textarea .v-field--focused .v-field__outline__start),
+html.dark :deep(.v-textarea .v-field--focused .v-field__outline__notch),
+html.dark :deep(.v-textarea .v-field--focused .v-field__outline__end) {
+  border-color: #c7d2fe !important; /* indigo-200 - even lighter blue */
+  color: #c7d2fe !important;
+}
+
+/* Also target the field element directly */
+html.dark :deep(.v-textarea .v-field) {
+  border-color: #c7d2fe !important;
+}
+
+html.dark :deep(.v-textarea .v-field--focused) {
+  border-color: #c7d2fe !important;
+}
+
+.dark :deep(.v-textarea .v-field__input) {
+  color: #f1f5f9 !important; /* slate-100 - light text */
+}
+
+/* Lighter blue label color in all states */
+.dark :deep(.v-textarea label),
+.dark :deep(.v-textarea .v-field-label),
+.dark :deep(.v-textarea .v-field-label--floating),
+.dark :deep(.v-textarea .v-field-label--active),
+.dark :deep(.v-textarea .v-field-label--floating-active) {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+html.dark :deep(.v-textarea label),
+html.dark :deep(.v-textarea .v-field-label),
+html.dark :deep(.v-textarea .v-field-label--floating),
+html.dark :deep(.v-textarea .v-field-label--active),
+html.dark :deep(.v-textarea .v-field-label--floating-active) {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+html.dark :deep(.v-textarea .v-field--focused .v-field-label),
+html.dark :deep(.v-textarea .v-field--focused label),
+html.dark :deep(.v-textarea .v-field--focused .v-field-label--floating),
+html.dark :deep(.v-textarea .v-field--focused .v-field-label--active) {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
 }
 
 :deep(.v-select) {

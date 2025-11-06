@@ -1,14 +1,15 @@
 <template>
   <div class="space-y-6">
-    <!-- Header -->
-    <div class="bg-white rounded-lg shadow-lg">
-      <div class="border-b border-gray-200 px-8 py-6">
+    <!-- Kanban Board Container -->
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+      <!-- Header -->
+      <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-7 h-7 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
             </svg>
-            <h2 class="text-2xl font-bold text-gray-900">Kanban Board</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Kanban Board</h2>
           </div>
           
           <!-- Filters (for Creative Director) -->
@@ -32,156 +33,158 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Kanban Board -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" style="min-height: calc(100vh - 300px);">
-      <!-- In Work Column -->
-      <div class="flex flex-col">
-        <div class="bg-white rounded-lg shadow-lg h-full flex flex-col">
-          <div class="px-4 py-3 border-b border-gray-200 bg-orange-50">
-            <h3 class="font-semibold text-gray-900">In Work</h3>
-            <p class="text-xs text-gray-500 mt-1">{{ getColumnCount('in_work') }} items</p>
-          </div>
-          <div class="flex-1 overflow-y-auto p-4 space-y-3">
-            <div
-              v-for="review in getColumnItems('in_work')"
-              :key="review.id"
-              @click="goToReview(review.id)"
-              class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div class="flex items-start justify-between mb-2">
-                <h4 class="font-medium text-gray-900 truncate flex-1">{{ review.filename }}</h4>
-                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" :class="getStatusBadgeClass(review.workflowState)">
-                  {{ getStatusLabel(review.workflowState) }}
-                </span>
+      <!-- Kanban Board Columns -->
+      <div class="p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" style="min-height: calc(100vh - 400px);">
+          <!-- In Work Column -->
+          <div class="flex flex-col">
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Work</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_work') }} items</p>
               </div>
-              <div class="flex items-center gap-2 text-xs text-gray-600 mb-2">
-                <span>{{ review.designer }}</span>
-              </div>
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-500">{{ formatDate(review.expiresAt) }}</span>
-                <span v-if="review.password" class="text-gray-400">
-                  <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                  </svg>
-                </span>
+              <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div
+                  v-for="review in getColumnItems('in_work')"
+                  :key="review.id"
+                  @click="goToReview(review.id)"
+                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-gray-300 dark:border-slate-500 hover:shadow-md transition-shadow cursor-pointer"
+                >
+                  <div class="flex items-start justify-between mb-2">
+                    <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate flex-1">{{ review.filename }}</h4>
+                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" :class="getStatusBadgeClass(review.workflowState)">
+                      {{ getStatusLabel(review.workflowState) }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
+                    <span>{{ review.designer }}</span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-500 dark:text-gray-400">{{ formatDate(review.expiresAt) }}</span>
+                    <span v-if="review.password" class="text-gray-400 dark:text-gray-500">
+                      <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <div v-if="getColumnItems('in_work').length === 0" class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+                  No items
+                </div>
               </div>
             </div>
-            <div v-if="getColumnItems('in_work').length === 0" class="text-center py-8 text-gray-400 text-sm">
-              No items
-            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- In Client Review Column -->
-      <div class="flex flex-col">
-        <div class="bg-white rounded-lg shadow-lg h-full flex flex-col">
-          <div class="px-4 py-3 border-b border-gray-200 bg-blue-50">
-            <h3 class="font-semibold text-gray-900">In Client Review</h3>
-            <p class="text-xs text-gray-500 mt-1">{{ getColumnCount('in_client_review') }} items</p>
-          </div>
-          <div class="flex-1 overflow-y-auto p-4 space-y-3">
-            <div
-              v-for="review in getColumnItems('in_client_review')"
-              :key="review.id"
-              @click="goToReview(review.id)"
-              class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div class="flex items-start justify-between mb-2">
-                <h4 class="font-medium text-gray-900 truncate flex-1">{{ review.filename }}</h4>
-                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" :class="getStatusBadgeClass(review.workflowState)">
-                  {{ getStatusLabel(review.workflowState) }}
-                </span>
+          <!-- In Client Review Column -->
+          <div class="flex flex-col">
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-50 dark:bg-indigo-900/20">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Client Review</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_client_review') }} items</p>
               </div>
-              <div class="flex items-center gap-2 text-xs text-gray-600 mb-2">
-                <span>{{ review.designer }}</span>
-              </div>
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-500">{{ formatDate(review.expiresAt) }}</span>
-                <span v-if="review.password" class="text-gray-400">
-                  <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                  </svg>
-                </span>
+              <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div
+                  v-for="review in getColumnItems('in_client_review')"
+                  :key="review.id"
+                  @click="goToReview(review.id)"
+                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-gray-300 dark:border-slate-500 hover:shadow-md transition-shadow cursor-pointer"
+                >
+                  <div class="flex items-start justify-between mb-2">
+                    <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate flex-1">{{ review.filename }}</h4>
+                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" :class="getStatusBadgeClass(review.workflowState)">
+                      {{ getStatusLabel(review.workflowState) }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
+                    <span>{{ review.designer }}</span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-500 dark:text-gray-400">{{ formatDate(review.expiresAt) }}</span>
+                    <span v-if="review.password" class="text-gray-400 dark:text-gray-500">
+                      <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <div v-if="getColumnItems('in_client_review').length === 0" class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+                  No items
+                </div>
               </div>
             </div>
-            <div v-if="getColumnItems('in_client_review').length === 0" class="text-center py-8 text-gray-400 text-sm">
-              No items
-            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- In Art/Creative Review Column -->
-      <div class="flex flex-col">
-        <div class="bg-white rounded-lg shadow-lg h-full flex flex-col">
-          <div class="px-4 py-3 border-b border-gray-200 bg-purple-50">
-            <h3 class="font-semibold text-gray-900">In Art/Creative Review</h3>
-            <p class="text-xs text-gray-500 mt-1">{{ getColumnCount('in_art_creative_review') }} items</p>
-          </div>
-          <div class="flex-1 overflow-y-auto p-4 space-y-3">
-            <div
-              v-for="review in getColumnItems('in_art_creative_review')"
-              :key="review.id"
-              @click="goToReview(review.id)"
-              class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div class="flex items-start justify-between mb-2">
-                <h4 class="font-medium text-gray-900 truncate flex-1">{{ review.filename }}</h4>
-                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" :class="getStatusBadgeClass(review.workflowState)">
-                  {{ getStatusLabel(review.workflowState) }}
-                </span>
+          <!-- In Art/Creative Review Column -->
+          <div class="flex flex-col">
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-indigo-50 dark:bg-indigo-900/20">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">In Art/Creative Review</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('in_art_creative_review') }} items</p>
               </div>
-              <div class="flex items-center gap-2 text-xs text-gray-600 mb-2">
-                <span>{{ review.designer }}</span>
-              </div>
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-500">{{ formatDate(review.expiresAt) }}</span>
-                <span v-if="review.password" class="text-gray-400">
-                  <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                  </svg>
-                </span>
+              <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div
+                  v-for="review in getColumnItems('in_art_creative_review')"
+                  :key="review.id"
+                  @click="goToReview(review.id)"
+                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-gray-300 dark:border-slate-500 hover:shadow-md transition-shadow cursor-pointer"
+                >
+                  <div class="flex items-start justify-between mb-2">
+                    <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate flex-1">{{ review.filename }}</h4>
+                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" :class="getStatusBadgeClass(review.workflowState)">
+                      {{ getStatusLabel(review.workflowState) }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
+                    <span>{{ review.designer }}</span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-500 dark:text-gray-400">{{ formatDate(review.expiresAt) }}</span>
+                    <span v-if="review.password" class="text-gray-400 dark:text-gray-500">
+                      <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <div v-if="getColumnItems('in_art_creative_review').length === 0" class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+                  No items
+                </div>
               </div>
             </div>
-            <div v-if="getColumnItems('in_art_creative_review').length === 0" class="text-center py-8 text-gray-400 text-sm">
-              No items
-            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Approved & Closed Column -->
-      <div class="flex flex-col">
-        <div class="bg-white rounded-lg shadow-lg h-full flex flex-col">
-          <div class="px-4 py-3 border-b border-gray-200 bg-green-50">
-            <h3 class="font-semibold text-gray-900">Approved & Closed</h3>
-            <p class="text-xs text-gray-500 mt-1">{{ getColumnCount('approved_closed') }} items</p>
-          </div>
-          <div class="flex-1 overflow-y-auto p-4 space-y-3">
-            <div
-              v-for="review in getColumnItems('approved_closed')"
-              :key="review.id"
-              @click="goToReview(review.id)"
-              class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <h4 class="font-medium text-gray-900 mb-2 truncate">{{ review.filename }}</h4>
-              <div class="flex items-center gap-2 text-xs text-gray-600 mb-2">
-                <span>{{ review.designer }}</span>
+          <!-- Approved & Closed Column -->
+          <div class="flex flex-col">
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col">
+              <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">Approved & Closed</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ getColumnCount('approved_closed') }} items</p>
               </div>
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-500">{{ formatDate(review.expiresAt) }}</span>
-                <span v-if="review.password" class="text-gray-400">
-                  <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                  </svg>
-                </span>
+              <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div
+                  v-for="review in getColumnItems('approved_closed')"
+                  :key="review.id"
+                  @click="goToReview(review.id)"
+                  class="bg-white dark:bg-slate-700 rounded-lg p-4 border-2 border-gray-300 dark:border-slate-500 hover:shadow-md transition-shadow cursor-pointer"
+                >
+                  <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2 truncate">{{ review.filename }}</h4>
+                  <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
+                    <span>{{ review.designer }}</span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-500 dark:text-gray-400">{{ formatDate(review.expiresAt) }}</span>
+                    <span v-if="review.password" class="text-gray-400 dark:text-gray-500">
+                      <svg class="w-3 h-3 inline" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <div v-if="getColumnItems('approved_closed').length === 0" class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+                  No items
+                </div>
               </div>
-            </div>
-            <div v-if="getColumnItems('approved_closed').length === 0" class="text-center py-8 text-gray-400 text-sm">
-              No items
             </div>
           </div>
         </div>
@@ -318,19 +321,19 @@ const getStatusLabel = (workflowState) => {
 // Get status badge color class
 const getStatusBadgeClass = (workflowState) => {
   if (workflowState === 'client_review') {
-    return 'bg-blue-100 text-blue-800';
+    return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-700';
   } else if (workflowState === 'client_approved') {
-    return 'bg-light-blue-100 text-light-blue-800';
+    return 'bg-light-blue-100 dark:bg-light-blue-900/30 text-light-blue-800 dark:text-light-blue-300 border border-light-blue-200 dark:border-light-blue-700';
   } else if (workflowState === 'art_director_review') {
-    return 'bg-purple-100 text-purple-800';
+    return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-700';
   } else if (workflowState === 'creative_director_review') {
-    return 'bg-indigo-100 text-indigo-800';
+    return 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700';
   } else if (workflowState === 'ad_changes_requested') {
-    return 'bg-orange-100 text-orange-800';
+    return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-700';
   } else if (workflowState === 'cd_changes_requested') {
-    return 'bg-orange-100 text-orange-800';
+    return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-700';
   }
-  return 'bg-gray-100 text-gray-800';
+  return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600';
 };
 
 // Navigate to review

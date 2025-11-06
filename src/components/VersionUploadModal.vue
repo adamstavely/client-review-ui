@@ -2,7 +2,7 @@
   <v-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" persistent max-width="600">
     <v-card>
       <v-card-title class="d-flex align-center">
-        <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
         </svg>
         Upload New Version
@@ -12,7 +12,7 @@
         <v-form @submit.prevent="uploadVersion">
           <!-- Drag and Drop File Upload Card -->
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Select new version file
             </label>
             <div
@@ -22,10 +22,10 @@
               @dragenter.prevent="isDragging = true"
               class="relative border-2 border-dashed rounded-lg p-6 transition-colors"
               :class="isDragging 
-                ? 'border-indigo-500 bg-indigo-50' 
+                ? 'border-indigo-500 dark:border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' 
                 : file 
-                  ? 'border-indigo-300 bg-indigo-50' 
-                  : 'border-gray-300 hover:border-indigo-400 hover:bg-gray-50'"
+                  ? 'border-indigo-300 dark:border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20' 
+                  : 'border-gray-300 dark:border-slate-600 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-gray-50 dark:hover:bg-slate-800'"
             >
               <input
                 ref="fileInput"
@@ -37,42 +37,42 @@
               
               <div class="text-center">
                 <div class="flex justify-center mb-3">
-                  <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                   </div>
                 </div>
                 
-                <p class="text-sm text-gray-600 mb-2">
-                  <span class="font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer" @click="openFileDialog">
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                  <span class="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 cursor-pointer" @click="openFileDialog">
                     Click to upload
                   </span>
-                  <span class="text-gray-500"> or drag and drop</span>
+                  <span class="text-gray-500 dark:text-gray-400"> or drag and drop</span>
                 </p>
                 
-                <p class="text-xs text-gray-500 mb-3">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
                   PDF, AI, Sketch, Figma, or other design files
                 </p>
                 
                 <!-- Selected File Preview -->
-                <div v-if="file" class="mt-3 p-3 bg-white rounded-lg border border-indigo-200">
+                <div v-if="file" class="mt-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-indigo-200 dark:border-indigo-800">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                      <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                       </div>
                       <div class="text-left">
-                        <p class="text-sm font-medium text-gray-900">{{ file.name }}</p>
-                        <p class="text-xs text-gray-500">{{ formatFileSize(file.size) }}</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ file.name }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatFileSize(file.size) }}</p>
                       </div>
                     </div>
                     <button
                       type="button"
                       @click="removeFile"
-                      class="text-gray-400 hover:text-red-600 transition-colors"
+                      class="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -84,7 +84,7 @@
                 <button
                   type="button"
                   @click="openFileDialog"
-                  class="mt-3 px-3 py-1.5 text-xs font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
+                  class="mt-3 px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm"
                 >
                   Choose File
                 </button>

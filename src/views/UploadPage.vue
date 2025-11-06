@@ -1,47 +1,28 @@
 <template>
   <div class="space-y-6" v-if="currentUserRole === 'designer'">
-    <!-- Upload Card - Full Width -->
-    <div class="bg-white rounded-lg shadow-lg w-full">
-      <div class="border-b border-gray-200 px-8 py-6">
-        <div class="flex items-center gap-3">
-          <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-          </svg>
-          <h2 class="text-2xl font-bold text-gray-900">Upload Design</h2>
-        </div>
-        <p class="text-sm text-gray-600 mt-1">Upload Adobe files for client review</p>
-      </div>
-      <div class="p-8">
-        <FileUpload @uploaded="handleUpload" />
-        <div
-          v-if="resultUrl"
-          class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg"
-        >
-          <div class="flex items-start">
-            <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <div>
-              <p class="text-sm font-medium text-green-800">Upload successful!</p>
-              <a :href="resultUrl" target="_blank" class="text-sm text-green-600 hover:text-green-800 underline mt-1 block">{{ resultUrl }}</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Two Column Layout Below -->
+    <!-- Two Column Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Demo Review Links - Left Pane -->
-      <div class="bg-white rounded-lg shadow-lg">
-        <div class="border-b border-gray-200 px-8 py-6">
-          <div class="flex items-center gap-3">
-            <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
-            <h2 class="text-2xl font-bold text-gray-900">Demo Review Links</h2>
+      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+        <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 flex-1">
+              <svg class="w-7 h-7 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">My Requested Reviews</h2>
+            </div>
+            <button
+              @click="openUploadDesignModal"
+              class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Upload Design
+            </button>
           </div>
-          <p class="text-sm text-gray-600 mt-1">Test the review functionality with these demo links</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Manage your design review requests</p>
         </div>
         <div class="p-8">
           <div class="space-y-4">
@@ -51,17 +32,17 @@
               @click="handleCardClick(link, $event)"
               class="flex items-start justify-between p-4 border rounded-lg transition-colors"
               :class="link.completed 
-                ? 'border-gray-300 bg-gray-50 opacity-75 cursor-not-allowed' 
-                : 'border-gray-200 hover:bg-gray-50 cursor-pointer'"
+                ? 'border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 opacity-75 cursor-not-allowed' 
+                : 'border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer'"
             >
               <div class="flex items-start gap-4 flex-1 min-w-0">
-                <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <h3 class="text-base font-semibold text-gray-900 mb-2">{{ link.filename }}</h3>
+                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ link.filename }}</h3>
                   <div class="flex items-center gap-2 flex-wrap mb-1.5">
                     <v-chip
                       :color="getWorkflowColor(link.workflowState || 'draft')"
@@ -70,29 +51,29 @@
                     >
                       {{ getWorkflowLabel(link.workflowState || 'draft') }}
                     </v-chip>
-                    <span class="text-sm text-gray-400">|</span>
-                    <span class="text-sm text-gray-600">{{ getVersionCount(link) }}</span>
+                    <span class="text-sm text-gray-400 dark:text-gray-500">|</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-300">{{ getVersionCount(link) }}</span>
                   </div>
                   <div class="flex items-center gap-2 overflow-hidden">
-                    <span class="text-xs text-gray-600 flex items-center gap-1 flex-shrink-0">
-                      <svg v-if="link.password !== null && link.password !== undefined" class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span class="text-xs text-gray-600 dark:text-gray-300 flex items-center gap-1 flex-shrink-0">
+                      <svg v-if="link.password !== null && link.password !== undefined" class="w-3.5 h-3.5 text-gray-600 dark:text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
-                      <svg v-else class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg v-else class="w-3.5 h-3.5 text-gray-600 dark:text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
                       </svg>
                       <span class="whitespace-nowrap">{{ getPasswordText(link) }}</span>
                     </span>
-                    <span class="text-xs text-gray-400 flex-shrink-0">|</span>
-                    <span v-if="link.completed" class="text-xs text-green-600 font-medium whitespace-nowrap flex-shrink-0">✓ Completed</span>
+                    <span class="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">|</span>
+                    <span v-if="link.completed" class="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap flex-shrink-0">✓ Completed</span>
                     <template v-else-if="isExpired(link.expiresAt)">
-                      <span class="text-xs text-red-600 font-medium whitespace-nowrap flex-shrink-0">Expired: {{ formatDate(link.expiresAt) }}</span>
+                      <span class="text-xs text-red-600 dark:text-red-400 font-medium whitespace-nowrap flex-shrink-0">Expired: {{ formatDate(link.expiresAt) }}</span>
                     </template>
                     <template v-else-if="isExpiringSoon(link.expiresAt)">
-                      <span class="text-xs text-orange-500 font-medium whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
+                      <span class="text-xs text-orange-500 dark:text-orange-400 font-medium whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
                     </template>
                     <template v-else>
-                      <span class="text-xs text-gray-500 whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
                     </template>
                   </div>
                 </div>
@@ -103,7 +84,7 @@
                     <button
                       v-if="isDesigner(link) && !link.completed"
                       @click.stop="handleMarkCompleted(link)"
-                      class="p-2 rounded-lg text-green-600 hover:bg-green-50 hover:text-green-700 transition-colors"
+                      class="p-2 rounded-lg text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-700 dark:hover:text-green-300 transition-colors"
                       v-bind="props"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,7 +98,7 @@
                     <button
                       v-if="isDesigner(link) && !link.completed"
                       @click.stop="handleChangePassword(link)"
-                      class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                      class="p-2 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
                       v-bind="props"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +112,7 @@
                     <button
                       v-if="isDesigner(link) && !link.completed"
                       @click.stop="handleExtendExpiration(link)"
-                      class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                      class="p-2 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
                       v-bind="props"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +126,7 @@
                     <button
                       v-if="isDesigner(link) && !link.completed"
                       @click.stop="handleUploadNewVersion(link)"
-                      class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                      class="p-2 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
                       v-bind="props"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,19 +142,19 @@
       </div>
 
       <!-- Recent Activity - Right Pane -->
-      <div class="bg-white rounded-lg shadow-lg">
-        <div class="border-b border-gray-200 px-8 py-6">
+      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+        <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
           <div class="flex items-center gap-3">
-            <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-7 h-7 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h2 class="text-2xl font-bold text-gray-900">Recent Activity</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Recent Activity</h2>
           </div>
-          <p class="text-sm text-gray-600 mt-1">Latest updates on your outstanding reviews</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Latest updates on your outstanding reviews</p>
         </div>
         <div class="p-8">
-          <div v-if="recentActivity.length === 0" class="text-center py-8 text-gray-400 text-sm">
-            <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-if="recentActivity.length === 0" class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+            <svg class="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p>No recent activity</p>
@@ -183,7 +164,7 @@
               v-for="activity in recentActivity"
               :key="activity.id"
               @click="goToReview(activity.reviewId)"
-              class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+              class="p-4 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"
             >
               <div class="flex items-start gap-3">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" :class="getActivityIconBg(activity.type)">
@@ -195,7 +176,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-1">
-                    <h4 class="text-sm font-semibold text-gray-900 truncate">{{ activity.reviewName }}</h4>
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ activity.reviewName }}</h4>
                     <v-chip
                       :color="getWorkflowColor(activity.workflowState)"
                       size="x-small"
@@ -204,8 +185,8 @@
                       {{ getWorkflowLabel(activity.workflowState) }}
                     </v-chip>
                   </div>
-                  <p class="text-sm text-gray-600 mb-1">{{ activity.description }}</p>
-                  <p class="text-xs text-gray-500">{{ formatRelativeTime(activity.timestamp) }}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">{{ activity.description }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatRelativeTime(activity.timestamp) }}</p>
                 </div>
               </div>
             </div>
@@ -215,57 +196,27 @@
     </div>
   </div>
 
-  <!-- Non-Designer Layout (Original) -->
-  <div class="flex gap-6" v-else>
-    <!-- Upload Card -->
-    <div class="bg-white rounded-lg shadow-lg flex-1">
-      <div class="border-b border-gray-200 px-8 py-6">
-        <div class="flex items-center gap-3">
-          <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-          </svg>
-          <h2 class="text-2xl font-bold text-gray-900">Upload Design</h2>
-        </div>
-        <p class="text-sm text-gray-600 mt-1">Upload Adobe files for client review</p>
-      </div>
-      <div class="p-8">
-        <FileUpload @uploaded="handleUpload" />
-        <div
-          v-if="resultUrl"
-          class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg"
-        >
-          <div class="flex items-start">
-            <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <div>
-              <p class="text-sm font-medium text-green-800">Upload successful!</p>
-              <a :href="resultUrl" target="_blank" class="text-sm text-green-600 hover:text-green-800 underline mt-1 block">{{ resultUrl }}</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <!-- Non-Designer Layout -->
+  <div v-else>
     <!-- Demo Links Card or Recently Viewed Links (for clients) -->
-    <div class="bg-white rounded-lg shadow-lg flex-1">
-      <div class="border-b border-gray-200 px-8 py-6">
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg w-full">
+      <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
         <div class="flex items-center gap-3">
-          <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-7 h-7 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path v-if="currentUserRole === 'client'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
           </svg>
-          <h2 class="text-2xl font-bold text-gray-900">
-            {{ currentUserRole === 'client' ? 'Recently Viewed Active Links' : 'Demo Review Links' }}
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {{ currentUserRole === 'client' ? 'Recently Viewed Active Links' : 'My Requested Reviews' }}
           </h2>
         </div>
-        <p class="text-sm text-gray-600 mt-1">
-          {{ currentUserRole === 'client' ? 'Your recently viewed review links' : 'Test the review functionality with these demo links' }}
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+          {{ currentUserRole === 'client' ? 'Your recently viewed review links' : 'Manage your design review requests' }}
         </p>
       </div>
       <div class="p-8">
-        <div v-if="currentUserRole === 'client' && recentlyViewedLinks.length === 0" class="text-center py-8 text-gray-400 text-sm">
-          <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-if="currentUserRole === 'client' && recentlyViewedLinks.length === 0" class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
+          <svg class="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <p>No recently viewed links</p>
@@ -277,17 +228,17 @@
             @click="handleCardClick(link, $event)"
             class="flex items-start justify-between p-4 border rounded-lg transition-colors"
             :class="link.completed 
-              ? 'border-gray-300 bg-gray-50 opacity-75 cursor-not-allowed' 
-              : 'border-gray-200 hover:bg-gray-50 cursor-pointer'"
+              ? 'border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 opacity-75 cursor-not-allowed' 
+              : 'border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer'"
           >
             <div class="flex items-start gap-4 flex-1 min-w-0">
-              <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="text-base font-semibold text-gray-900 mb-2">{{ link.filename }}</h3>
+                <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ link.filename }}</h3>
                 <div class="flex items-center gap-2 flex-wrap mb-1.5">
                   <v-chip
                     :color="getWorkflowColor(link.workflowState || 'draft')"
@@ -296,29 +247,29 @@
                   >
                     {{ getWorkflowLabel(link.workflowState || 'draft') }}
                   </v-chip>
-                  <span class="text-sm text-gray-400">|</span>
-                  <span class="text-sm text-gray-600">{{ getVersionCount(link) }}</span>
+                  <span class="text-sm text-gray-400 dark:text-gray-500">|</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-300">{{ getVersionCount(link) }}</span>
                 </div>
                 <div class="flex items-center gap-2 overflow-hidden">
-                  <span class="text-xs text-gray-600 flex items-center gap-1 flex-shrink-0">
-                    <svg v-if="link.password !== null && link.password !== undefined" class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span class="text-xs text-gray-600 dark:text-gray-300 flex items-center gap-1 flex-shrink-0">
+                    <svg v-if="link.password !== null && link.password !== undefined" class="w-3.5 h-3.5 text-gray-600 dark:text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
-                    <svg v-else class="w-3.5 h-3.5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg v-else class="w-3.5 h-3.5 text-gray-600 dark:text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
                     </svg>
                     <span class="whitespace-nowrap">{{ getPasswordText(link) }}</span>
                   </span>
-                  <span class="text-xs text-gray-400 flex-shrink-0">|</span>
-                  <span v-if="link.completed" class="text-xs text-green-600 font-medium whitespace-nowrap flex-shrink-0">✓ Completed</span>
+                  <span class="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">|</span>
+                  <span v-if="link.completed" class="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap flex-shrink-0">✓ Completed</span>
                   <template v-else-if="isExpired(link.expiresAt)">
-                    <span class="text-xs text-red-600 font-medium whitespace-nowrap flex-shrink-0">Expired: {{ formatDate(link.expiresAt) }}</span>
+                    <span class="text-xs text-red-600 dark:text-red-400 font-medium whitespace-nowrap flex-shrink-0">Expired: {{ formatDate(link.expiresAt) }}</span>
                   </template>
                   <template v-else-if="isExpiringSoon(link.expiresAt)">
-                    <span class="text-xs text-orange-500 font-medium whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
+                    <span class="text-xs text-orange-500 dark:text-orange-400 font-medium whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
                   </template>
                   <template v-else>
-                    <span class="text-xs text-gray-500 whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap flex-shrink-0">Expires: {{ formatDate(link.expiresAt) }}</span>
                   </template>
                 </div>
               </div>
@@ -329,7 +280,7 @@
                   <button
                     v-if="isDesigner(link) && !link.completed"
                     @click.stop="handleMarkCompleted(link)"
-                    class="p-2 rounded-lg text-green-600 hover:bg-green-50 hover:text-green-700 transition-colors"
+                    class="p-2 rounded-lg text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-700 dark:hover:text-green-300 transition-colors"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -343,7 +294,7 @@
                   <button
                     v-if="isDesigner(link) && !link.completed"
                     @click.stop="handleChangePassword(link)"
-                    class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                    class="p-2 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -357,7 +308,7 @@
                   <button
                     v-if="isDesigner(link) && !link.completed"
                     @click.stop="handleExtendExpiration(link)"
-                    class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                    class="p-2 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -371,7 +322,7 @@
                   <button
                     v-if="isDesigner(link) && !link.completed"
                     @click.stop="handleUploadNewVersion(link)"
-                    class="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                    class="p-2 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
                     v-bind="props"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -385,6 +336,44 @@
         </div>
       </div>
     </div>
+
+    <!-- Upload Design Modal -->
+  <v-dialog :model-value="showUploadDesignModal" @update:model-value="showUploadDesignModal = $event" persistent max-width="800">
+      <v-card>
+        <v-card-title class="d-flex align-center justify-space-between">
+          <div class="d-flex align-center">
+            <svg class="w-7 h-7 mr-3 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <span class="text-gray-900 dark:text-gray-100">Upload Design</span>
+          </div>
+          <button @click="closeUploadDesignModal" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </v-card-title>
+        <v-divider />
+        <v-card-text class="pt-6">
+          <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">Upload design files or link to a website under development for client review</p>
+          <FileUpload @uploaded="handleUpload" />
+          <div
+            v-if="resultUrl"
+            class="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+          >
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <div>
+                <p class="text-sm font-medium text-green-800 dark:text-green-300">Upload successful!</p>
+                <a :href="resultUrl" target="_blank" class="text-sm text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 underline mt-1 block">{{ resultUrl }}</a>
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
 
     <!-- Version Upload Modal -->
     <VersionUploadModal
@@ -437,6 +426,7 @@ import { mockAPI, isMockMode, mockReviews, getCurrentUser, getFilteredReviews } 
 const $router = useRouter();
 
 const resultUrl = ref('');
+const showUploadDesignModal = ref(false);
 const showUploadModal = ref(false);
 const selectedReviewId = ref(null);
 const showPasswordModal = ref(false);
@@ -573,8 +563,22 @@ const trackReviewView = (reviewId) => {
   }
 };
 
+const openUploadDesignModal = () => {
+  console.log('Opening upload modal');
+  showUploadDesignModal.value = true;
+};
+
+const closeUploadDesignModal = () => {
+  showUploadDesignModal.value = false;
+  resultUrl.value = '';
+};
+
 const handleUpload = (url) => {
   resultUrl.value = url;
+  // Close modal after a short delay to show success message
+  setTimeout(() => {
+    closeUploadDesignModal();
+  }, 2000);
 };
 
 // Load recent activity for designer

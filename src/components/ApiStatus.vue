@@ -1,16 +1,16 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg">
-    <div class="border-b border-gray-200 px-8 py-6">
+  <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+    <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div
             class="w-8 h-8 rounded-full flex items-center justify-center"
-            :class="checking ? 'bg-orange-100' : mockMode ? 'bg-orange-100' : 'bg-green-100'"
+            :class="checking ? 'bg-orange-100 dark:bg-orange-900' : mockMode ? 'bg-orange-100 dark:bg-orange-900' : 'bg-green-100 dark:bg-green-900'"
           >
             <svg
               v-if="!checking && mockMode"
               class="w-5 h-5"
-              :class="mockMode ? 'text-orange-600' : 'text-green-600'"
+              :class="mockMode ? 'text-orange-600 dark:text-orange-400' : 'text-green-600 dark:text-green-400'"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -19,7 +19,7 @@
             </svg>
             <svg
               v-else-if="!checking && !mockMode"
-              class="w-5 h-5 text-green-600"
+              class="w-5 h-5 text-green-600 dark:text-green-400"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -27,7 +27,7 @@
             </svg>
             <svg
               v-else
-              class="w-5 h-5 text-orange-600 animate-spin"
+              class="w-5 h-5 text-orange-600 dark:text-orange-400 animate-spin"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -36,8 +36,8 @@
             </svg>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-gray-900">API Connection</h3>
-            <p class="text-sm text-gray-600 mt-0.5">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">API Connection</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mt-0.5">
               {{ mockMode ? 'Using mock data for testing' : `Connected to ${apiUrl}` }}
             </p>
           </div>
@@ -46,7 +46,7 @@
           <button
             @click="checkApiStatus"
             :disabled="checking"
-            class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-50"
+            class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-gray-100 transition-colors disabled:opacity-50"
             title="Refresh"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,9 +58,9 @@
               type="checkbox"
               v-model="forceMockMode"
               @change="toggleMockMode"
-              class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+              class="w-4 h-4 text-orange-600 dark:text-orange-400 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-orange-500 dark:focus:ring-orange-400 focus:ring-2"
             />
-            <span class="text-sm font-medium text-gray-700">Force Mock Mode</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Force Mock Mode</span>
           </label>
         </div>
       </div>

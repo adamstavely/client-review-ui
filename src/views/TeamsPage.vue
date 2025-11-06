@@ -1,18 +1,18 @@
 <template>
   <div class="space-y-6">
     <!-- Teams Header -->
-    <div class="bg-white rounded-lg shadow-lg">
-      <div class="border-b border-gray-200 px-8 py-6">
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+      <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-7 h-7 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <h2 class="text-2xl font-bold text-gray-900">Teams</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Teams</h2>
           </div>
           <button
             @click="showCreateTeamModal = true"
-            class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+            class="px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors flex items-center gap-2"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -20,34 +20,34 @@
             Create Team
           </button>
         </div>
-        <p class="text-sm text-gray-600 mt-1">Manage your teams and collaborate on design reviews</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Manage your teams and collaborate on design reviews</p>
       </div>
       
       <!-- Teams List -->
       <div class="p-8">
         <div v-if="teams.length === 0" class="text-center py-12">
-          <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <p class="text-gray-500 mb-2">No teams yet</p>
-          <p class="text-sm text-gray-400">Create your first team to start collaborating</p>
+          <p class="text-gray-500 dark:text-gray-400 mb-2">No teams yet</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500">Create your first team to start collaborating</p>
         </div>
         
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="team in teams"
             :key="team.id"
-            class="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            class="bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600 p-6 hover:shadow-md transition-shadow"
           >
             <div class="flex items-start justify-between mb-4">
               <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ team.name }}</h3>
-                <p class="text-sm text-gray-600">{{ team.description || 'No description' }}</p>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">{{ team.name }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">{{ team.description || 'No description' }}</p>
               </div>
               <div class="flex items-center gap-2">
                 <button
                   @click="editTeam(team)"
-                  class="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
+                  class="p-2 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                   title="Edit Team"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@
                 </button>
                 <button
                   @click="confirmDeleteTeam(team)"
-                  class="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                  class="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                   title="Delete Team"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,18 +68,18 @@
             
             <div class="space-y-3">
               <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-600">Members</span>
-                <span class="font-medium text-gray-900">{{ team.members.length }}</span>
+                <span class="text-gray-600 dark:text-gray-300">Members</span>
+                <span class="font-medium text-gray-900 dark:text-gray-100">{{ team.members.length }}</span>
               </div>
               <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-600">Reviews</span>
-                <span class="font-medium text-gray-900">{{ team.reviews?.length || 0 }}</span>
+                <span class="text-gray-600 dark:text-gray-300">Reviews</span>
+                <span class="font-medium text-gray-900 dark:text-gray-100">{{ team.reviews?.length || 0 }}</span>
               </div>
               
               <!-- Team Members Preview -->
               <div class="mt-4">
                 <div class="flex items-center gap-2 mb-2">
-                  <span class="text-xs font-medium text-gray-700">Members:</span>
+                  <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Members:</span>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <span
@@ -87,15 +87,15 @@
                     :key="member.email"
                     class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium"
                     :class="member.role === 'Art Director' 
-                      ? 'bg-purple-100 text-purple-800' 
-                      : 'bg-indigo-100 text-indigo-800'"
+                      ? 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200' 
+                      : 'bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200'"
                   >
                     {{ member.name || member.email }}
                     <span class="text-xs opacity-75">({{ member.role || 'Designer' }})</span>
                   </span>
                   <span
                     v-if="team.members.length > 5"
-                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600"
+                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-slate-600 text-gray-600 dark:text-gray-300"
                   >
                     +{{ team.members.length - 5 }} more
                   </span>
@@ -104,7 +104,7 @@
               
               <button
                 @click="manageTeamMembers(team)"
-                class="w-full mt-4 px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
+                class="w-full mt-4 px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm"
               >
                 Manage Members
               </button>

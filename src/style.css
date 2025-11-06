@@ -9,10 +9,27 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+html.dark body {
+  background-color: #0f172a; /* slate-900 */
+  color: #f1f5f9; /* slate-100 */
+}
+
+html {
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+html.dark {
+  background-color: #0f172a; /* slate-900 */
 }
 
 #app {
   min-height: 100vh;
+  background-color: transparent;
 }
 
 /* Fix Vuetify app container to not interfere with Tailwind */
@@ -308,6 +325,890 @@ svg {
 /* Dropdown/Select styling to use primary blue color */
 .v-select .v-field--focused .v-field__outline {
   color: #4f46e5 !important;
+}
+
+/* Dark Mode Styles */
+.dark {
+  color-scheme: dark;
+}
+
+/* Dark mode Vuetify theme variables */
+.dark .v-application {
+  --v-theme-primary: 129, 140, 248 !important; /* RGB values for indigo-400 */
+  --v-theme-on-primary: 255, 255, 255 !important;
+  --v-theme-background: 15, 23, 42 !important; /* slate-900 */
+  --v-theme-surface: 30, 41, 59 !important; /* slate-800 */
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+/* Force dark mode backgrounds on all white containers - high specificity */
+html.dark .bg-white,
+html.dark div.bg-white,
+html.dark section.bg-white,
+html.dark [class*="bg-white"] {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+html.dark .bg-gray-50,
+html.dark div.bg-gray-50,
+html.dark [class*="bg-gray-50"] {
+  background-color: #334155 !important; /* slate-700 */
+}
+
+html.dark .bg-gray-100,
+html.dark div.bg-gray-100,
+html.dark [class*="bg-gray-100"] {
+  background-color: #475569 !important; /* slate-600 */
+}
+
+/* Ensure light mode containers are NOT forced to dark */
+html:not(.dark) .bg-white,
+html:not(.dark) div.bg-white,
+html:not(.dark) section.bg-white,
+html:not(.dark) header.bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Override any inline styles or higher specificity selectors */
+html.dark [class*="bg-white"]:not([class*="dark:bg-"]) {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+/* Ensure Tailwind dark mode utilities have higher specificity */
+html.dark [class*="dark:bg-slate-800"] {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+html.dark [class*="dark:bg-slate-700"] {
+  background-color: #334155 !important; /* slate-700 */
+}
+
+html.dark [class*="dark:bg-slate-900"] {
+  background-color: #0f172a !important; /* slate-900 */
+}
+
+/* Dark mode Vuetify components - ensure cards use dark background */
+html.dark .v-card {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important;
+}
+
+/* Light mode Vuetify components - ensure cards use light background */
+html:not(.dark) .v-card {
+  background-color: #ffffff !important;
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Dark mode text colors for Vuetify components */
+html.dark .v-card-title span,
+html.dark .v-card-text,
+html.dark .v-list-item-title,
+html.dark .v-list-item-subtitle {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+/* Light mode text colors for Vuetify components */
+html:not(.dark) .v-card-title span,
+html:not(.dark) .v-card-text,
+html:not(.dark) .v-list-item-title,
+html:not(.dark) .v-list-item-subtitle {
+  color: #111827 !important; /* gray-900 */
+}
+
+html.dark .v-btn {
+  color: inherit !important;
+}
+
+html.dark .v-btn--variant-text {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+/* Light mode button colors */
+html:not(.dark) .v-btn--variant-text {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+html.dark .v-btn--variant-outlined {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+/* Light mode outlined button colors */
+html:not(.dark) .v-btn--variant-outlined {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+.dark .v-card {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important;
+}
+
+/* Light mode card reset - ensure proper white background */
+:not(.dark) .v-card,
+html:not(.dark) .v-card {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.dark .v-list {
+  background-color: transparent !important;
+}
+
+:not(.dark) .v-list,
+html:not(.dark) .v-list {
+  background-color: transparent !important;
+}
+
+.dark .v-list-item {
+  color: #f1f5f9 !important;
+}
+
+:not(.dark) .v-list-item,
+html:not(.dark) .v-list-item {
+  color: #111827 !important;
+}
+
+.dark .v-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .v-tab {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+
+/* Light mode tab reset */
+html:not(.dark) .v-tab {
+  color: #111827 !important; /* gray-900 */
+}
+
+.dark .v-tab--selected {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+/* Light mode selected tab reset */
+html:not(.dark) .v-tab--selected {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+.dark .v-divider {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Light mode divider reset */
+html:not(.dark) .v-divider {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.dark .v-field {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important;
+}
+
+/* Light mode field reset */
+html:not(.dark) .v-field {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.dark .v-field__input {
+  color: #f1f5f9 !important;
+}
+
+/* Light mode field input reset */
+html:not(.dark) .v-field__input {
+  color: #111827 !important;
+}
+
+/* Dark mode textarea - lighter blue outline (override general field styles) */
+html.dark .v-textarea .v-field__outline,
+html.dark .v-textarea .v-field__outline__start,
+html.dark .v-textarea .v-field__outline__notch,
+html.dark .v-textarea .v-field__outline__end {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  border-color: #c7d2fe !important;
+}
+
+html.dark .v-textarea .v-field--focused .v-field__outline,
+html.dark .v-textarea .v-field--focused .v-field__outline__start,
+html.dark .v-textarea .v-field--focused .v-field__outline__notch,
+html.dark .v-textarea .v-field--focused .v-field__outline__end {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  border-color: #c7d2fe !important;
+}
+
+.dark .v-data-table {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important;
+}
+
+/* Light mode data table reset */
+html:not(.dark) .v-data-table {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.dark .v-data-table__th {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Light mode data table header reset */
+html:not(.dark) .v-data-table__th {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.dark .v-data-table__td {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Light mode data table cell reset */
+html:not(.dark) .v-data-table__td {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: #111827 !important;
+}
+
+.dark .v-data-table__tr:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .v-menu .v-list {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+/* Light mode menu reset */
+html:not(.dark) .v-menu .v-list {
+  background-color: #ffffff !important;
+}
+
+.dark .v-dialog > .v-overlay__content > .v-card {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important;
+}
+
+/* Light mode dialog reset */
+html:not(.dark) .v-dialog > .v-overlay__content > .v-card {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.dark .v-dialog > .v-overlay__content > .v-card .v-card-title {
+  color: #f1f5f9 !important;
+}
+
+.dark .v-dialog > .v-overlay__content > .v-card .v-card-text {
+  color: #cbd5e1 !important;
+}
+
+.dark .v-tooltip .v-overlay__content {
+  background-color: #334155 !important; /* slate-700 */
+  color: #f1f5f9 !important;
+}
+
+/* Light mode tooltip reset */
+html:not(.dark) .v-tooltip .v-overlay__content {
+  background-color: #111827 !important; /* gray-900 */
+  color: #ffffff !important;
+}
+
+/* Dark mode checkbox and switch colors - use indigo instead of purple */
+.dark .v-checkbox .v-selection-control__input {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+.dark .v-selection-control__input {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+.dark .v-data-table__checkbox .v-selection-control__input {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+.dark .v-switch--checked .v-switch__track {
+  background-color: #818cf8 !important; /* indigo-400 */
+  opacity: 1 !important;
+}
+
+/* Dark mode select/dropdown colors */
+.dark .v-select .v-field__input {
+  color: #f1f5f9 !important;
+}
+
+/* Light mode select reset */
+html:not(.dark) .v-select .v-field__input {
+  color: #111827 !important;
+}
+
+.dark .v-select .v-field__outline,
+.dark .v-select .v-field__outline__start,
+.dark .v-select .v-field__outline__notch,
+.dark .v-select .v-field__outline__end {
+  border-color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  color: #c7d2fe !important;
+}
+
+/* Light mode select outline reset */
+html:not(.dark) .v-select .v-field__outline,
+html:not(.dark) .v-select .v-field__outline__start,
+html:not(.dark) .v-select .v-field__outline__notch,
+html:not(.dark) .v-select .v-field__outline__end {
+  border-color: #4f46e5 !important; /* indigo-600 */
+  color: #4f46e5 !important;
+}
+
+.dark .v-select .v-field--focused .v-field__outline,
+.dark .v-select .v-field--focused .v-field__outline__start,
+.dark .v-select .v-field--focused .v-field__outline__notch,
+.dark .v-select .v-field--focused .v-field__outline__end {
+  border-color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  color: #c7d2fe !important;
+}
+
+/* Dark mode select caret icon - lighter blue */
+.dark .v-select .v-field__append-inner .v-icon,
+.dark .v-select .v-field__append-inner svg {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+.dark .v-select .v-field--focused .v-field__append-inner .v-icon,
+.dark .v-select .v-field--focused .v-field__append-inner svg {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+html.dark .v-select .v-field__outline,
+html.dark .v-select .v-field__outline__start,
+html.dark .v-select .v-field__outline__notch,
+html.dark .v-select .v-field__outline__end {
+  border-color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  color: #c7d2fe !important;
+}
+
+html.dark .v-select .v-field--focused .v-field__outline,
+html.dark .v-select .v-field--focused .v-field__outline__start,
+html.dark .v-select .v-field--focused .v-field__outline__notch,
+html.dark .v-select .v-field--focused .v-field__outline__end {
+  border-color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  color: #c7d2fe !important;
+}
+
+html.dark .v-select .v-field__append-inner .v-icon,
+html.dark .v-select .v-field__append-inner svg {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+html.dark .v-select .v-field--focused .v-field__append-inner .v-icon,
+html.dark .v-select .v-field--focused .v-field__append-inner svg {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+/* Dark mode select label color */
+.dark .v-select .v-field-label,
+.dark .v-select label,
+.dark .v-select .v-field-label--floating,
+.dark .v-select .v-field-label--active,
+.dark .v-select .v-field--focused .v-field-label,
+.dark .v-select .v-field--focused label {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+html.dark .v-select .v-field-label,
+html.dark .v-select label,
+html.dark .v-select .v-field-label--floating,
+html.dark .v-select .v-field-label--active,
+html.dark .v-select .v-field--focused .v-field-label,
+html.dark .v-select .v-field--focused label {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+.dark .v-switch.v-switch--inset.v-switch--checked .v-switch__track {
+  background-color: #818cf8 !important; /* indigo-400 */
+  opacity: 1 !important;
+}
+
+/* Dark mode textarea - lighter blue outline */
+html.dark .v-textarea .v-field__outline,
+html.dark .v-textarea .v-field__outline__start,
+html.dark .v-textarea .v-field__outline__notch,
+html.dark .v-textarea .v-field__outline__end {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  border-color: #c7d2fe !important;
+}
+
+html.dark .v-textarea .v-field--focused .v-field__outline,
+html.dark .v-textarea .v-field--focused .v-field__outline__start,
+html.dark .v-textarea .v-field--focused .v-field__outline__notch,
+html.dark .v-textarea .v-field--focused .v-field__outline__end {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+  border-color: #c7d2fe !important;
+}
+
+/* Lighter blue label color for textarea in dark mode */
+html.dark .v-textarea .v-field-label,
+html.dark .v-textarea label,
+html.dark .v-textarea .v-field-label--floating,
+html.dark .v-textarea .v-field-label--active,
+html.dark .v-textarea .v-field--focused .v-field-label,
+html.dark .v-textarea .v-field--focused label {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+/* Dark mode selection controls */
+.dark .v-selection-control[aria-checked="true"] .v-selection-control__input {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+.dark .v-selection-control[aria-checked="true"] .v-selection-control__input .v-icon {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+.dark .v-checkbox-btn .v-selection-control__input--checked {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+.dark .v-select .v-field--focused .v-field__outline {
+  color: #c7d2fe !important; /* indigo-200 - lighter blue */
+}
+
+/* Dark mode chip/pill styling - lighter backgrounds for better visibility */
+html.dark .v-chip {
+  background-color: rgba(99, 102, 241, 0.2) !important; /* indigo-600 with opacity */
+  color: #c7d2fe !important; /* indigo-200 - lighter text */
+}
+
+html.dark .v-chip--color-blue {
+  background-color: rgba(59, 130, 246, 0.25) !important; /* blue-500 with opacity */
+  color: #93c5fd !important; /* blue-300 - lighter text */
+}
+
+html.dark .v-chip--color-light-blue {
+  background-color: rgba(96, 165, 250, 0.25) !important; /* light-blue-400 with opacity */
+  color: #bfdbfe !important; /* light-blue-300 - lighter text */
+}
+
+html.dark .v-chip--color-purple {
+  background-color: rgba(147, 51, 234, 0.25) !important; /* purple-600 with opacity */
+  color: #c4b5fd !important; /* purple-300 - lighter text */
+}
+
+html.dark .v-chip--color-deep-purple {
+  background-color: rgba(124, 58, 237, 0.25) !important; /* deep-purple-600 with opacity */
+  color: #c4b5fd !important; /* purple-300 - lighter text */
+}
+
+html.dark .v-chip--color-indigo {
+  background-color: rgba(99, 102, 241, 0.25) !important; /* indigo-600 with opacity */
+  color: #c7d2fe !important; /* indigo-200 - lighter text */
+}
+
+html.dark .v-chip--color-grey {
+  background-color: rgba(148, 163, 184, 0.25) !important; /* slate-400 with opacity */
+  color: #cbd5e1 !important; /* slate-300 - lighter text */
+}
+
+html.dark .v-chip--color-green {
+  background-color: rgba(34, 197, 94, 0.25) !important; /* green-500 with opacity */
+  color: #86efac !important; /* green-300 - lighter text */
+}
+
+html.dark .v-chip--color-orange {
+  background-color: rgba(249, 115, 22, 0.25) !important; /* orange-500 with opacity */
+  color: #fdba74 !important; /* orange-300 - lighter text */
+}
+
+/* Light mode chip reset - ensure chips use Vuetify default colors in light mode */
+html:not(.dark) .v-chip {
+  background-color: rgba(0, 0, 0, 0.08) !important; /* Default Vuetify chip background */
+  color: rgba(0, 0, 0, 0.87) !important; /* Default Vuetify chip text */
+}
+
+html:not(.dark) .v-chip--color-blue {
+  background-color: rgba(33, 150, 243, 0.12) !important; /* blue-500 with opacity */
+  color: #1976d2 !important; /* blue-700 - darker blue text */
+}
+
+html:not(.dark) .v-chip--color-light-blue {
+  background-color: rgba(3, 169, 244, 0.12) !important; /* light-blue-500 with opacity */
+  color: #0288d1 !important; /* light-blue-700 - darker blue text */
+}
+
+html:not(.dark) .v-chip--color-purple {
+  background-color: rgba(156, 39, 176, 0.12) !important; /* purple-500 with opacity */
+  color: #7b1fa2 !important; /* purple-800 - darker purple text */
+}
+
+html:not(.dark) .v-chip--color-deep-purple {
+  background-color: rgba(103, 58, 183, 0.12) !important; /* deep-purple-500 with opacity */
+  color: #512da8 !important; /* deep-purple-700 - darker purple text */
+}
+
+html:not(.dark) .v-chip--color-indigo {
+  background-color: rgba(63, 81, 181, 0.12) !important; /* indigo-500 with opacity */
+  color: #303f9f !important; /* indigo-700 - darker indigo text */
+}
+
+html:not(.dark) .v-chip--color-grey {
+  background-color: rgba(158, 158, 158, 0.12) !important; /* grey-500 with opacity */
+  color: #616161 !important; /* grey-700 - darker grey text */
+}
+
+html:not(.dark) .v-chip--color-green {
+  background-color: rgba(76, 175, 80, 0.12) !important; /* green-500 with opacity */
+  color: #388e3c !important; /* green-700 - darker green text */
+}
+
+html:not(.dark) .v-chip--color-orange {
+  background-color: rgba(255, 152, 0, 0.12) !important; /* orange-500 with opacity */
+  color: #f57c00 !important; /* orange-700 - darker orange text */
+}
+
+/* Ensure proper contrast for accessibility */
+html.dark body {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+html.dark {
+  background-color: #0f172a !important; /* slate-900 */
+}
+
+/* Light mode body and html reset */
+html:not(.dark) body {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+html:not(.dark) {
+  background-color: #faf5ff !important; /* Match the gradient light colors */
+}
+
+/* Ensure Tailwind gradient works in light mode - override any dark mode rules */
+html:not(.dark) .bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
+}
+
+html:not(.dark) [class*="from-purple-50"],
+html:not(.dark) [class*="via-blue-50"],
+html:not(.dark) [class*="to-indigo-50"] {
+  --tw-gradient-from: #faf5ff !important;
+  --tw-gradient-to: #eff6ff !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to), var(--tw-gradient-to);
+}
+
+/* Ensure header background is white in light mode */
+html:not(.dark) header.bg-white {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) header[class*="bg-white"] {
+  background-color: #ffffff !important;
+}
+
+/* Ensure text colors reset properly in light mode */
+html:not(.dark) .text-gray-900,
+html:not(.dark) h1.text-gray-900,
+html:not(.dark) h2.text-gray-900,
+html:not(.dark) h3.text-gray-900 {
+  color: #111827 !important; /* gray-900 */
+}
+
+html:not(.dark) .text-gray-600,
+html:not(.dark) p.text-gray-600,
+html:not(.dark) span.text-gray-600 {
+  color: #4b5563 !important; /* gray-600 */
+}
+
+html:not(.dark) .text-gray-500,
+html:not(.dark) p.text-gray-500,
+html:not(.dark) span.text-gray-500 {
+  color: #6b7280 !important; /* gray-500 */
+}
+
+html:not(.dark) .text-gray-400,
+html:not(.dark) p.text-gray-400,
+html:not(.dark) span.text-gray-400 {
+  color: #9ca3af !important; /* gray-400 */
+}
+
+html:not(.dark) .text-gray-300,
+html:not(.dark) p.text-gray-300,
+html:not(.dark) span.text-gray-300 {
+  color: #d1d5db !important; /* gray-300 */
+}
+
+/* Ensure icon colors reset properly in light mode */
+html:not(.dark) svg.text-indigo-600,
+html:not(.dark) svg.text-indigo-500,
+html:not(.dark) svg.text-indigo-400 {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+html:not(.dark) .text-indigo-600,
+html:not(.dark) .text-indigo-500,
+html:not(.dark) .text-indigo-400 {
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+/* Ensure hover states work correctly in light mode - override dark mode hover */
+html:not(.dark) .hover\:bg-gray-50:hover,
+html:not(.dark) [class*="hover:bg-gray-50"]:hover {
+  background-color: #f9fafb !important; /* gray-50 */
+}
+
+/* More specific rules for elements with both hover states */
+html:not(.dark) [class*="hover:bg-gray-50"][class*="dark:hover"]:hover {
+  background-color: #f9fafb !important; /* gray-50 - override dark mode hover */
+}
+
+html:not(.dark) [class*="hover:bg-indigo-50"][class*="dark:hover"]:hover {
+  background-color: #eef2ff !important; /* indigo-50 - override dark mode hover */
+}
+
+html:not(.dark) [class*="hover:bg-green-50"][class*="dark:hover"]:hover {
+  background-color: #f0fdf4 !important; /* green-50 - override dark mode hover */
+}
+
+html:not(.dark) .hover\:bg-indigo-50:hover,
+html:not(.dark) [class*="hover:bg-indigo-50"]:hover {
+  background-color: #eef2ff !important; /* indigo-50 */
+}
+
+html:not(.dark) .hover\:bg-green-50:hover,
+html:not(.dark) [class*="hover:bg-green-50"]:hover {
+  background-color: #f0fdf4 !important; /* green-50 */
+}
+
+html:not(.dark) .hover\:bg-indigo-700:hover,
+html:not(.dark) [class*="hover:bg-indigo-700"]:hover {
+  background-color: #4338ca !important; /* indigo-700 */
+}
+
+html:not(.dark) .hover\:text-indigo-700:hover,
+html:not(.dark) [class*="hover:text-indigo-700"]:hover {
+  color: #4338ca !important; /* indigo-700 */
+}
+
+html:not(.dark) .hover\:text-green-700:hover,
+html:not(.dark) [class*="hover:text-green-700"]:hover {
+  color: #15803d !important; /* green-700 */
+}
+
+html:not(.dark) .hover\:text-gray-600:hover,
+html:not(.dark) [class*="hover:text-gray-600"]:hover {
+  color: #4b5563 !important; /* gray-600 */
+}
+
+html:not(.dark) .hover\:text-gray-900:hover,
+html:not(.dark) [class*="hover:text-gray-900"]:hover {
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Prevent dark mode hover backgrounds from applying in light mode */
+html:not(.dark) [class*="dark:hover:bg-slate"]:hover {
+  background-color: inherit !important;
+}
+
+html:not(.dark) [class*="dark:hover:bg-gray"]:hover {
+  background-color: inherit !important;
+}
+
+html:not(.dark) [class*="dark:hover:bg-indigo"]:hover {
+  background-color: inherit !important;
+}
+
+html:not(.dark) [class*="dark:hover:bg-green"]:hover {
+  background-color: inherit !important;
+}
+
+/* More specific: ensure elements with hover:bg-gray-50 get light gray on hover */
+html:not(.dark) [class*="hover:bg-gray-50"]:hover {
+  background-color: #f9fafb !important; /* gray-50 */
+}
+
+html:not(.dark) [class*="hover:bg-indigo-50"]:hover {
+  background-color: #eef2ff !important; /* indigo-50 */
+}
+
+html:not(.dark) [class*="hover:bg-green-50"]:hover {
+  background-color: #f0fdf4 !important; /* green-50 */
+}
+
+/* Ensure team cards reset properly in light mode */
+html:not(.dark) [class*="bg-gray-50"] {
+  background-color: #f9fafb !important; /* gray-50 */
+}
+
+html:not(.dark) [class*="bg-gray-100"] {
+  background-color: #f3f4f6 !important; /* gray-100 */
+}
+
+html:not(.dark) [class*="bg-purple-100"] {
+  background-color: #f3e8ff !important; /* purple-100 */
+}
+
+html:not(.dark) [class*="bg-indigo-100"] {
+  background-color: #eef2ff !important; /* indigo-100 */
+}
+
+/* Light mode badge background color resets */
+html:not(.dark) [class*="bg-blue-100"] {
+  background-color: #dbeafe !important; /* blue-100 */
+}
+
+html:not(.dark) [class*="bg-light-blue-100"] {
+  background-color: #e0f2fe !important; /* light-blue-100 */
+}
+
+html:not(.dark) [class*="bg-orange-100"] {
+  background-color: #ffedd5 !important; /* orange-100 */
+}
+
+html:not(.dark) [class*="bg-green-100"] {
+  background-color: #dcfce7 !important; /* green-100 */
+}
+
+html:not(.dark) [class*="bg-gray-100"] {
+  background-color: #f3f4f6 !important; /* gray-100 */
+}
+
+html:not(.dark) [class*="bg-slate-600"],
+html:not(.dark) [class*="bg-slate-700"] {
+  background-color: inherit !important; /* Don't apply dark mode backgrounds */
+}
+
+html:not(.dark) [class*="border-gray-200"] {
+  border-color: #e5e7eb !important; /* gray-200 */
+}
+
+html:not(.dark) [class*="border-slate-600"],
+html:not(.dark) [class*="border-slate-700"] {
+  border-color: #e5e7eb !important; /* gray-200 - light mode border */
+}
+
+html:not(.dark) [class*="text-purple-800"] {
+  color: #6b21a8 !important; /* purple-800 */
+}
+
+html:not(.dark) [class*="text-indigo-800"] {
+  color: #4c1d95 !important; /* indigo-800 */
+}
+
+html:not(.dark) [class*="text-purple-200"] {
+  color: #6b21a8 !important; /* purple-800 - light mode version */
+}
+
+html:not(.dark) [class*="text-indigo-200"] {
+  color: #4c1d95 !important; /* indigo-800 - light mode version */
+}
+
+/* Light mode badge text color resets */
+html:not(.dark) [class*="text-blue-800"] {
+  color: #1e40af !important; /* blue-800 */
+}
+
+html:not(.dark) [class*="text-light-blue-800"] {
+  color: #0369a1 !important; /* light-blue-800 */
+}
+
+html:not(.dark) [class*="text-blue-300"] {
+  color: #1e40af !important; /* blue-800 - light mode version */
+}
+
+html:not(.dark) [class*="text-light-blue-300"] {
+  color: #0369a1 !important; /* light-blue-800 - light mode version */
+}
+
+html:not(.dark) [class*="text-orange-800"] {
+  color: #9a3412 !important; /* orange-800 */
+}
+
+html:not(.dark) [class*="text-orange-300"] {
+  color: #9a3412 !important; /* orange-800 - light mode version */
+}
+
+html:not(.dark) [class*="text-gray-800"] {
+  color: #1f2937 !important; /* gray-800 */
+}
+
+html:not(.dark) [class*="text-gray-200"] {
+  color: #1f2937 !important; /* gray-800 - light mode version */
+}
+
+html:not(.dark) [class*="text-green-800"] {
+  color: #166534 !important; /* green-800 */
+}
+
+html:not(.dark) [class*="text-green-300"] {
+  color: #166534 !important; /* green-800 - light mode version */
+}
+
+/* Light mode badge border color resets */
+html:not(.dark) [class*="border-blue-200"] {
+  border-color: #bfdbfe !important; /* blue-200 */
+}
+
+html:not(.dark) [class*="border-light-blue-200"] {
+  border-color: #bae6fd !important; /* light-blue-200 */
+}
+
+html:not(.dark) [class*="border-purple-200"] {
+  border-color: #e9d5ff !important; /* purple-200 */
+}
+
+html:not(.dark) [class*="border-indigo-200"] {
+  border-color: #c7d2fe !important; /* indigo-200 */
+}
+
+html:not(.dark) [class*="border-orange-200"] {
+  border-color: #fed7aa !important; /* orange-200 */
+}
+
+html:not(.dark) [class*="border-gray-200"] {
+  border-color: #e5e7eb !important; /* gray-200 */
+}
+
+html:not(.dark) [class*="border-blue-700"] {
+  border-color: #bfdbfe !important; /* blue-200 - light mode version */
+}
+
+html:not(.dark) [class*="border-light-blue-700"] {
+  border-color: #bae6fd !important; /* light-blue-200 - light mode version */
+}
+
+html:not(.dark) [class*="border-purple-700"] {
+  border-color: #e9d5ff !important; /* purple-200 - light mode version */
+}
+
+html:not(.dark) [class*="border-indigo-700"] {
+  border-color: #c7d2fe !important; /* indigo-200 - light mode version */
+}
+
+html:not(.dark) [class*="border-orange-700"] {
+  border-color: #fed7aa !important; /* orange-200 - light mode version */
+}
+
+html:not(.dark) [class*="border-gray-600"] {
+  border-color: #e5e7eb !important; /* gray-200 - light mode version */
+}
+
+/* Dark mode scrollbar styling */
+.dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b; /* slate-800 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569; /* slate-600 */
+  border-radius: 5px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b; /* slate-500 */
 }
 
 .v-select .v-field--focused .v-field__outline__start,

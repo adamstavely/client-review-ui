@@ -3,34 +3,34 @@
     <!-- Main Content Area -->
     <div class="flex-1 overflow-y-auto space-y-6">
       <!-- Completed Review Message -->
-      <div v-if="reviewCompleted" class="bg-white rounded-lg shadow-lg">
+      <div v-if="reviewCompleted" class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
         <div class="p-8 text-center">
           <div class="flex justify-center mb-4">
-            <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+              <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Review Completed</h2>
-          <p class="text-gray-600 mb-4">This review has been marked as completed by the designer.</p>
-          <p class="text-sm text-gray-500">Comments and review information are preserved, but the review link is no longer active.</p>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Review Completed</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">This review has been marked as completed by the designer.</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Comments and review information are preserved, but the review link is no longer active.</p>
         </div>
       </div>
 
       <!-- File Preview Section -->
-      <div v-if="!reviewCompleted && (!passwordRequired || passwordValidated)" class="bg-white rounded-lg shadow-lg">
-        <div class="border-b border-gray-200 px-8 py-6">
+      <div v-if="!reviewCompleted && (!passwordRequired || passwordValidated)" class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+        <div class="border-b border-gray-200 dark:border-slate-700 px-8 py-6">
           <div class="flex items-center justify-between mb-4">
             <div class="flex-1">
-              <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ metadata.filename }}</h2>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ metadata.filename }}</h2>
               <!-- Role switcher for demo/testing (remove in production) -->
               <div class="flex items-center gap-1">
-                <span class="text-xs text-gray-400">Role:</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">Role:</span>
                 <select 
                   v-model="currentUserRole" 
                   @change="switchRole(currentUserRole)"
-                  class="text-xs border border-gray-300 rounded px-2 py-1 bg-white"
+                  class="text-xs border border-gray-300 dark:border-slate-600 rounded px-2 py-1 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="designer">Designer</option>
                   <option value="art_director">Art Director</option>
@@ -42,9 +42,7 @@
               <button
                 v-if="metadata.versions.length > 1"
                 @click="toggleComparisonMode"
-                :class="comparisonMode 
-                  ? 'px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2'
-                  : 'px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-2'"
+                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-sm"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
@@ -54,7 +52,7 @@
               <button
                 v-if="previewUrl && !comparisonMode"
                 @click="openInNewTab"
-                class="px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-2"
+                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors flex items-center gap-2 shadow-sm"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -81,14 +79,14 @@
               <!-- Left Version -->
               <div>
                 <div class="mb-3">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Version 1</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Version 1</label>
                   <VersionSelector
                     v-model="leftVersion"
                     :versions="metadata.versions"
                     @update:modelValue="loadLeftVersion"
                   />
                 </div>
-                <div class="border-2 border-indigo-200 rounded-lg overflow-hidden">
+                <div class="border-2 border-indigo-200 dark:border-indigo-800 rounded-lg overflow-hidden">
                   <PreviewFrame :url="leftPreviewUrl" />
                 </div>
               </div>
@@ -103,7 +101,7 @@
                     @update:modelValue="loadRightVersion"
                   />
                 </div>
-                <div class="border-2 border-indigo-200 rounded-lg overflow-hidden">
+                <div class="border-2 border-indigo-200 dark:border-indigo-800 rounded-lg overflow-hidden">
                   <PreviewFrame :url="rightPreviewUrl" />
                 </div>
               </div>
