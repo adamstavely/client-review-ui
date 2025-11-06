@@ -16,7 +16,15 @@
           <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Manage your design review requests</p>
         </div>
         <div class="p-8">
-          <div class="space-y-4">
+          <div v-if="filteredDemoLinks.length === 0" class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 mb-2">No review requests yet</p>
+            <p class="text-sm text-gray-400 dark:text-gray-500">Create your first design review request to get started</p>
+          </div>
+          
+          <div v-else class="space-y-4">
             <div
               v-for="link in filteredDemoLinks"
               :key="link.id"
@@ -144,11 +152,12 @@
           <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Latest updates on your outstanding reviews</p>
         </div>
         <div class="p-8">
-          <div v-if="recentActivity.length === 0" class="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
-            <svg class="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-if="recentActivity.length === 0" class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p>No recent activity</p>
+            <p class="text-gray-500 dark:text-gray-400 mb-2">No recent activity</p>
+            <p class="text-sm text-gray-400 dark:text-gray-500">Activity will appear here once you have review requests</p>
           </div>
           <div v-else class="space-y-4">
             <div
@@ -223,6 +232,13 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <p>No recently viewed links</p>
+        </div>
+        <div v-else-if="currentUserRole !== 'client' && filteredDemoLinks.length === 0" class="text-center py-12">
+          <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+          <p class="text-gray-500 dark:text-gray-400 mb-2">No review requests yet</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500">Create your first design review request to get started</p>
         </div>
         <div v-else class="space-y-4">
           <div
@@ -767,24 +783,33 @@ const demoLinks = ref([
 
 // Filter demo links based on user role
 const filteredDemoLinks = computed(() => {
+  let filtered = [];
+  
   if (currentUserRole.value === 'creative_director') {
     // Creative Director sees all reviews across all teams
-    return demoLinks.value;
+    filtered = demoLinks.value;
   } else if (currentUserRole.value === 'art_director') {
     // Art Director sees all reviews in their team
-    return demoLinks.value.filter(link => {
+    filtered = demoLinks.value.filter(link => {
       const review = mockReviews.find(r => r.id === link.reviewId);
       return review && review.teamId === currentUserTeamId.value;
     });
   } else if (currentUserRole.value === 'designer') {
     // Designer sees only their own reviews
-    return demoLinks.value.filter(link => {
+    filtered = demoLinks.value.filter(link => {
       return link.designer === currentUser.value || 
              mockReviews.find(r => r.id === link.reviewId)?.designerEmail === currentUserEmail.value;
     });
+  } else {
+    // Default: return all (for clients/admins)
+    filtered = demoLinks.value;
   }
-  // Default: return all (for clients/admins)
-  return demoLinks.value;
+  
+  // Exclude completed reviews from the list
+  return filtered.filter(link => {
+    const review = mockReviews.find(r => r.id === link.reviewId);
+    return !review || !review.completed;
+  });
 });
 
 // Check if current user is the designer for a given link

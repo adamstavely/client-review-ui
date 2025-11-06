@@ -30,6 +30,16 @@
                 </svg>
                 <span class="text-gray-900 dark:text-gray-100">Review Status</span>
               </button>
+              <!-- Review History Menu Item -->
+              <button
+                @click="$router.push('/history')"
+                class="flex items-center gap-2 px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              >
+                <svg class="w-5 h-5 text-gray-900 dark:text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-gray-900 dark:text-gray-100">Review History</span>
+              </button>
             </div>
           </div>
           <div class="flex items-center gap-4">
@@ -107,6 +117,16 @@
                 </div>
               </div>
             </div>
+            
+            <!-- App Picker -->
+            <button
+              @click="showAppPicker = !showAppPicker"
+              class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors relative"
+              title="App Picker"
+              ref="appPickerRef"
+            >
+              <span class="material-symbols-outlined text-gray-600 dark:text-gray-300" style="font-size: 32px;">apps</span>
+            </button>
           </div>
         </div>
       </div>
@@ -177,6 +197,8 @@ const isFullScreenPreview = computed(() => route.path.includes('/preview'));
 
 const showUserMenu = ref(false);
 const userMenuRef = ref(null);
+const showAppPicker = ref(false);
+const appPickerRef = ref(null);
 const currentUser = computed(() => getCurrentUser());
 const showRequestReviewModal = ref(false);
 const requestReviewResultUrl = ref('');
@@ -202,6 +224,9 @@ const handleRequestReviewUpload = (url) => {
 const handleClickOutside = (event) => {
   if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
     showUserMenu.value = false;
+  }
+  if (appPickerRef.value && !appPickerRef.value.contains(event.target)) {
+    showAppPicker.value = false;
   }
 };
 

@@ -264,6 +264,9 @@ const teamFilterOptions = computed(() => {
 const filteredReviews = computed(() => {
   let filtered = reviews.value;
   
+  // Exclude completed reviews from the kanban board
+  filtered = filtered.filter(review => !review.completed);
+  
   if (currentUserRole.value === 'creative_director') {
     // Apply team filter
     if (selectedTeamFilter.value) {

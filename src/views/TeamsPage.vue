@@ -37,7 +37,7 @@
           <div
             v-for="team in teams"
             :key="team.id"
-            class="bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600 p-6 hover:shadow-md transition-shadow"
+            class="bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600 p-6 hover:shadow-md transition-shadow flex flex-col"
           >
             <div class="flex items-start justify-between mb-4">
               <div class="flex-1">
@@ -66,7 +66,7 @@
               </div>
             </div>
             
-            <div class="space-y-3">
+            <div class="flex flex-col flex-1 space-y-3">
               <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600 dark:text-gray-300">Members</span>
                 <span class="font-medium text-gray-900 dark:text-gray-100">{{ team.members.length }}</span>
@@ -79,7 +79,7 @@
               <!-- Team Members Preview -->
               <div class="mt-4">
                 <div class="flex items-center gap-2 mb-2">
-                  <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Members:</span>
+                  <span class="text-xs font-medium text-gray-500 dark:text-gray-300">Members:</span>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <span
@@ -104,7 +104,7 @@
               
               <button
                 @click="manageTeamMembers(team)"
-                class="w-full mt-4 px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm"
+                class="w-full mt-auto px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm"
               >
                 Manage Members
               </button>
