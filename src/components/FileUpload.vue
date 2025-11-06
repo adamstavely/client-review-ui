@@ -288,6 +288,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { mockAPI, isMockMode } from '@/mockData.js';
+import { uploadAPI } from '@/services/api.js';
 import AlertModal from '@/components/AlertModal.vue';
 
 const emit = defineEmits(['uploaded']);
@@ -498,43 +499,27 @@ const submit = async () => {
     } else {
       // Use real API
       if (uploadType.value === 'file') {
-        const res = await fetch('/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            filename: file.value.name,
-            password: finalPassword,
-            bypassClientReview: bypassClientReview,
-            sharingMode: sharingMode,
-            approvedEmails: approvedEmails,
-          }),
-        });
+        const { uploadUrl, reviewId } = await uploadAPI.createFromUpload(
+          file.value.name,
+          finalPassword,
+          bypassClientReview,
+          sharingMode,
+          approvedEmails
+        );
 
-        const { uploadUrl, reviewId } = await res.json();
-
-        await fetch(uploadUrl, {
-          method: 'PUT',
-          body: file.value,
-          headers: { 'Content-Type': file.value.type },
-        });
+        await uploadAPI.uploadFile(uploadUrl, file.value);
 
         const fullUrl = `${window.location.origin}/review/${reviewId}`;
         emit('uploaded', fullUrl);
       } else {
         // Create review with external URL
-        const res = await fetch('/review/create-from-url', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: externalUrl.value,
-            password: finalPassword,
-            bypassClientReview: bypassClientReview,
-            sharingMode: sharingMode,
-            approvedEmails: approvedEmails,
-          }),
-        });
-
-        const { reviewId } = await res.json();
+        const { reviewId } = await uploadAPI.createFromUrl(
+          externalUrl.value,
+          finalPassword,
+          bypassClientReview,
+          sharingMode,
+          approvedEmails
+        );
         const fullUrl = `${window.location.origin}/review/${reviewId}`;
         emit('uploaded', fullUrl);
       }

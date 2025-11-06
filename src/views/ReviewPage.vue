@@ -360,7 +360,6 @@
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
-import axios from 'axios';
 import { useRoute } from 'vue-router';
 import VersionSelector from '@/components/VersionSelector.vue';
 import PreviewFrame from '@/components/PreviewFrame.vue';
@@ -372,6 +371,7 @@ import PasswordPrompt from '@/components/PasswordPrompt.vue';
 import AlertModal from '@/components/AlertModal.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
 import { mockAPI, isMockMode, mockReviews } from '@/mockData.js';
+import { reviewAPI, workflowAPI, commentAPI, versionAPI, passwordAPI } from '@/services/api.js';
 
 const route = useRoute();
 const reviewId = route.params.id;
@@ -420,8 +420,8 @@ const loadVersion = async () => {
       previewUrl.value = res.url;
       await loadComments();
     } else {
-  const res = await axios.get(`/review/${reviewId}/version/${selectedVersion.value}`);
-  previewUrl.value = res.data.url;
+      const url = await reviewAPI.getVersion(reviewId, selectedVersion.value);
+      previewUrl.value = url;
       await loadComments();
     }
   } catch (error) {
@@ -436,8 +436,8 @@ const loadLeftVersion = async () => {
       const res = await mockAPI.getVersion(reviewId, leftVersion.value);
       leftPreviewUrl.value = res.url;
     } else {
-      const res = await axios.get(`/review/${reviewId}/version/${leftVersion.value}`);
-      leftPreviewUrl.value = res.data.url;
+      const url = await reviewAPI.getVersion(reviewId, leftVersion.value);
+      leftPreviewUrl.value = url;
     }
   } catch (error) {
     console.error('Failed to load left version:', error);
@@ -451,8 +451,8 @@ const loadRightVersion = async () => {
       const res = await mockAPI.getVersion(reviewId, rightVersion.value);
       rightPreviewUrl.value = res.url;
     } else {
-      const res = await axios.get(`/review/${reviewId}/version/${rightVersion.value}`);
-      rightPreviewUrl.value = res.data.url;
+      const url = await reviewAPI.getVersion(reviewId, rightVersion.value);
+      rightPreviewUrl.value = url;
     }
   } catch (error) {
     console.error('Failed to load right version:', error);
@@ -488,13 +488,11 @@ const submitPassword = async (input) => {
       passwordValidated.value = true;
       loadVersion();
     } else {
-    const res = await axios.get(`/review/${reviewId}`, {
-      params: { password: input },
-    });
-    metadata.value = res.data;
-    selectedVersion.value = res.data.versions[0].id;
-    passwordValidated.value = true;
-    loadVersion();
+      const res = await reviewAPI.getReview(reviewId, input);
+      metadata.value = res;
+      selectedVersion.value = res.versions[0].id;
+      passwordValidated.value = true;
+      loadVersion();
     }
   } catch {
     showAlertMessage('Error', 'Invalid password', 'error');
@@ -520,7 +518,7 @@ const handleCommentAdded = async (comment) => {
         await previewFrameRef.value.refreshAnnotations();
       }
     } else {
-      await axios.post(`/review/${reviewId}/comments`, comment);
+      await commentAPI.addComment(reviewId, comment.text, comment.version, comment.type, comment.resolved);
       await loadComments();
       // Refresh annotations in WebViewer to sync
       if (previewFrameRef.value) {
@@ -543,7 +541,7 @@ const handleCommentUpdated = async (commentId, updates) => {
         await previewFrameRef.value.refreshAnnotations();
       }
     } else {
-      await axios.patch(`/review/${reviewId}/comments/${commentId}`, updates);
+      await commentAPI.updateComment(reviewId, commentId, updates);
       await loadComments();
       // Refresh annotations in WebViewer to sync
       if (previewFrameRef.value) {
@@ -566,7 +564,7 @@ const handleReplyAdded = async (commentId, reply) => {
         await previewFrameRef.value.refreshAnnotations();
       }
     } else {
-      await axios.post(`/review/${reviewId}/comments/${commentId}/replies`, reply);
+      await commentAPI.addReply(reviewId, commentId, reply.text);
       await loadComments();
       // Refresh annotations in WebViewer to sync
       if (previewFrameRef.value) {
@@ -589,7 +587,7 @@ const handleEmojiReactionToggled = async (commentId, emoji) => {
         await previewFrameRef.value.refreshAnnotations();
       }
     } else {
-      await axios.post(`/review/${reviewId}/comments/${commentId}/reactions`, { emoji });
+      await commentAPI.toggleReaction(reviewId, commentId, emoji);
       await loadComments();
       // Refresh annotations in WebViewer to sync
       if (previewFrameRef.value) {
@@ -612,7 +610,7 @@ const handleEmojiReactionToggledReply = async (commentId, replyId, emoji) => {
         await previewFrameRef.value.refreshAnnotations();
       }
     } else {
-      await axios.post(`/review/${reviewId}/comments/${commentId}/replies/${replyId}/reactions`, { emoji });
+      await commentAPI.toggleReplyReaction(reviewId, commentId, replyId, emoji);
       await loadComments();
       // Refresh annotations in WebViewer to sync
       if (previewFrameRef.value) {
@@ -720,9 +718,16 @@ const loadComments = async () => {
         })) : []
       }));
     } else {
-      // Load all comments for the review
-      const res = await axios.get(`/review/${reviewId}/comments`);
-      comments.value = res.data;
+      const res = await commentAPI.getComments(reviewId, selectedVersion.value);
+      // Create new object references to ensure Vue reactivity detects nested changes
+      comments.value = res.map(comment => ({
+        ...comment,
+        reactions: comment.reactions ? [...comment.reactions] : [],
+        replies: comment.replies ? comment.replies.map(reply => ({
+          ...reply,
+          reactions: reply.reactions ? [...reply.reactions] : []
+        })) : []
+      }));
     }
   } catch (error) {
     console.error('Failed to load comments:', error);
@@ -816,11 +821,9 @@ const handleApprove = async () => {
         metadata.value = { ...res };
       }
     } else {
-      await axios.post(`/review/${reviewId}/workflow/approve`, { stage: state });
-      
-      // Reload review data
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
+      const updatedReview = await workflowAPI.approve(reviewId, state);
+      // Update metadata with the returned review data
+      metadata.value = { ...updatedReview };
     }
     
     showAlertMessage('Success', 'Workflow stage approved successfully', 'success');
@@ -838,7 +841,8 @@ const handleReject = async () => {
     if (useMockMode) {
       await mockAPI.rejectWorkflowStage(reviewId, state, currentUser.value);
     } else {
-      await axios.post(`/review/${reviewId}/workflow/reject`, { stage: state });
+      const updatedReview = await workflowAPI.reject(reviewId, state);
+      metadata.value = { ...updatedReview };
     }
     
     // Reload review data
@@ -847,8 +851,8 @@ const handleReject = async () => {
       const res = await mockAPI.getReview(reviewId);
       metadata.value = { ...res }; // Create new object reference for reactivity
     } else {
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
+      const res = await reviewAPI.getReview(reviewId);
+      metadata.value = { ...res };
     }
     
     const rejectionMessage = state === 'art_director_review' 
@@ -870,18 +874,15 @@ const handleMoveToClientReview = async () => {
     if (useMockMode) {
       await mockAPI.moveToClientReview(reviewId);
     } else {
-      await axios.post(`/review/${reviewId}/workflow/move-to-client-review`);
+      const updatedReview = await workflowAPI.moveToClientReview(reviewId);
+      metadata.value = { ...updatedReview };
+      showAlertMessage('Success', 'Review sent to client for approval', 'success');
+      return;
     }
     
     // Reload review data
-    const useMock = await isMockMode();
-    if (useMock) {
-      const res = await mockAPI.getReview(reviewId);
-      metadata.value = { ...res }; // Create new object reference for reactivity
-    } else {
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
-    }
+    const res = await mockAPI.getReview(reviewId);
+    metadata.value = { ...res }; // Create new object reference for reactivity
     
     showAlertMessage('Success', 'Review sent to client for approval', 'success');
   } catch (error) {
@@ -897,18 +898,14 @@ const handleMoveToArtDirectorReview = async () => {
     if (useMockMode) {
       await mockAPI.moveToArtDirectorReview(reviewId);
     } else {
-      await axios.post(`/review/${reviewId}/workflow/move-to-art-director-review`);
+      const updatedReview = await workflowAPI.moveToArtDirectorReview(reviewId);
+      metadata.value = { ...updatedReview };
+      return;
     }
     
     // Reload review data
-    const useMock = await isMockMode();
-    if (useMock) {
-      const res = await mockAPI.getReview(reviewId);
-      metadata.value = { ...res }; // Create new object reference for reactivity
-    } else {
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
-    }
+    const res = await mockAPI.getReview(reviewId);
+    metadata.value = { ...res }; // Create new object reference for reactivity
     
     showAlertMessage('Success', 'Review sent to Art Director for approval', 'success');
   } catch (error) {
@@ -921,25 +918,24 @@ const handleResubmitForReview = async () => {
   try {
     const useMockMode = await isMockMode();
     const state = metadata.value.workflowState;
+    const targetStage = state === 'ad_changes_requested' ? 'art_director_review' : 'creative_director_review';
     
     if (useMockMode) {
       await mockAPI.resubmitForReview(reviewId, state);
     } else {
-      await axios.post(`/review/${reviewId}/workflow/resubmit`, { targetStage: state });
+      const updatedReview = await workflowAPI.resubmit(reviewId, targetStage);
+      metadata.value = { ...updatedReview };
+      const stageLabel = targetStage === 'art_director_review' ? 'Art Director' : 'Creative Director';
+      showAlertMessage('Success', `Review resubmitted for ${stageLabel} review`, 'success');
+      return;
     }
     
     // Reload review data
-    const useMock = await isMockMode();
-    if (useMock) {
-      const res = await mockAPI.getReview(reviewId);
-      metadata.value = { ...res }; // Create new object reference for reactivity
-    } else {
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
-    }
+    const res = await mockAPI.getReview(reviewId);
+    metadata.value = { ...res }; // Create new object reference for reactivity
     
-    const targetStage = state === 'ad_changes_requested' ? 'Art Director' : 'Creative Director';
-    showAlertMessage('Success', `Review resubmitted for ${targetStage} review`, 'success');
+    const stageLabel = state === 'ad_changes_requested' ? 'Art Director' : 'Creative Director';
+    showAlertMessage('Success', `Review resubmitted for ${stageLabel} review`, 'success');
   } catch (error) {
     console.error('Failed to resubmit for review:', error);
     showAlertMessage('Error', 'Failed to resubmit for review', 'error');
@@ -962,20 +958,18 @@ const confirmMarkCompleted = async () => {
       await mockAPI.markReviewCompleted(reviewId, currentUser.value);
     } else {
       // Use real API
-      await axios.post(`/review/${reviewId}/complete`);
+      const updatedReview = await reviewAPI.completeReview(reviewId);
+      metadata.value = { ...updatedReview };
+      reviewCompleted.value = true;
+      showConfirmModal.value = false;
+      showAlertMessage('Success', 'Review marked as complete', 'success');
+      return;
     }
     
     // Reload review data
-    const useMock = await isMockMode();
-    if (useMock) {
-      const res = await mockAPI.getReview(reviewId);
-      metadata.value = { ...res };
-      reviewCompleted.value = res.completed || false;
-    } else {
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
-      reviewCompleted.value = res.data.completed || false;
-    }
+    const res = await mockAPI.getReview(reviewId);
+    metadata.value = { ...res };
+    reviewCompleted.value = res.completed || false;
     
     showAlertMessage('Success', 'Review marked as complete. The link is now disabled.', 'success');
   } catch (error) {
@@ -1041,14 +1035,8 @@ const handleSharingChanged = async () => {
       }
     } else {
       // Use real API
-      await axios.post(`/review/${reviewId}/sharing`, {
-        sharingMode: finalSharingMode,
-        approvedEmails: finalApprovedEmails
-      });
-      
-      // Reload review data
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
+      const updatedReview = await reviewAPI.updateSharing(reviewId, finalSharingMode, finalApprovedEmails);
+      metadata.value = { ...updatedReview };
     }
     
     showSharingModal.value = false;
@@ -1086,11 +1074,8 @@ const handlePasswordChanged = async (passwordValue) => {
       }
     } else {
       // Use real API
-      await axios.post(`/review/${reviewId}/password`, { password: passwordValue });
-      
-      // Reload review data
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
+      const updatedReview = await passwordAPI.updatePassword(reviewId, passwordValue);
+      metadata.value = { ...updatedReview };
     }
     
     const message = passwordValue 
@@ -1107,17 +1092,14 @@ const handleExtendExpiration = async () => {
   try {
     const useMockMode = await isMockMode();
     
-    // Calculate new expiration date: 30 days from now
-    const newExpiresAt = new Date();
-    newExpiresAt.setDate(newExpiresAt.getDate() + 30);
-    newExpiresAt.setHours(23, 59, 59, 999); // Set to end of day
-    const newExpiresAtISO = newExpiresAt.toISOString();
-    
     if (useMockMode) {
       // Update mock data
       const review = mockReviews.find(r => r.id === reviewId);
       if (review) {
-        review.expiresAt = newExpiresAtISO;
+        const newExpiresAt = new Date();
+        newExpiresAt.setDate(newExpiresAt.getDate() + 30);
+        newExpiresAt.setHours(23, 59, 59, 999);
+        review.expiresAt = newExpiresAt.toISOString();
         
         // Add history entry
         if (!review.workflowHistory) {
@@ -1137,11 +1119,8 @@ const handleExtendExpiration = async () => {
       }
     } else {
       // Use real API
-      await axios.post(`/review/${reviewId}/extend-expiration`, { days: 30 });
-      
-      // Reload review data
-      const res = await axios.get(`/review/${reviewId}`);
-      metadata.value = { ...res.data };
+      const updatedReview = await passwordAPI.extendExpiration(reviewId, 30);
+      metadata.value = { ...updatedReview };
     }
     
     showAlertMessage('Success', 'Expiration date extended by 30 days!', 'success');
@@ -1246,11 +1225,11 @@ onMounted(async () => {
         rightVersion.value = res.versions.length > 1 ? res.versions[1].id : res.versions[0].id;
       }
     } else {
-    const res = await axios.get(`/review/${reviewId}`);
-      console.log('Loaded review:', res.data);
-      console.log('WorkflowHistory:', res.data.workflowHistory);
-      metadata.value = { ...res.data };
-      reviewCompleted.value = res.data.completed || false;
+      const res = await reviewAPI.getReview(reviewId);
+      console.log('Loaded review:', res);
+      console.log('WorkflowHistory:', res.workflowHistory);
+      metadata.value = { ...res }; // Create new object reference for reactivity
+      reviewCompleted.value = res.completed || false;
       
       // Track view for clients
       if (currentUserRole.value === 'client') {
@@ -1262,14 +1241,14 @@ onMounted(async () => {
         return;
       }
       
-    selectedVersion.value = res.data.versions[0].id;
-    passwordValidated.value = true;
-    loadVersion();
+      selectedVersion.value = res.versions[0].id;
+      passwordValidated.value = true;
+      loadVersion();
       
       // Initialize comparison versions if switching to comparison mode
-      if (comparisonMode.value && res.data.versions.length >= 2) {
-        leftVersion.value = res.data.versions[0].id;
-        rightVersion.value = res.data.versions.length > 1 ? res.data.versions[1].id : res.data.versions[0].id;
+      if (comparisonMode.value && res.versions.length >= 2) {
+        leftVersion.value = res.versions[0].id;
+        rightVersion.value = res.versions.length > 1 ? res.versions[1].id : res.versions[0].id;
       }
     }
   } catch (err) {

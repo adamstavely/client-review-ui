@@ -1094,11 +1094,14 @@ export const isMockMode = async () => {
     return true;
   }
   
-  // Check if user wants to use real API
-  if (localStorage.getItem('useRealAPI') === 'true') {
-    // Only try to ping API if user explicitly enabled it
+  // Check if user wants to use real API or if not set, auto-detect
+  const useRealAPI = localStorage.getItem('useRealAPI') === 'true' || localStorage.getItem('useRealAPI') === null;
+  
+  if (useRealAPI) {
+    // Try to ping API health endpoint
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/health`, {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+      const response = await fetch(`${apiUrl}/health`, {
         method: 'GET',
         mode: 'cors',
         credentials: 'omit',
@@ -1113,6 +1116,6 @@ export const isMockMode = async () => {
     }
   }
   
-  // Default to mock mode to avoid unnecessary API calls
+  // Default to mock mode if explicitly disabled
   return true;
 };
