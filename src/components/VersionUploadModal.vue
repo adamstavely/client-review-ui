@@ -12,7 +12,7 @@
         <v-form @submit.prevent="uploadVersion">
           <!-- Drag and Drop File Upload Card -->
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
               Select new version file
             </label>
             <div

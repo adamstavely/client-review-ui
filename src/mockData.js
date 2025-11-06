@@ -9,7 +9,7 @@ let mockReviews = [
     designerEmail: 'sarah@example.com', // Add email for team matching
     teamId: 'team-1', // Associate with team
     completed: false,
-    workflowState: 'client_review', // draft, client_review, client_approved, art_director_review, art_director_approved, creative_director_review, approved
+    workflowState: 'art_director_review', // draft, client_review, client_approved, art_director_review, art_director_approved, creative_director_review, approved
     workflowHistory: [
       // Initial upload
       { stage: 'draft', action: 'uploaded', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString() },

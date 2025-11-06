@@ -498,6 +498,15 @@ html:not(.dark) .v-divider {
   border-color: rgba(0, 0, 0, 0.12) !important;
 }
 
+/* Workflow Card specific styling - ensure proper background switching */
+html:not(.dark) .v-card.bg-white {
+  background-color: #ffffff !important;
+}
+
+html.dark .v-card.dark\:bg-slate-800 {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
 .dark .v-field {
   background-color: #1e293b !important; /* slate-800 */
   color: #f1f5f9 !important;
@@ -620,6 +629,11 @@ html:not(.dark) .v-dialog > .v-overlay__content > .v-card .v-card-text {
   padding-right: 1.5rem !important; /* px-6 */
   padding-top: 0 !important; /* pt-0 */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+}
+
+/* Fix label text color in modals for light mode */
+html:not(.dark) .v-dialog > .v-overlay__content > .v-card .v-card-text label {
+  color: #111827 !important; /* gray-900 */
 }
 
 .dark .v-dialog > .v-overlay__content > .v-card .v-card-title {
@@ -1072,15 +1086,66 @@ html:not(.dark) [class*="dark:hover:bg-indigo"]:hover {
   background-color: inherit !important;
 }
 
-/* Fix Compare Versions and Open in New Tab buttons hover states in light mode */
+/* User Avatar - Fix colors in light mode */
+html:not(.dark) .bg-indigo-600.dark\:bg-indigo-500 {
+  background-color: #4f46e5 !important; /* indigo-600 */
+}
+
+html.dark .bg-indigo-600.dark\:bg-indigo-500 {
+  background-color: #6366f1 !important; /* indigo-500 */
+}
+
+/* Compare Versions and Open in New Tab buttons - Fix hover/inactive states in light mode */
+html:not(.dark) .compare-versions-btn,
+html:not(.dark) .open-new-tab-btn {
+  background-color: #4f46e5 !important; /* indigo-600 */
+  color: #ffffff !important;
+}
+
 html:not(.dark) .compare-versions-btn:hover,
 html:not(.dark) .open-new-tab-btn:hover {
-  background-color: #4338ca !important; /* indigo-700 */
+  background-color: #4338ca !important; /* indigo-700 - darker on hover */
+  color: #ffffff !important;
+}
+
+html.dark .compare-versions-btn,
+html.dark .open-new-tab-btn {
+  background-color: #6366f1 !important; /* indigo-500 */
+  color: #ffffff !important;
 }
 
 html.dark .compare-versions-btn:hover,
 html.dark .open-new-tab-btn:hover {
-  background-color: #818cf8 !important; /* indigo-400 */
+  background-color: #818cf8 !important; /* indigo-400 - lighter on hover in dark mode */
+  color: #ffffff !important;
+}
+
+/* Fix approve button hover state in light mode - override the dark:hover rule */
+html:not(.dark) button.bg-indigo-600.dark\:bg-indigo-500:hover,
+html:not(.dark) button[class*="bg-indigo-600"][class*="hover:bg-indigo-700"]:hover,
+html:not(.dark) button[class*="bg-indigo-600"][class*="dark:hover:bg-indigo-400"]:hover {
+  background-color: #4338ca !important; /* indigo-700 */
+}
+
+/* Fix rework button inactive state in dark mode */
+html.dark button[class*="bg-white"][class*="dark:bg-slate-800"] {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+/* Fix rework button text color in dark mode */
+html.dark button[class*="text-indigo-600"][class*="dark:text-indigo-400"] {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+/* Fix rework button hover state in dark mode - ensure dark mode hover overrides light mode hover */
+html.dark button[class*="bg-white"][class*="dark:bg-slate-800"][class*="dark:hover:bg-indigo-900/20"]:hover,
+html.dark button[class*="hover:bg-indigo-50"][class*="dark:hover:bg-indigo-900/20"]:hover {
+  background-color: rgba(30, 58, 138, 0.2) !important; /* indigo-900/20 */
+}
+
+/* Prevent light mode hover from applying in dark mode for buttons that have dark mode hover */
+html.dark button[class*="hover:bg-indigo-50"][class*="dark:hover"]:hover {
+  background-color: inherit !important;
 }
 
 /* Ensure icon doesn't distort */
@@ -1573,4 +1638,680 @@ html:not(.dark) input[type="checkbox"]:checked {
 .workflow-history-timeline .material-symbols-outlined {
   background-color: transparent !important;
   background: transparent !important;
+}
+
+/* Version Selector Styling - Match app theme */
+.version-selector .v-select {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.version-selector .v-field {
+  border-radius: 0.5rem;
+}
+
+/* Simplify border - single clean border */
+.version-selector .v-field__outline {
+  border-color: #6366f1 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
+html.dark .version-selector .v-field__outline {
+  border-color: #818cf8 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
+/* Ensure outline parts don't create duplicate borders - remove their borders but keep them visible for layout */
+.version-selector .v-field__outline__start,
+.version-selector .v-field__outline__notch,
+.version-selector .v-field__outline__end {
+  border: none !important;
+  border-width: 0 !important;
+  background: transparent !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* Make sure the notch doesn't render any border lines */
+.version-selector .v-field__outline__notch::before,
+.version-selector .v-field__outline__notch::after {
+  display: none !important;
+}
+
+.version-selector .v-field--focused .v-field__outline__notch::before,
+.version-selector .v-field--focused .v-field__outline__notch::after {
+  display: none !important;
+}
+
+/* Remove any bottom borders that might appear on text */
+.version-selector .v-field__input,
+.version-selector .v-field__input input {
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* Focused state - single clean border */
+/* Prevent text shifting - ensure border width doesn't change */
+.version-selector .v-field__outline {
+  border-color: #6366f1 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  box-sizing: border-box !important;
+}
+
+.version-selector .v-field--focused .v-field__outline {
+  border-color: #6366f1 !important;
+  border-width: 1px !important; /* Keep same width, don't change to 2px */
+  border-style: solid !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
+html.dark .version-selector .v-field__outline {
+  border-color: #818cf8 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+
+html.dark .version-selector .v-field--focused .v-field__outline {
+  border-color: #818cf8 !important;
+  border-width: 1px !important; /* Keep same width */
+  border-style: solid !important;
+  box-shadow: none !important;
+}
+
+.version-selector .v-field--focused .v-field__outline__start,
+.version-selector .v-field--focused .v-field__outline__notch,
+.version-selector .v-field--focused .v-field__outline__end {
+  border: none !important;
+  border-width: 0 !important;
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+html.dark .version-selector .v-field--focused .v-field__outline {
+  border-color: #818cf8 !important;
+  border-width: 2px !important;
+  border-style: solid !important;
+  box-shadow: none !important;
+}
+
+html.dark .version-selector .v-field--focused .v-field__outline__start,
+html.dark .version-selector .v-field--focused .v-field__outline__notch,
+html.dark .version-selector .v-field--focused .v-field__outline__end {
+  border: none !important;
+  border-width: 0 !important;
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+.version-selector .v-field__input {
+  color: #111827;
+}
+
+html.dark .version-selector .v-field__input {
+  color: #f1f5f9;
+}
+
+/* Version Selector - Custom Dropdown Styled */
+.version-selector-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.version-select-label {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background-color: #ffffff;
+  padding: 0 4px;
+  font-size: 0.75rem;
+  color: #6366f1;
+  z-index: 1;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+html.dark .version-select-label {
+  background-color: #1e293b;
+  color: #818cf8;
+}
+
+.version-select-button {
+  width: 100%;
+  padding: 16px 48px 12px 16px;
+  min-height: 40px;
+  border: 1px solid #6366f1;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+html.dark .version-select-button {
+  border-color: #818cf8;
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.version-select-button:focus,
+.version-select-button--focused {
+  outline: none;
+  border-color: #6366f1;
+  border-width: 1px;
+}
+
+html.dark .version-select-button:focus,
+html.dark .version-select-button--focused {
+  border-color: #818cf8;
+}
+
+.version-select-button-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.version-select-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #6366f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+html.dark .version-select-icon {
+  color: #818cf8;
+}
+
+/* Ensure dropdown matches button width exactly */
+.version-select-menu .v-overlay__content {
+  width: auto !important;
+}
+
+.version-select-menu .v-overlay__content > .v-list {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+
+.version-select-dropdown {
+  background-color: #ffffff;
+  padding: 4px 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  width: 100% !important;
+  min-width: 100% !important;
+}
+
+html.dark .version-select-dropdown {
+  background-color: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.version-select-option {
+  padding: 12px 16px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.version-select-option:hover {
+  background-color: #e0e7ff !important; /* indigo-100 - matches icon background in My Requested Reviews */
+}
+
+html.dark .version-select-option:hover {
+  background-color: rgba(67, 56, 202, 0.3) !important; /* indigo-900/30 - matches dark mode icon background */
+}
+
+.version-select-option.v-list-item--active {
+  background-color: #e0e7ff !important; /* indigo-100 - matches icon background in My Requested Reviews */
+  color: #4f46e5 !important; /* indigo-600 */
+}
+
+html.dark .version-select-option.v-list-item--active {
+  background-color: rgba(67, 56, 202, 0.3) !important; /* indigo-900/30 - matches dark mode icon background */
+  color: #818cf8 !important; /* indigo-400 for dark mode */
+}
+
+.version-select-option.v-list-item--active:hover {
+  background-color: #c7d2fe !important; /* indigo-200 - slightly darker for hover on selected */
+}
+
+html.dark .version-select-option.v-list-item--active:hover {
+  background-color: rgba(67, 56, 202, 0.4) !important; /* indigo-900/40 - slightly darker for hover on selected */
+}
+
+.version-select-option .v-list-item-title {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 400;
+}
+
+html.dark .version-select-option .v-list-item-title {
+  color: #f1f5f9;
+}
+
+.version-select-option.v-list-item--active .v-list-item-title {
+  color: #4f46e5 !important; /* indigo-600 */
+  font-weight: 500;
+}
+
+html.dark .version-select-option.v-list-item--active .v-list-item-title {
+  color: #818cf8 !important; /* indigo-400 for dark mode */
+}
+
+/* Version Selector - OLD VUETIFY STYLES (can be removed after confirming native select works) */
+.version-selector .v-field-label {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Always hide label when it's inside the input area (since there's always a value selected) */
+.version-selector .v-field__input .v-field-label,
+.version-selector .v-field__input-wrapper .v-field-label,
+.version-selector .v-field__input .v-label {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  display: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+/* Always show floating label centered on the border (since there's always a value) */
+.version-selector .v-field__field .v-field-label,
+.version-selector .v-field-label {
+  position: absolute !important;
+  top: -10px !important; /* Center on the border */
+  left: 12px !important;
+  background-color: #ffffff !important;
+  padding: 0 4px !important;
+  margin-left: -4px !important;
+  z-index: 1 !important;
+  transform: none !important;
+  font-size: 0.75rem !important;
+  color: #6366f1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  pointer-events: none !important;
+  line-height: 1 !important;
+}
+
+html.dark .version-selector .v-field__field .v-field-label,
+html.dark .version-selector .v-field-label {
+  background-color: #1e293b !important;
+  color: #818cf8 !important;
+}
+
+/* Ensure field field container is positioned relative */
+.version-selector .v-field__field {
+  position: relative !important;
+}
+
+/* Prevent text shifting - use flexbox and explicit widths */
+.version-selector-wrapper {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.version-selector .v-field {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative !important;
+  overflow: visible !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.version-selector .v-field--focused {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+.version-selector .v-field__control {
+  position: relative !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.version-selector .v-field__input {
+  padding-left: 16px !important;
+  padding-right: 48px !important;
+  padding-top: 16px !important;
+  padding-bottom: 12px !important;
+  min-height: 40px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+}
+
+.version-selector .v-field--focused .v-field__input {
+  padding-left: 16px !important;
+  padding-right: 48px !important;
+  padding-top: 16px !important;
+  padding-bottom: 12px !important;
+}
+
+.version-selector .v-field__input-wrapper {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative !important;
+  left: 0 !important;
+  transform: none !important;
+  width: calc(100% - 48px) !important; /* Account for icon space */
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.version-selector .v-field--focused .v-field__input-wrapper {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative !important;
+  left: 0 !important;
+  transform: none !important;
+  width: calc(100% - 48px) !important;
+}
+
+.version-selector .v-field__input .v-select__selection {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative !important;
+  left: 0 !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.version-selector .v-field__input .v-select__selection-text {
+  position: absolute !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  display: block !important;
+  width: auto !important;
+  max-width: calc(100% - 64px) !important; /* Account for icon space */
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Ensure selection text doesn't shift on focus */
+.version-selector .v-field--focused .v-field__input .v-select__selection,
+.version-selector .v-field--focused .v-field__input .v-select__selection-text {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: absolute !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Lock append icon position */
+.version-selector .v-field__append-inner {
+  position: absolute !important;
+  right: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 24px !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.version-selector .v-field--focused .v-field__append-inner {
+  position: absolute !important;
+  right: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 24px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Prevent ALL transitions and layout shifts */
+.version-selector * {
+  transition: none !important;
+}
+
+.version-selector .v-field__control,
+.version-selector .v-field,
+.version-selector .v-field__input,
+.version-selector .v-field__input-wrapper,
+.version-selector .v-field__input-wrapper *,
+.version-selector .v-field__outline__notch {
+  transition: none !important;
+  will-change: auto !important;
+}
+
+/* Only apply purple/indigo color when focused - ensure label fully covers border */
+.version-selector .v-field--focused .v-label,
+.version-selector .v-field--focused .v-label--active,
+.version-selector .v-field--focused .v-field-label,
+.version-selector .v-field--focused label {
+  background-color: #ffffff !important;
+  padding: 2px 10px !important;
+  margin-left: -10px !important;
+  margin-top: 0 !important;
+  color: #6366f1 !important;
+  z-index: 10 !important;
+  position: relative !important;
+  text-decoration: none !important;
+  border: none !important;
+  border-bottom: none !important;
+  box-shadow: 0 0 0 10px #ffffff !important;
+  display: inline-block !important;
+}
+
+html.dark .version-selector .v-field--focused .v-label,
+html.dark .version-selector .v-field--focused .v-label--active,
+html.dark .version-selector .v-field--focused .v-field-label,
+html.dark .version-selector .v-field--focused label {
+  background-color: #1e293b !important; /* slate-800 */
+  padding: 2px 10px !important;
+  margin-left: -10px !important;
+  margin-top: 0 !important;
+  color: #818cf8 !important;
+  z-index: 10 !important;
+  position: relative !important;
+  text-decoration: none !important;
+  border: none !important;
+  border-bottom: none !important;
+  box-shadow: 0 0 0 10px #1e293b !important;
+  display: inline-block !important;
+}
+
+/* Remove any borders from text/input content */
+.version-selector .v-field__input,
+.version-selector .v-field__input input,
+.version-selector .v-field__input div,
+.version-selector .v-field__content,
+.version-selector .v-field__content * {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+.version-selector .v-field__input::placeholder {
+  color: #9ca3af;
+}
+
+html.dark .version-selector .v-field__input::placeholder {
+  color: #6b7280;
+}
+
+/* Version Selector Dropdown Items - use lighter indigo for hover/active */
+.v-select .v-menu .v-list .v-list-item:hover {
+  background-color: #eef2ff !important; /* indigo-50 */
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+html.dark .v-select .v-menu .v-list .v-list-item:hover {
+  background-color: rgba(99, 102, 241, 0.2) !important; /* indigo-600 with opacity */
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.v-select .v-menu .v-list .v-list-item--active {
+  background-color: #e0e7ff !important; /* indigo-100 */
+  color: #6366f1 !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+html.dark .v-select .v-menu .v-list .v-list-item--active {
+  background-color: rgba(99, 102, 241, 0.3) !important; /* indigo-600 with more opacity */
+  color: #818cf8 !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.v-select .v-menu .v-list .v-list-item--active:hover {
+  background-color: #c7d2fe !important; /* indigo-200 */
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+html.dark .v-select .v-menu .v-list .v-list-item--active:hover {
+  background-color: rgba(99, 102, 241, 0.4) !important; /* indigo-600 with even more opacity */
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove borders from dropdown items */
+.v-select .v-menu .v-list .v-list-item,
+.v-select .v-menu .v-list .v-list-item__content {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.v-select .v-menu .v-list .v-list-item__content > * {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove dividers between list items */
+.v-select .v-menu .v-list .v-divider,
+.v-select .v-menu .v-list-item + .v-divider,
+.v-select .v-menu .v-list-item::before,
+.v-select .v-menu .v-list-item::after {
+  display: none !important;
+  border: none !important;
+}
+
+/* Remove any separator lines */
+.v-select .v-menu .v-list-item + .v-list-item {
+  border-top: none !important;
+}
+
+.v-select .v-menu .v-list-item--active::before,
+.v-select .v-menu .v-list-item--active::after {
+  display: none !important;
+  border: none !important;
+}
+
+/* Remove borders from active list item inner elements */
+.v-select .v-menu .v-list-item--active .v-list-item__content,
+.v-select .v-menu .v-list-item--active .v-list-item-title,
+.v-select .v-menu .v-list-item--active .v-list-item-subtitle {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Ensure no box-shadow creates border appearance */
+.v-select .v-menu .v-list-item--active {
+  box-shadow: none !important;
+}
+
+/* Remove any border lines from active item - target all possible sources */
+.v-select .v-menu .v-list-item--active * {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove borders from the list item wrapper */
+.v-select .v-menu .v-list-item--active .v-list-item__prepend,
+.v-select .v-menu .v-list-item--active .v-list-item__append {
+  border: none !important;
+}
+
+/* Remove any outline or border-image that might create lines */
+.v-select .v-menu .v-list-item--active {
+  outline: none !important;
+  border-image: none !important;
+}
+
+/* Target any pseudo-elements that might create borders */
+.v-select .v-menu .v-list-item--active .v-list-item__content::before,
+.v-select .v-menu .v-list-item--active .v-list-item__content::after,
+.v-select .v-menu .v-list-item--active::before,
+.v-select .v-menu .v-list-item--active::after {
+  content: none !important;
+  display: none !important;
+  border: none !important;
 }

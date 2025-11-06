@@ -13,22 +13,22 @@
               <!-- Request Review Menu Item -->
               <button
                 @click="showRequestReviewModal = true"
-                class="flex items-center gap-2 px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                class="flex items-center gap-2 px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
-                <svg class="w-5 h-5 text-gray-900 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-gray-900 dark:text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
-                <span class="text-gray-900 dark:text-gray-300">Request Review</span>
+                <span class="text-gray-900 dark:text-gray-100">Request Review</span>
               </button>
               <!-- Review Status Menu Item -->
               <button
                 @click="$router.push('/kanban')"
-                class="flex items-center gap-2 px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                class="flex items-center gap-2 px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
-                <svg class="w-5 h-5 text-gray-900 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-gray-900 dark:text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
                 </svg>
-                <span class="text-gray-900 dark:text-gray-300">Review Status</span>
+                <span class="text-gray-900 dark:text-gray-100">Review Status</span>
               </button>
             </div>
           </div>
