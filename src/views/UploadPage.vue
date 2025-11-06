@@ -13,7 +13,8 @@
               <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">My Requested Reviews</h2>
             </div>
             <button
-              @click="openUploadDesignModal"
+              @click.stop.prevent="openUploadDesignModal"
+              type="button"
               class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm flex items-center gap-2"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -336,81 +337,83 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Upload Design Modal -->
-  <v-dialog :model-value="showUploadDesignModal" @update:model-value="showUploadDesignModal = $event" persistent max-width="800">
-      <v-card>
-        <v-card-title class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
-            <svg class="w-7 h-7 mr-3 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+
+  <!-- Modals - Outside all conditional blocks -->
+  <!-- Version Upload Modal -->
+  <VersionUploadModal
+    v-model="showUploadModal"
+    :review-id="selectedReviewId"
+    @version-uploaded="handleVersionUploaded"
+  />
+
+  <!-- Change Password Modal -->
+  <PromptModal
+    v-model="showPasswordModal"
+    title="Change Password"
+    label="Enter new password (leave empty to remove password)"
+    placeholder="Enter new password or leave empty"
+    type="password"
+    :required="false"
+    @submit="handlePasswordChanged"
+  />
+
+  <!-- Confirm Completion Modal -->
+  <ConfirmModal
+    v-model="showConfirmModal"
+    :title="confirmModalTitle"
+    :message="confirmModalMessage"
+    confirm-text="Mark as Completed"
+    confirm-color="success"
+    @confirm="confirmMarkCompleted"
+  />
+
+  <!-- Alert Modal -->
+  <AlertModal
+    v-model="showAlert"
+    :title="alertTitle"
+    :message="alertMessage"
+    :type="alertType"
+  />
+
+  <!-- Upload Design Modal -->
+  <v-dialog :model-value="showUploadDesignModal" @update:model-value="(val) => showUploadDesignModal = val" persistent max-width="800">
+    <v-card class="bg-white dark:bg-slate-800">
+      <v-card-title class="d-flex align-center justify-space-between bg-white dark:bg-slate-800 px-6 pt-10 pb-4" style="font-family: inherit; font-weight: 600;">
+        <div class="d-flex align-center">
+          <svg class="w-7 h-7 mr-3 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+          <span class="text-gray-900 dark:text-gray-100 font-bold text-2xl">Design Review Request</span>
+        </div>
+        <button @click.stop="showUploadDesignModal = false" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </v-card-title>
+      <v-divider />
+      <v-card-text class="pt-0 bg-white dark:bg-slate-800 px-6">
+        <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">Upload design files or link to a website under development for client review</p>
+        <FileUpload @uploaded="handleUpload" />
+        <div
+          v-if="resultUrl"
+          class="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+        >
+          <div class="flex items-start">
+            <svg class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
-            <span class="text-gray-900 dark:text-gray-100">Upload Design</span>
-          </div>
-          <button @click="closeUploadDesignModal" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </v-card-title>
-        <v-divider />
-        <v-card-text class="pt-6">
-          <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">Upload design files or link to a website under development for client review</p>
-          <FileUpload @uploaded="handleUpload" />
-          <div
-            v-if="resultUrl"
-            class="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
-          >
-            <div class="flex items-start">
-              <svg class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-              <div>
-                <p class="text-sm font-medium text-green-800 dark:text-green-300">Upload successful!</p>
-                <a :href="resultUrl" target="_blank" class="text-sm text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 underline mt-1 block">{{ resultUrl }}</a>
-              </div>
+            <div>
+              <p class="text-sm font-medium text-green-800 dark:text-green-300">Upload successful!</p>
+              <a :href="resultUrl" target="_blank" class="text-sm text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 underline mt-1 block">{{ resultUrl }}</a>
             </div>
           </div>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
-    <!-- Version Upload Modal -->
-    <VersionUploadModal
-      v-model="showUploadModal"
-      :review-id="selectedReviewId"
-      @version-uploaded="handleVersionUploaded"
-    />
-
-    <!-- Change Password Modal -->
-    <PromptModal
-      v-model="showPasswordModal"
-      title="Change Password"
-      label="Enter new password (leave empty to remove password)"
-      placeholder="Enter new password or leave empty"
-      type="password"
-      :required="false"
-      @submit="handlePasswordChanged"
-    />
-
-    <!-- Confirm Completion Modal -->
-    <ConfirmModal
-      v-model="showConfirmModal"
-      :title="confirmModalTitle"
-      :message="confirmModalMessage"
-      confirm-text="Mark as Completed"
-      confirm-color="success"
-      @confirm="confirmMarkCompleted"
-    />
-
-    <!-- Alert Modal -->
-    <AlertModal
-      v-model="showAlert"
-      :title="alertTitle"
-      :message="alertMessage"
-      :type="alertType"
-    />
-  </div>
+        </div>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -564,8 +567,9 @@ const trackReviewView = (reviewId) => {
 };
 
 const openUploadDesignModal = () => {
-  console.log('Opening upload modal');
+  console.log('Opening upload modal - function called');
   showUploadDesignModal.value = true;
+  console.log('showUploadDesignModal is now:', showUploadDesignModal.value);
 };
 
 const closeUploadDesignModal = () => {

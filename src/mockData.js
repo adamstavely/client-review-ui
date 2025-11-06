@@ -177,8 +177,23 @@ export { mockReviews };
 // Mock API functions
 export const mockAPI = {
   // Upload simulation
-  upload: async (filename, password) => {
+  upload: async (filename, password, bypassClientReview = false, sharingMode = 'anyone', approvedEmails = []) => {
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate upload delay
+    
+    // Determine initial workflow state
+    let initialWorkflowState = 'draft';
+    let workflowHistory = [
+      { stage: 'draft', action: 'uploaded', user: 'Designer', timestamp: new Date().toISOString() }
+    ];
+    
+    if (bypassClientReview) {
+      // Skip client review, go directly to art director review
+      initialWorkflowState = 'art_director_review';
+      workflowHistory = [
+        { stage: 'draft', action: 'uploaded', user: 'Designer', timestamp: new Date().toISOString() },
+        { stage: 'art_director_review', action: 'bypassed_client_review', user: 'Designer', timestamp: new Date().toISOString() }
+      ];
+    }
     
     const newReview = {
       id: `review-${Date.now()}`,
@@ -187,10 +202,10 @@ export const mockAPI = {
       designer: 'Designer', // In real app, this would come from auth
       designerEmail: 'designer@example.com', // In real app, this would come from auth
       teamId: null, // Will be set when associated with a team
-      workflowState: 'draft', // Start in draft state
-      workflowHistory: [
-        { stage: 'draft', action: 'uploaded', user: 'Designer', timestamp: new Date().toISOString() }
-      ],
+      workflowState: initialWorkflowState,
+      workflowHistory: workflowHistory,
+      sharingMode: sharingMode, // 'anyone' or 'restricted'
+      approvedEmails: approvedEmails, // Array of email addresses
       versions: [
         { 
           id: 'v1', 
@@ -218,12 +233,27 @@ export const mockAPI = {
   },
 
   // Create review from external URL
-  createReviewFromUrl: async (url, password) => {
+  createReviewFromUrl: async (url, password, bypassClientReview = false, sharingMode = 'anyone', approvedEmails = []) => {
     await new Promise(resolve => setTimeout(resolve, 800)); // Simulate API delay
     
     // Extract filename from URL or use a default
     const urlParts = url.split('/');
     const filename = urlParts[urlParts.length - 1] || 'External Design Link';
+    
+    // Determine initial workflow state
+    let initialWorkflowState = 'draft';
+    let workflowHistory = [
+      { stage: 'draft', action: 'created_from_url', user: 'Designer', timestamp: new Date().toISOString() }
+    ];
+    
+    if (bypassClientReview) {
+      // Skip client review, go directly to art director review
+      initialWorkflowState = 'art_director_review';
+      workflowHistory = [
+        { stage: 'draft', action: 'created_from_url', user: 'Designer', timestamp: new Date().toISOString() },
+        { stage: 'art_director_review', action: 'bypassed_client_review', user: 'Designer', timestamp: new Date().toISOString() }
+      ];
+    }
     
     const newReview = {
       id: `review-${Date.now()}`,
@@ -232,10 +262,10 @@ export const mockAPI = {
       designer: 'Designer', // In real app, this would come from auth
       designerEmail: 'designer@example.com', // In real app, this would come from auth
       teamId: null, // Will be set when associated with a team
-      workflowState: 'draft', // Start in draft state
-      workflowHistory: [
-        { stage: 'draft', action: 'created_from_url', user: 'Designer', timestamp: new Date().toISOString() }
-      ],
+      workflowState: initialWorkflowState,
+      workflowHistory: workflowHistory,
+      sharingMode: sharingMode, // 'anyone' or 'restricted'
+      approvedEmails: approvedEmails, // Array of email addresses
       versions: [
         { 
           id: 'v1', 
