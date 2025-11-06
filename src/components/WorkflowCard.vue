@@ -1,11 +1,11 @@
 <template>
-  <v-card class="bg-white dark:bg-slate-800 rounded-lg shadow-lg mb-4">
+  <v-card class="bg-white dark:bg-slate-800 rounded-lg shadow-lg mb-4" elevation="0">
     <v-card-title class="d-flex align-center pa-0">
       <div class="d-flex align-center w-100" style="padding: 12px 16px;">
         <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
         </svg>
-        <span class="text-left uppercase text-gray-900 dark:text-gray-100">Workflow</span>
+        <span class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">Workflow</span>
       </div>
     </v-card-title>
     

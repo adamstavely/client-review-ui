@@ -1,5 +1,5 @@
 <template>
-  <v-card class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+  <v-card class="bg-white dark:bg-slate-800 rounded-lg shadow-lg" elevation="0">
     <v-card-title class="d-flex align-center pa-0">
       <v-tabs v-model="activeTab" bg-color="transparent" class="w-100">
         <v-tab value="comments" class="text-left">

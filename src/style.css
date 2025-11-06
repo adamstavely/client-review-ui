@@ -1247,6 +1247,25 @@ html:not(.dark) [class*="border-gray-600"] {
   border-color: #e5e7eb !important; /* gray-200 - light mode version */
 }
 
+/* Ensure shadow-lg works on Vuetify cards */
+.v-card.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.dark .v-card.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Hide scrollbar but keep scrolling functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
 /* Dark mode scrollbar styling */
 .dark ::-webkit-scrollbar {
   width: 10px;

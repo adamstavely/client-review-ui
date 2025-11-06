@@ -65,12 +65,12 @@
         <div class="p-8">
           <!-- Single View Mode -->
           <div v-if="!comparisonMode">
-            <VersionSelector
-              v-model="selectedVersion"
-              :versions="metadata.versions"
-              @update:modelValue="loadVersion"
-            />
-            <PreviewFrame :url="previewUrl" />
+        <VersionSelector
+          v-model="selectedVersion"
+          :versions="metadata.versions"
+          @update:modelValue="loadVersion"
+        />
+        <PreviewFrame :url="previewUrl" />
           </div>
           
           <!-- Comparison Mode -->
@@ -110,15 +110,93 @@
         </div>
       </div>
 
-      <PasswordPrompt
-        v-model="passwordRequired"
-        @submit="submitPassword"
-      />
+    <PasswordPrompt
+      v-model="passwordRequired"
+      @submit="submitPassword"
+    />
     </div>
 
     <!-- Comments Sidebar -->
     <div v-if="passwordValidated || reviewCompleted" class="w-96 flex-shrink-0">
-      <div class="sticky top-8 max-h-[calc(100vh-120px)] overflow-y-auto">
+      <div class="space-y-6">
+        <!-- Designer Tools Card -->
+        <div v-if="isDesigner && !reviewCompleted" class="bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <h3 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">DESIGNER TOOLS</h3>
+            </div>
+            <div class="grid gap-3" :class="metadata.password ? 'grid-cols-4' : 'grid-cols-3'">
+              <!-- Mark as Completed -->
+              <v-tooltip text="Mark as Completed">
+                <template #activator="{ props }">
+                  <button
+                    @click="handleMarkCompleted"
+                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    v-bind="props"
+                  >
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Mark Completed</span>
+                  </button>
+                </template>
+              </v-tooltip>
+              
+              <!-- Change Password -->
+              <v-tooltip v-if="metadata.password" text="Change Password">
+                <template #activator="{ props }">
+                  <button
+                    @click="handleChangePassword"
+                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    v-bind="props"
+                  >
+                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                    </svg>
+                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Change Password</span>
+                  </button>
+                </template>
+              </v-tooltip>
+              
+              <!-- Extend Expiration -->
+              <v-tooltip text="Extend Expiration">
+                <template #activator="{ props }">
+                  <button
+                    @click="handleExtendExpiration"
+                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    v-bind="props"
+                  >
+                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Extend Expiration</span>
+                  </button>
+                </template>
+              </v-tooltip>
+              
+              <!-- Upload New Version -->
+              <v-tooltip text="Upload New Version">
+                <template #activator="{ props }">
+                  <button
+                    @click="handleUploadNewVersion"
+                    class="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    v-bind="props"
+                  >
+                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span class="text-xs font-medium text-gray-900 dark:text-gray-300">Upload Version</span>
+                  </button>
+                </template>
+              </v-tooltip>
+            </div>
+          </div>
+        </div>
+        
         <WorkflowCard
           :workflow-state="metadata.workflowState"
           :current-user-role="currentUserRole"
@@ -149,6 +227,34 @@
       </div>
     </div>
 
+    <!-- Version Upload Modal -->
+    <VersionUploadModal
+      v-model="showUploadModal"
+      :review-id="reviewId"
+      @version-uploaded="handleVersionUploaded"
+    />
+
+    <!-- Change Password Modal -->
+    <PromptModal
+      v-model="showPasswordModal"
+      title="Change Password"
+      label="Enter new password (leave empty to remove password)"
+      placeholder="Enter new password or leave empty"
+      type="password"
+      :required="false"
+      @submit="handlePasswordChanged"
+    />
+
+    <!-- Confirm Completion Modal -->
+    <ConfirmModal
+      v-model="showConfirmModal"
+      :title="confirmModalTitle"
+      :message="confirmModalMessage"
+      confirm-text="Mark as Completed"
+      confirm-color="success"
+      @confirm="confirmMarkCompleted"
+    />
+
     <!-- Alert Modal -->
     <AlertModal
       v-model="showAlert"
@@ -169,7 +275,10 @@ import PasswordPrompt from '@/components/PasswordPrompt.vue';
 import CommentsSidebar from '@/components/CommentsSidebar.vue';
 import WorkflowCard from '@/components/WorkflowCard.vue';
 import AlertModal from '@/components/AlertModal.vue';
-import { mockAPI, isMockMode } from '@/mockData.js';
+import VersionUploadModal from '@/components/VersionUploadModal.vue';
+import PromptModal from '@/components/PromptModal.vue';
+import ConfirmModal from '@/components/ConfirmModal.vue';
+import { mockAPI, isMockMode, mockReviews } from '@/mockData.js';
 
 const route = useRoute();
 const reviewId = route.params.id;
@@ -204,6 +313,13 @@ const alertTitle = ref('');
 const alertMessage = ref('');
 const alertType = ref('error');
 
+// Designer tools modals state
+const showUploadModal = ref(false);
+const showPasswordModal = ref(false);
+const showConfirmModal = ref(false);
+const confirmModalTitle = ref('');
+const confirmModalMessage = ref('');
+
 const loadVersion = async () => {
   try {
     const useMockMode = await isMockMode();
@@ -212,8 +328,8 @@ const loadVersion = async () => {
       previewUrl.value = res.url;
       await loadComments();
     } else {
-      const res = await axios.get(`/review/${reviewId}/version/${selectedVersion.value}`);
-      previewUrl.value = res.data.url;
+  const res = await axios.get(`/review/${reviewId}/version/${selectedVersion.value}`);
+  previewUrl.value = res.data.url;
       await loadComments();
     }
   } catch (error) {
@@ -306,13 +422,13 @@ const submitPassword = async (input) => {
       passwordValidated.value = true;
       loadVersion();
     } else {
-      const res = await axios.get(`/review/${reviewId}`, {
-        params: { password: input },
-      });
-      metadata.value = res.data;
-      selectedVersion.value = res.data.versions[0].id;
-      passwordValidated.value = true;
-      loadVersion();
+    const res = await axios.get(`/review/${reviewId}`, {
+      params: { password: input },
+    });
+    metadata.value = res.data;
+    selectedVersion.value = res.data.versions[0].id;
+    passwordValidated.value = true;
+    loadVersion();
     }
   } catch {
     showAlertMessage('Error', 'Invalid password', 'error');
@@ -602,6 +718,174 @@ const handleResubmitForReview = async () => {
   }
 };
 
+// Designer tools handler functions
+const handleMarkCompleted = () => {
+  confirmModalTitle.value = 'Mark Review as Completed';
+  confirmModalMessage.value = `Are you sure you want to mark "${metadata.value.filename}" as completed? The review link will be disabled, but comments and information will be preserved.`;
+  showConfirmModal.value = true;
+};
+
+const confirmMarkCompleted = async () => {
+  try {
+    const useMockMode = await isMockMode();
+    
+    if (useMockMode) {
+      // Update mock data - mark review as completed
+      const review = mockReviews.find(r => r.id === reviewId);
+      if (review) {
+        review.completed = true;
+        reviewCompleted.value = true;
+      }
+    } else {
+      // Use real API
+      await axios.post(`/review/${reviewId}/complete`);
+      reviewCompleted.value = true;
+    }
+    
+    // Reload review data
+    const useMock = await isMockMode();
+    if (useMock) {
+      const res = await mockAPI.getReview(reviewId);
+      metadata.value = { ...res };
+      reviewCompleted.value = res.completed || false;
+    } else {
+      const res = await axios.get(`/review/${reviewId}`);
+      metadata.value = { ...res.data };
+      reviewCompleted.value = res.data.completed || false;
+    }
+    
+    showAlertMessage('Success', 'Review marked as completed. The link is now disabled.', 'success');
+  } catch (error) {
+    console.error('Failed to mark review as completed:', error);
+    showAlertMessage('Error', 'Failed to mark review as completed. Please try again.', 'error');
+  }
+};
+
+const handleChangePassword = () => {
+  showPasswordModal.value = true;
+};
+
+const handlePasswordChanged = async (passwordValue) => {
+  try {
+    const useMockMode = await isMockMode();
+    
+    if (useMockMode) {
+      // Update mock data
+      const review = mockReviews.find(r => r.id === reviewId);
+      if (review) {
+        review.password = passwordValue;
+        
+        // Add history entry for any password change
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
+        review.workflowHistory.push({
+          stage: review.workflowState || 'draft',
+          action: passwordValue ? 'password_set' : 'password_removed',
+          user: review.designer || 'Designer',
+          timestamp: new Date().toISOString()
+        });
+        
+        // Reload review data to get updated history
+        const res = await mockAPI.getReview(reviewId);
+        metadata.value = { ...res };
+      }
+    } else {
+      // Use real API
+      await axios.post(`/review/${reviewId}/password`, { password: passwordValue });
+      
+      // Reload review data
+      const res = await axios.get(`/review/${reviewId}`);
+      metadata.value = { ...res.data };
+    }
+    
+    const message = passwordValue 
+      ? 'Password updated successfully!'
+      : 'Password removed successfully!';
+    showAlertMessage('Success', message, 'success');
+  } catch (error) {
+    console.error('Failed to change password:', error);
+    showAlertMessage('Error', 'Failed to change password. Please try again.', 'error');
+  }
+};
+
+const handleExtendExpiration = async () => {
+  try {
+    const useMockMode = await isMockMode();
+    
+    // Calculate new expiration date: 30 days from now
+    const newExpiresAt = new Date();
+    newExpiresAt.setDate(newExpiresAt.getDate() + 30);
+    newExpiresAt.setHours(23, 59, 59, 999); // Set to end of day
+    const newExpiresAtISO = newExpiresAt.toISOString();
+    
+    if (useMockMode) {
+      // Update mock data
+      const review = mockReviews.find(r => r.id === reviewId);
+      if (review) {
+        review.expiresAt = newExpiresAtISO;
+        
+        // Add history entry
+        if (!review.workflowHistory) {
+          review.workflowHistory = [];
+        }
+        review.workflowHistory.push({
+          stage: review.workflowState || 'draft',
+          action: 'expiration_extended',
+          user: review.designer || 'Designer',
+          timestamp: new Date().toISOString()
+        });
+        
+        // Reload review data to get updated history
+        const res = await mockAPI.getReview(reviewId);
+        metadata.value = { ...res };
+      }
+    } else {
+      // Use real API
+      await axios.post(`/review/${reviewId}/extend-expiration`, { days: 30 });
+      
+      // Reload review data
+      const res = await axios.get(`/review/${reviewId}`);
+      metadata.value = { ...res.data };
+    }
+    
+    showAlertMessage('Success', 'Expiration date extended by 30 days!', 'success');
+  } catch (error) {
+    console.error('Failed to extend expiration:', error);
+    showAlertMessage('Error', 'Failed to extend expiration date. Please try again.', 'error');
+  }
+};
+
+const handleUploadNewVersion = () => {
+  showUploadModal.value = true;
+};
+
+const handleVersionUploaded = async () => {
+  // Reload review data to get new version
+  try {
+    const useMockMode = await isMockMode();
+    if (useMockMode) {
+      const res = await mockAPI.getReview(reviewId);
+      metadata.value = { ...res };
+      // Auto-select the new version
+      if (res.versions && res.versions.length > 0) {
+        selectedVersion.value = res.versions[res.versions.length - 1].id;
+        await loadVersion();
+      }
+    } else {
+      const res = await axios.get(`/review/${reviewId}`);
+      metadata.value = { ...res.data };
+      if (res.data.versions && res.data.versions.length > 0) {
+        selectedVersion.value = res.data.versions[res.data.versions.length - 1].id;
+        await loadVersion();
+      }
+    }
+    showAlertMessage('Success', 'New version uploaded successfully!', 'success');
+  } catch (error) {
+    console.error('Failed to reload review after version upload:', error);
+  }
+};
+
 // Track when a review is viewed (for clients)
 const trackReviewView = (reviewId) => {
   if (currentUserRole.value !== 'client') return;
@@ -668,7 +952,7 @@ onMounted(async () => {
         rightVersion.value = res.versions.length > 1 ? res.versions[1].id : res.versions[0].id;
       }
     } else {
-      const res = await axios.get(`/review/${reviewId}`);
+    const res = await axios.get(`/review/${reviewId}`);
       console.log('Loaded review:', res.data);
       console.log('WorkflowHistory:', res.data.workflowHistory);
       metadata.value = { ...res.data };
@@ -685,9 +969,9 @@ onMounted(async () => {
         return;
       }
       
-      selectedVersion.value = res.data.versions[0].id;
-      passwordValidated.value = true;
-      loadVersion();
+    selectedVersion.value = res.data.versions[0].id;
+    passwordValidated.value = true;
+    loadVersion();
       
       // Initialize comparison versions if switching to comparison mode
       if (comparisonMode.value && res.data.versions.length >= 2) {
