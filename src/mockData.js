@@ -61,6 +61,7 @@ let mockReviews = [
         text: 'The header looks great! I love the new typography.',
         type: 'approval',
         author: 'Sarah Johnson',
+        authorRole: 'designer',
         timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         version: 'v3',
         resolved: false,
@@ -72,6 +73,7 @@ let mockReviews = [
             id: 'reply-1',
             text: 'Thanks! We spent a lot of time getting the font pairing just right.',
             author: 'Design Team',
+            authorRole: 'designer',
             timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
           }
         ]
@@ -81,6 +83,7 @@ let mockReviews = [
         text: 'Could we make the navigation menu more prominent? It feels a bit hidden.',
         type: 'suggestion',
         author: 'Mike Chen',
+        authorRole: 'designer',
         timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
         version: 'v2',
         resolved: false,
@@ -115,6 +118,7 @@ let mockReviews = [
         text: 'The login flow is confusing. Users might get lost here.',
         type: 'bug',
         author: 'Alex Rodriguez',
+        authorRole: 'designer',
         timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
         version: 'v1',
         resolved: true,
@@ -127,6 +131,7 @@ let mockReviews = [
             id: 'reply-2',
             text: 'Good catch! We\'ve simplified this in v2.',
             author: 'Design Team',
+            authorRole: 'designer',
             timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString()
           }
         ]
@@ -165,6 +170,7 @@ let mockReviews = [
         text: 'Perfect! This is exactly what we were looking for. Approved for final production.',
         type: 'approval',
         author: 'Jennifer Walsh',
+        authorRole: 'creative_director',
         timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
         version: 'v4',
         resolved: true,

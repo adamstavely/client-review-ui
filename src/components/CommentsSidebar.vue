@@ -11,20 +11,22 @@
     
     <v-divider />
     
-    <!-- Comments Content -->
-    <v-card-text v-if="readOnly" class="text-center py-4">
-      <p class="text-sm text-gray-500 dark:text-gray-400">This review is completed. Comments are view-only.</p>
-    </v-card-text>
-    
-    <!-- Comments List -->
-    <v-card-text v-if="validComments.length === 0" class="empty-state">
-          <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-          <p class="text-gray-600 dark:text-gray-400">No comments yet. Be the first to add feedback!</p>
-        </v-card-text>
-        
-        <v-list v-else class="pt-1 pb-2 px-2">
+    <!-- Comments Content with Scrollable Area -->
+    <div class="comments-scrollable-container">
+      <!-- Comments Content -->
+      <v-card-text v-if="readOnly" class="text-center py-4">
+        <p class="text-sm text-gray-500 dark:text-gray-400">This review is completed. Comments are view-only.</p>
+      </v-card-text>
+      
+      <!-- Comments List -->
+      <v-card-text v-if="validComments.length === 0" class="empty-state">
+        <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <p class="text-gray-600 dark:text-gray-400">No comments yet. Be the first to add feedback!</p>
+      </v-card-text>
+      
+      <v-list v-else class="pt-1 pb-2 px-2">
       <template v-for="(comment, index) in validComments" :key="comment.id">
         <v-list-item v-if="comment" class="comment-item">
           <div class="d-flex align-start w-100">
@@ -35,10 +37,11 @@
             
             <!-- Comment content -->
             <div class="flex-grow-1" style="min-width: 0; width: 100%;">
-              <!-- Header with name, chips, and actions -->
+              <!-- Header with name, role, chips, and actions -->
               <div class="d-flex align-center mb-1" style="width: 100%;">
                 <div class="d-flex align-center flex-wrap" style="flex: 1 1 0; min-width: 0; margin-right: 12px;">
                   <span class="font-weight-medium text-body-1 mr-2 text-gray-900 dark:text-gray-100" style="white-space: nowrap;">{{ comment.author }}</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 mr-2" style="white-space: nowrap;">{{ getRoleLabel(getAuthorRole(comment.author, comment)) }}</span>
                   <v-chip
                     v-if="comment.resolved"
                     color="success"
@@ -201,7 +204,10 @@
                     <div class="flex-grow-1 w-100">
                       <div class="d-flex align-start justify-space-between mb-1">
                         <div class="d-flex flex-column">
-                          <span class="font-weight-medium text-body-2 text-gray-900 dark:text-gray-100" style="white-space: nowrap;">{{ reply.author }}</span>
+                          <div class="d-flex align-center flex-wrap ga-2">
+                            <span class="font-weight-medium text-body-2 text-gray-900 dark:text-gray-100" style="white-space: nowrap;">{{ reply.author }}</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400" style="white-space: nowrap;">{{ getRoleLabel(reply.authorRole || getAuthorRole(reply.author, reply)) }}</span>
+                          </div>
                           <span class="text-caption text-gray-500 dark:text-gray-400" style="white-space: nowrap;">{{ formatTimestamp(reply.timestamp) }}</span>
                         </div>
                       </div>
@@ -270,6 +276,7 @@
         </v-list-item>
       </template>
     </v-list>
+    </div>
     
     <v-divider v-if="!readOnly" />
     
@@ -309,14 +316,26 @@ const props = defineProps({
   readOnly: {
     type: Boolean,
     default: false
+  },
+  currentUserRole: {
+    type: String,
+    default: 'designer'
   }
 });
 
 const emit = defineEmits(['comment-added', 'comment-updated', 'reply-added', 'emoji-reaction-toggled', 'emoji-reaction-toggled-reply']);
 
-// Filter out any null/undefined comments to prevent rendering errors
+// Filter comments by version and remove null/undefined comments
 const validComments = computed(() => {
-  return (props.comments || []).filter(comment => comment && comment.id);
+  const allComments = (props.comments || []).filter(comment => comment && comment.id);
+  
+  // If versionId is provided, filter by version
+  if (props.versionId) {
+    return allComments.filter(comment => comment.version === props.versionId);
+  }
+  
+  // If no versionId, return all comments (for backwards compatibility)
+  return allComments;
 });
 
 const newComment = ref('');
@@ -348,6 +367,36 @@ const getInitials = (name) => {
   }
   // Single name - use first two letters if available
   return name.length >= 2 ? name.substring(0, 2).toUpperCase() : name[0].toUpperCase();
+};
+
+// Get role label from role string
+const getRoleLabel = (role) => {
+  if (!role) return '';
+  const roleMap = {
+    'designer': 'Designer',
+    'art_director': 'Art Director',
+    'creative_director': 'Creative Director',
+    'client': 'Client'
+  };
+  return roleMap[role] || role;
+};
+
+// Get role from author name (for legacy comments without role)
+const getAuthorRole = (author, comment) => {
+  if (comment?.authorRole) {
+    return comment.authorRole;
+  }
+  // Fallback logic for legacy comments
+  if (author === 'Client' || author?.toLowerCase().includes('client')) {
+    return 'client';
+  }
+  if (author === 'Art Director' || author?.toLowerCase().includes('art director')) {
+    return 'art_director';
+  }
+  if (author === 'Creative Director' || author?.toLowerCase().includes('creative director')) {
+    return 'creative_director';
+  }
+  return 'designer'; // Default to designer
 };
 
 // Group reactions by emoji
@@ -412,6 +461,7 @@ const submitComment = async () => {
       id: `comment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       text: newComment.value.trim(),
       author: 'Current User', // In real app, this would come from auth
+      authorRole: props.currentUserRole || 'designer',
       timestamp: new Date().toISOString(),
       version: props.versionId || null,
       resolved: false,
@@ -454,6 +504,7 @@ const submitReply = (commentId) => {
     id: `reply-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     text: replyText.value.trim(),
     author: 'Current User',
+    authorRole: props.currentUserRole || 'designer',
     timestamp: new Date().toISOString()
   };
   
@@ -479,6 +530,40 @@ const toggleResolved = (commentId) => {
 </script>
 
 <style scoped>
+/* Comments scrollable container */
+.comments-scrollable-container {
+  max-height: 60vh;
+  min-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar styling */
+.comments-scrollable-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.comments-scrollable-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.comments-scrollable-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.comments-scrollable-container::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+html.dark .comments-scrollable-container::-webkit-scrollbar-thumb {
+  background-color: #475569;
+}
+
+html.dark .comments-scrollable-container::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b;
+}
+
 .comment-item {
   align-items: flex-start !important;
   padding: 12px 16px !important;

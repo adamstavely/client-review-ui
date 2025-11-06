@@ -227,6 +227,7 @@
           :comments="comments"
           :version-id="selectedVersion"
           :read-only="reviewCompleted"
+          :current-user-role="currentUserRole"
           @comment-added="handleCommentAdded"
           @comment-updated="handleCommentUpdated"
           @reply-added="handleReplyAdded"
